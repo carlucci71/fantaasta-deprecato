@@ -130,7 +130,7 @@ app.run(
 //				$rootScope.sendMsg(JSON.stringify({'ping': $rootScope.giocatore}));
 	          }, 1000);
 			$rootScope.start = function(){
-				$resource(window.location.pathname + 'start',{'durata':$rootScope.durataAsta}).get();
+				$resource(window.location.pathname + 'start',{'nomegiocatore':$rootScope.giocatore, 'durata':$rootScope.durataAsta}).get();
 			}
 			$rootScope.inviaOfferta = function(){
 				$resource(window.location.pathname + 'inviaOfferta',{'nomegiocatore':$rootScope.giocatore, 'offerta':$rootScope.offerta}).save().$promise.then(function(data){}

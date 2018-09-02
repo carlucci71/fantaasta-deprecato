@@ -55,10 +55,12 @@ public class MyController {
 		offertaVincente.put("offerta", 1);
 	}
 	@RequestMapping("/start")
-	public void  start(@RequestParam int durata) {
+	public void  start(@RequestParam String nomegiocatore,@RequestParam int durata) {
 		durataAsta=durata;
 		calInizioOfferta = Calendar.getInstance();
 		offertaVincente = new HashMap<>();
+		offertaVincente.put("nomegiocatore", nomegiocatore);
+		offertaVincente.put("offerta", 1);
 	}
 	@RequestMapping("/inviaOfferta")
 	public void  inviaOfferta(@RequestParam String nomegiocatore,@RequestParam int offerta) {

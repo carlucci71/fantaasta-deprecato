@@ -20,7 +20,7 @@
 <br>
 <div ng-show="isLoggato()">
 	Ciao, {{giocatore}}
-	<input type="button" value="disconnect"   ng-click="doDisconnect()"></input>
+    <a href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' ng-click="doDisconnect()" height="25" width="25"/></a>
 </div>
 <br>
 <label>Utenti collegati:</label>
@@ -28,7 +28,7 @@
     <li>{{utente}} 
     	<span ng-show="utenteOK(utente)">
 <!--     		<img src='./verde.png' height="10" width="10"/>  -->
-    		<a href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente)" height="13" width="13"/></a>
+    		<a href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente)" height="20" width="20"/></a>
     	</span>
     	<span ng-show="!utenteOK(utente)">
 <!--     		<img src='./rosso.png' height="10" width="10"/>  -->
@@ -43,7 +43,7 @@
 </div>
 <span ng-show="isLoggato()">
 	<br>
-	<input type="button"  value="start" ng-click="start()"></input>
+	<a href=#><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
 	<label>Durata Asta: </label><input style='width: 60px;' type="number" ng-model="durataAsta"></input>
 	<br><br>
 	<div style="margin-left:30px" ng-show="timeStart==0"><img src='./0.png' height="80" width="80"/></div>
@@ -51,10 +51,11 @@
 	<div style="margin-left:30px" ng-show="timeStart==2"><img src='./2.png' height="80" width="80"/></div>
 	<div style="margin-left:30px" ng-show="timeStart==3"><img src='./3.png' height="80" width="80"/></div>
 	<br><br>
-	<label>Rilancio: </label><input  style='width: 60px;' type="number"  ng-model="offerta"></input>
-	<input type="button"  value="invia" ng-click="inviaOfferta()"></input>
+	<label ng-style="timeStart==3 && {'background-color':'red'} || {'background-color': 'white'}"  style="font-size:200%;" ng-show="offertaVincente.nomegiocatore">Vincitore: {{offertaVincente.nomegiocatore}} con {{offertaVincente.offerta}}</label>
+	<br><br>
+	<input  style='width: 60px;' type="number"  ng-model="offerta"></input>
+    <a href=#><img style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta()" height="35" width="35"/></a>
 	<br><br><br>
-	<label ng-show="offertaVincente.nomegiocatore">Vincitore: {{offertaVincente.nomegiocatore}} con {{offertaVincente.offerta}}</label>
 	<input type="button" value="+1" ng-click="incrementa(1)"></input>
 	<input type="button" value="+5" ng-click="incrementa(5)"></input>
 	<input type="button" value="+10" ng-click="incrementa(10)"></input>
