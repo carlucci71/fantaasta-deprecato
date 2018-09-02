@@ -16,15 +16,22 @@
 
 <script>
 </script>
-<body x-ng-app="app">
+<body x-ng-app="app" style="margin-left:20px">
+<br>
+<div ng-show="isLoggato()">
+	Ciao, {{giocatore}}
+	<input type="button" value="disconnect"   ng-click="doDisconnect()"></input>
+</div>
+<br>
 <label>Utenti collegati:</label>
 <ul ng-repeat="utente in utenti">  
     <li>{{utente}} 
     	<span ng-show="utenteOK(utente)">
-    		<img src='./verde.png' height="10" width="10"/>
+<!--     		<img src='./verde.png' height="10" width="10"/>  -->
+    		<a href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente)" height="13" width="13"/></a>
     	</span>
     	<span ng-show="!utenteOK(utente)">
-    		<img src='./rosso.png' height="10" width="10"/>
+<!--     		<img src='./rosso.png' height="10" width="10"/>  -->
     		<a href=#><img src='./cestino.png' ng-click="cancellaUtente(utente)" height="20" width="20"/></a>
     	</span>
     </li>
@@ -35,19 +42,22 @@
 	<input type="button"  value="connect" ng-disabled="!nomegiocatore" ng-click="doConnect()"></input>
 </div>
 <span ng-show="isLoggato()">
-	Ciao, {{giocatore}}
-	<input type="button" value="disconnect"   ng-click="doDisconnect()"></input>
-	<br><br>
-	<input type="button"  value="start" ng-click="start()"></input>
-	<label>Durata Asta: </label><input type="number" ng-model="durataAsta"></input>
-	<br><br>
-	<label>Rilancio: </label><input type="number"  ng-model="offerta"></input>
-	<label>Vincitore: {{offertaVincente.nomegiocatore}} con {{offertaVincente.offerta}}</label>
-	<input type="button"  value="invia" ng-click="inviaOfferta()"></input>
-	<div ng-show="timeStart==0 || timeStart==1"><img src='./1.png' height="50" width="50"/></div>
-	<div ng-show="timeStart==2"><img src='./2.png' height="50" width="50"/></div>
-	<div ng-show="timeStart==3"><img src='./3.png' height="50" width="50"/></div>
 	<br>
+	<input type="button"  value="start" ng-click="start()"></input>
+	<label>Durata Asta: </label><input style='width: 60px;' type="number" ng-model="durataAsta"></input>
+	<br><br>
+	<div style="margin-left:30px" ng-show="timeStart==0"><img src='./0.png' height="80" width="80"/></div>
+	<div style="margin-left:30px" ng-show="timeStart==1"><img src='./1.png' height="80" width="80"/></div>
+	<div style="margin-left:30px" ng-show="timeStart==2"><img src='./2.png' height="80" width="80"/></div>
+	<div style="margin-left:30px" ng-show="timeStart==3"><img src='./3.png' height="80" width="80"/></div>
+	<br><br>
+	<label>Rilancio: </label><input  style='width: 60px;' type="number"  ng-model="offerta"></input>
+	<input type="button"  value="invia" ng-click="inviaOfferta()"></input>
+	<br><br><br>
+	<label ng-show="offertaVincente.nomegiocatore">Vincitore: {{offertaVincente.nomegiocatore}} con {{offertaVincente.offerta}}</label>
+	<input type="button" value="+1" ng-click="incrementa(1)"></input>
+	<input type="button" value="+5" ng-click="incrementa(5)"></input>
+	<input type="button" value="+10" ng-click="incrementa(10)"></input>
 </span>
 </body>
 </html>

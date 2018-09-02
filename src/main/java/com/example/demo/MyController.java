@@ -46,6 +46,14 @@ public class MyController {
 		ret.put("utenti", utenti);
 		return ret;
 	}
+	@RequestMapping("/inizia")
+	public void  inizia(@RequestParam String nomegiocatore,@RequestParam int durata) {
+		durataAsta=durata;
+		calInizioOfferta = Calendar.getInstance();
+		offertaVincente = new HashMap<>();
+		offertaVincente.put("nomegiocatore", nomegiocatore);
+		offertaVincente.put("offerta", 1);
+	}
 	@RequestMapping("/start")
 	public void  start(@RequestParam int durata) {
 		durataAsta=durata;

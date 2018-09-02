@@ -142,7 +142,16 @@ app.run(
 				$resource(window.location.pathname + 'cancellaUtente',{'nomegiocatore':u}).save().$promise.then(function(d) {
 					$rootScope.sendMsg(JSON.stringify({'utenti': d.utenti}));
 				})
-				
+			}
+			$rootScope.inizia = function(u) {
+				$resource(window.location.pathname + 'inizia',{'nomegiocatore':u,'durata':$rootScope.durataAsta}).save().$promise.then(function(d) {
+				})
+			}
+			$rootScope.incrementa = function(inc) {
+				$resource(window.location.pathname + 'inviaOfferta',{'nomegiocatore':$rootScope.giocatore, 'offerta':$rootScope.offertaVincente.offerta+inc}).save().$promise.then(function(data){}
+				,function(reason) {
+					  alert('Failed: ' + reason.data.message);
+				});
 			}
 	}
 )
