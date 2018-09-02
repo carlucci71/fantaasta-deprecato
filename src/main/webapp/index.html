@@ -39,7 +39,7 @@
 <div ng-show="!isLoggato()">
 	<label>Utente:</label>
 	<input type=text ng-model="nomegiocatore"></input>
-	<input type="button"  value="connect" ng-disabled="!nomegiocatore" ng-click="doConnect()"></input>
+    <a href=# ng-show="nomegiocatore"><img style="margin-bottom:2px" src='./connect-icon.png' ng-click="doConnect()" height="25" width="25"/></a>
 </div>
 <span ng-show="isLoggato()">
 	<br>
