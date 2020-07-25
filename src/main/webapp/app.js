@@ -1,11 +1,11 @@
 var app=angular.module("app",["ngResource"]);
-//app.controller('myCtrl', function($scope) {});
 var app = angular.module('app', [ 'ngResource' ]);
 app.run(
 		function($rootScope, $resource, $interval){
 			$rootScope.giocatore="";
-			$rootScope.offerta=0;
+			$rootScope.offerta=1;
 			$rootScope.durataAsta=10;
+			$rootScope.bSemaforoAttivo=true;
 			$rootScope.isLoggato= function(){
 				if (!$rootScope.giocatore) return false;
 				return $rootScope.giocatore!='';
@@ -13,12 +13,8 @@ app.run(
 			$rootScope.doConnect = function() {
 		        console.log('Connected');
 		        if (!$rootScope.giocatore){
-					$resource(window.location.pathname + 'connetti',{'nomegiocatore':$rootScope.nomegiocatore}).save().$promise.then(function(d) {
-						$rootScope.giocatore=d.giocatore;
-						$rootScope.sendMsg(JSON.stringify({'utenti': d.utenti}));
-					},function(reason) {
-						  alert('Failed: ' + reason.data.message);
-					});
+					$rootScope.sendMsg(JSON.stringify({'operazione':'connetti', 'nomegiocatore':$rootScope.nomegiocatore}));
+					$rootScope.giocatore=$rootScope.nomegiocatore;
 		        }
 			}
 			$rootScope.utenteOK = function(u){
@@ -30,34 +26,10 @@ app.run(
 				return ret;
 			}
 			$rootScope.doDisconnect = function() {
-				$resource(window.location.pathname + 'disconnetti',{}).save().$promise.then(function(d) {
-					$rootScope.sendMsg(JSON.stringify({'utenti': d.utenti}));
-					$rootScope.giocatore="";
-				});
+				$rootScope.sendMsg(JSON.stringify({'operazione':'disconnetti', 'nomegiocatore':$rootScope.nomegiocatore}));
+				$rootScope.giocatore="";
 			}
-		    $rootScope.doInvia = function(){
-		    }
-			$rootScope.connect1 = function() {
-			    var socket = new SockJS('/messaggi-websocket');
-			    stompClient = Stomp.over(socket);
-			    stompClient.connect({}, function (frame) {
-			        console.log('Connected: ' + frame);
-			        stompClient.subscribe('/topic/messaggio', function (msg) {
-			            $rootScope.getMessaggio(msg.body);
-			        });
-			    });
-			}
-			$rootScope.disconnect1= function() {
-			    if (stompClient !== null) {
-			        stompClient.disconnect();
-			    }
-			    console.log("Disconnected");
-			}
-			$rootScope.invia1= function(s) {
-			    stompClient.send("/app/hello", {}, s);
-			    $rootScope.doInvia();
-			}
-			$rootScope.connect2 = function() {
+			$rootScope.connect = function() {
 				 var loc = window.location, new_uri;
 	             if (loc.protocol === "https:") {
 	                 new_uri = "wss:";
@@ -71,87 +43,141 @@ app.run(
 					$rootScope.getMessaggio(data.data);
 				}
 			}
-			$rootScope.disconnect2= function() {
+			$rootScope.disconnect= function() {
 			    if (ws != null) {
 			        ws.close();
 			    }
 			    console.log("Disconnected");
 			}
-			$rootScope.invia2= function(s) {
-				ws.send(s);
-			    $rootScope.doInvia();
-			}
 			$resource(window.location.pathname + 'init',{}).get().$promise.then(function(data) {
-				var profilo=data.profilo;
-				if (profilo=="PRIMO"){
-					$rootScope.invia=$rootScope.invia1;
-					$rootScope.disconnect=$rootScope.disconnect1;
-					$rootScope.connect=$rootScope.connect1;
-				}
-				else{
-					$rootScope.invia=$rootScope.invia2;
-					$rootScope.disconnect=$rootScope.disconnect2;
-					$rootScope.connect=$rootScope.connect2;
-				}
 				$rootScope.connect();
 				$rootScope.giocatore=data.giocatore;
 				if ($rootScope.giocatore){
 					$rootScope.nomegiocatore=$rootScope.giocatore;
 					$rootScope.doConnect();
 				}
-				
+
 				$rootScope.utenti=data.utenti;
 			});
 			$rootScope.sendMsg=function(s){
-				$rootScope.invia(s);
+				ws.send(s);
 			}
 			$rootScope.getMessaggio = function(message){
 				if (message){
 					var msg = JSON.parse(message);
+					if (msg.messaggio){
+						$rootScope.messaggio=msg.messaggio;
+					}
 					if (msg.utenti){
 						$rootScope.utenti=msg.utenti;
 					}
-					if (msg.ping){
-						console.log("PING");
+					if (msg.offertaVincente){
+						$rootScope.offertaVincente=msg.offertaVincente;
 					}
-					$rootScope.$apply();
+					if (msg.durataAsta){
+						$rootScope.durataAsta=msg.durataAsta;
+					}
+					if (msg.giocatoreDurataAsta){
+						$rootScope.giocatoreDurataAsta=msg.giocatoreDurataAsta;
+					}
+					if (msg.contaTempo){
+						if (msg.contaTempo>$rootScope.durataAsta*1000)
+							$rootScope.contaTempo=$rootScope.durataAsta*1000;
+						else
+							$rootScope.contaTempo=msg.contaTempo;
+					}
+					if (msg.sSemaforoAttivo){
+						if (msg.sSemaforoAttivo=='S')
+							$rootScope.bSemaforoAttivo=true;
+						else
+							$rootScope.bSemaforoAttivo=false;
+					}
+					if (msg.timeStart){
+						$rootScope.timeStart=msg.timeStart;
+					}
+					if (msg.utentiScaduti){
+						$rootScope.utentiScaduti=msg.utentiScaduti;
+					}
 				}
 			}
-			$rootScope.aggiorna = function(){
-				$resource(window.location.pathname + 'aggiorna',{'nomegiocatore':$rootScope.giocatore}).get().$promise.then(function(data) {
-					$rootScope.utentiScaduti=data.utentiScaduti;
-					$rootScope.timeStart=data.timeStart;
-					$rootScope.offertaVincente=data.offertaVincente;
-				});				
-			}
-			$rootScope.aggiorna();
 			var a = $interval(function() {
-				$rootScope.aggiorna();
-//				$rootScope.sendMsg(JSON.stringify({'ping': $rootScope.giocatore}));
+				$rootScope.sendMsg(JSON.stringify({'operazione':'ping', 'nomegiocatore':$rootScope.nomegiocatore}));
 	          }, 1000);
 			$rootScope.start = function(){
-				$resource(window.location.pathname + 'start',{'nomegiocatore':$rootScope.giocatore, 'durata':$rootScope.durataAsta}).get();
+				$rootScope.bSemaforoAttivo=false;
+				$rootScope.timeStart=0;
+				$rootScope.contaTempo=0;
+				$rootScope.sendMsg(JSON.stringify({'operazione':'start', 'nomegiocatore':$rootScope.nomegiocatore, 'bSemaforoAttivo':$rootScope.bSemaforoAttivo, 'durataAsta':$rootScope.durataAsta}));
+			}
+			$rootScope.conferma = function(){
+				$rootScope.bSemaforoAttivo=true;
+				$rootScope.offertaVincente="";
+				$rootScope.sendMsg(JSON.stringify({'operazione':'ripristinaSemaforoAttivo', 'nomegiocatore':$rootScope.nomegiocatore}));
 			}
 			$rootScope.inviaOfferta = function(){
-				$resource(window.location.pathname + 'inviaOfferta',{'nomegiocatore':$rootScope.giocatore, 'offerta':$rootScope.offerta}).save().$promise.then(function(data){}
-				,function(reason) {
-					  alert('Failed: ' + reason.data.message);
-				});
+				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':$rootScope.nomegiocatore, 'offerta':$rootScope.offerta}));
+			}
+			$rootScope.aggiornaDurataAsta = function(){
+				$rootScope.sendMsg(JSON.stringify({'operazione':'aggiornaDurataAsta', 'giocatoreDurataAsta':$rootScope.nomegiocatore, 'durataAsta':$rootScope.durataAsta}));
 			}
 			$rootScope.cancellaUtente = function(u) {
-				$resource(window.location.pathname + 'cancellaUtente',{'nomegiocatore':u}).save().$promise.then(function(d) {
-					$rootScope.sendMsg(JSON.stringify({'utenti': d.utenti}));
-				})
+				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':u}));
 			}
 			$rootScope.inizia = function(u) {
-				$resource(window.location.pathname + 'inizia',{'nomegiocatore':u,'durata':$rootScope.durataAsta}).save().$promise.then(function(d) {
-				})
+				$rootScope.sendMsg(JSON.stringify({'operazione':'start', 'nomegiocatore':u, 'durataAsta':$rootScope.durataAsta}));
 			}
 			$rootScope.incrementa = function(inc) {
-				$resource(window.location.pathname + 'inviaOfferta',{'nomegiocatore':$rootScope.giocatore, 'offerta':$rootScope.offertaVincente.offerta+inc}).save().$promise.then(function(data){}
-				,function(reason) {
-					  alert('Failed: ' + reason.data.message);
-				});
+				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':$rootScope.nomegiocatore, 'offerta':$rootScope.offertaVincente.offerta+inc}));
 			}
 	}
 )
+
+// Directive that tracks playback progress. Usage in the player:
+// <track-progress-bar
+//   cur-val='{{playPosition}}'
+//   max-val='{{playDuration}}'></track-progress-bar>
+// adapted from http://codepen.io/marknalepka/pen/Ewzxc
+app.directive('trackProgressBar', [function () {
+
+  return {
+    restrict: 'E', // element
+    scope: {
+      colVal: '@', // bound to 'col-val' attribute, playback progress
+      curVal: '@', // bound to 'cur-val' attribute, playback progress
+      maxVal: '@'  // bound to 'max-val' attribute, track duration
+    },
+    template: '<div class="progress-bar-bkgd"><div class="progress-bar-marker"></div></div>',
+
+    link: function ($scope, element, attrs) {
+      // grab element references outside the update handler
+      var progressBarBkgdElement = angular.element(element[0].querySelector('.progress-bar-bkgd')),
+          progressBarMarkerElement = angular.element(element[0].querySelector('.progress-bar-marker'));
+
+      // set the progress-bar-marker width when called
+      function updateProgress() {
+        var progress = 0,
+            currentValue = $scope.curVal,
+            maxValue = $scope.maxVal,
+            // recompute overall progress bar width inside the handler to adapt to viewport changes
+            progressBarWidth = progressBarBkgdElement.prop('clientWidth');
+
+        if ($scope.maxVal) {
+          // determine the current progress marker's width in pixels
+          progress = Math.min(currentValue, maxValue) / maxValue * progressBarWidth;
+        }
+
+        // set the marker's width
+        progressBarMarkerElement.css('width', progress + 'px');
+        //console.log(currentValue + "-" + maxValue + "-" + progress + "-" +  $scope.colVal);
+        if ($scope.colVal<2) progressBarMarkerElement.css('background-color', 'green');
+        if ($scope.colVal==2) progressBarMarkerElement.css('background-color', 'yellow');
+        if ($scope.colVal==3) progressBarMarkerElement.css('background-color', 'red');
+      }
+
+      // curVal changes constantly, maxVal only when a new track is loaded
+      $scope.$watch('curVal', updateProgress);
+      $scope.$watch('maxVal', updateProgress);
+    }
+  };
+}]);
+

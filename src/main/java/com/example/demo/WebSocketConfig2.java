@@ -25,16 +25,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 */
 /* */
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 @Configuration
-@Profile("SECONDO")
 @EnableWebSocket
+@EnableScheduling
 public class WebSocketConfig2 implements WebSocketConfigurer {
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(new SocketHandler(), "/messaggi-websocket");
+		registry.addHandler(new SocketHandler(), "/messaggi-websocket")
+		.addInterceptors(new HttpSessionIdHandshakeInterceptor());
 	}
 }
