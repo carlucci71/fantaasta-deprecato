@@ -27,3 +27,4 @@ target/classes/application.properties
 .settings/org.eclipse.jdt.apt.core.prefs
 .classpath
 .settings/org.eclipse.jdt.core.prefs
+.classpath
