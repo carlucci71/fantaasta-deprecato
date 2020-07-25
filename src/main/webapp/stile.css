@@ -22,4 +22,33 @@
   font-weight: normal
 }
 
+.correntePerdente {
+	background-color: white;
+	color: red;
+	font-size: 36px;
+	font-weight: bold;
+}
+.correnteVincente {
+	background-color: white;
+	color: black;
+	font-size: 36px;
+	font-weight: bold;
+}
+
+.finitoPerdente {
+	background-color: yellow;
+	color: red;
+	font-size: 36px;
+	font-weight: bold;
+}
+.finitoVincente {
+	background-color: yellow;
+	color: black;
+	font-size: 36px;
+	font-weight: bold;
+}
+
+
+
+
 

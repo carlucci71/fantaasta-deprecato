@@ -1,5 +1,6 @@
 package com.example.demo;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -28,9 +29,11 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	HttpSession httpSession;	
 	Map<String, Object> offertaVincente = new HashMap<>();
 	Calendar calInizioOfferta;
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ssZ");
 	int durataAsta;
 	String giocatoreDurataAsta="";
 	String sSemaforoAttivo;
+	List<String> messaggi=new ArrayList<>();
 	
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws InterruptedException, IOException {
@@ -48,10 +51,13 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		}
 		if (operazione != null && operazione.equals("connetti")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			Long tokenUtente = (Long)jsonToMap.get("tokenUtente");
 			Map<String, Object> m = new HashMap<>();
 			if (utenti != null && utenti.contains(nomegiocatore)) {
+//				m.put("messaggio", "Utente esistente:" + nomegiocatore);
+//				messaggi.add("Utente esistente:" + nomegiocatore);
+				m.put("RESET_UTENTE",tokenUtente);
 //				throw new RuntimeException("Utente esistente:" + nomegiocatore);
-				m.put("messaggio", "Utente esistente:" + nomegiocatore);
 			} else {
 				httpSession.setAttribute("giocatore", nomegiocatore);
 				utenti.add(nomegiocatore);
@@ -62,6 +68,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else if (operazione != null && operazione.equals("ripristinaSemaforoAttivo")) {
 			sSemaforoAttivo="S";
 			offertaVincente = new HashMap<>();
+			messaggi = new ArrayList<>();
 		}		
 		else if (operazione != null && operazione.equals("start")) {
 			durataAsta = (Integer) jsonToMap.get("durataAsta");
@@ -77,6 +84,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			offertaVincente.put("offerta", 1);
 			Map<String, Object> m = new HashMap<>();
 			m.put("offertaVincente", offertaVincente);
+			messaggi.add(simpleDateFormat.format(calInizioOfferta.getTime()) + " Offerta avviata da " + nomegiocatore);
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("disconnetti")) {
@@ -107,16 +115,19 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 			if (now.after(scadenzaAsta)) {
 //				throw new RuntimeException("Asta scaduta");
-				m.put("messaggio", "Offerta di " + nomegiocatore + " arrivata dopo : " + (now.getTimeInMillis()-scadenzaAsta.getTimeInMillis()) + "millisecondi da scadenza asta");
+//				m.put("messaggio", simpleDateFormat.format(now.getTime()) + " Offerta di " + nomegiocatore + " arrivata dopo : " + (now.getTimeInMillis()-scadenzaAsta.getTimeInMillis()) + "millisecondi da scadenza asta");
+				messaggi.add(simpleDateFormat.format(now.getTime()) + " Offerta di " + nomegiocatore + " arrivata dopo : " + (now.getTimeInMillis()-scadenzaAsta.getTimeInMillis()) + "millisecondi da scadenza asta");
 			} else  if (attOfferta != null && offerta<=attOfferta) {
 //				throw new RuntimeException("Offerta superata");
-				m.put("messaggio", "Offerta di " + offerta + " fatta da " + nomegiocatore + " inferiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
+//				m.put("messaggio", simpleDateFormat.format(now.getTime()) + " Offerta di " + offerta + " fatta da " + nomegiocatore + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
+				messaggi.add(simpleDateFormat.format(now.getTime()) + " Offerta di " + offerta + " fatta da " + nomegiocatore + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
 			}
 			else {
 				calInizioOfferta = Calendar.getInstance();
 				offertaVincente.put("nomegiocatore", nomegiocatore);
 				offertaVincente.put("offerta", offerta);
 				m.put("offertaVincente", offertaVincente);
+				messaggi.add(simpleDateFormat.format(now.getTime()) + " Offerta di " + offerta + " fatta da " + nomegiocatore);
 			}
 			invia(toJson(m));
 		}
@@ -141,6 +152,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
 			m.put("sSemaforoAttivo", sSemaforoAttivo);
 			m.put("offertaVincente", offertaVincente);
+			m.put("messaggi", messaggi);
 			invia(toJson(m));
 			aggiorna();
 		}

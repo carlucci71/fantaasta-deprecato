@@ -6,6 +6,8 @@ app.run(
 			$rootScope.offerta=1;
 			$rootScope.durataAsta=10;
 			$rootScope.bSemaforoAttivo=true;
+			$rootScope.messaggi=[];
+			$rootScope.tokenUtente;
 			$rootScope.isLoggato= function(){
 				if (!$rootScope.giocatore) return false;
 				return $rootScope.giocatore!='';
@@ -13,7 +15,8 @@ app.run(
 			$rootScope.doConnect = function() {
 		        console.log('Connected');
 		        if (!$rootScope.giocatore){
-					$rootScope.sendMsg(JSON.stringify({'operazione':'connetti', 'nomegiocatore':$rootScope.nomegiocatore}));
+		        	$rootScope.tokenUtente=new Date().getTime();
+					$rootScope.sendMsg(JSON.stringify({'operazione':'connetti', 'nomegiocatore':$rootScope.nomegiocatore, 'tokenUtente':$rootScope.tokenUtente}));
 					$rootScope.giocatore=$rootScope.nomegiocatore;
 		        }
 			}
@@ -65,11 +68,19 @@ app.run(
 			$rootScope.getMessaggio = function(message){
 				if (message){
 					var msg = JSON.parse(message);
-					if (msg.messaggio){
-						$rootScope.messaggio=msg.messaggio;
+					console.log(msg);
+					if (msg.messaggi){
+						//$rootScope.messaggi.push(msg.messaggio);
+						$rootScope.messaggi=msg.messaggi;
 					}
 					if (msg.utenti){
 						$rootScope.utenti=msg.utenti;
+					}
+					if (msg.RESET_UTENTE){
+						if (msg.RESET_UTENTE==$rootScope.tokenUtente){
+							$rootScope.giocatore="";
+							alert("Utente esistente. Riconnettiti!");
+						}
 					}
 					if (msg.offertaVincente){
 						$rootScope.offertaVincente=msg.offertaVincente;
@@ -98,10 +109,17 @@ app.run(
 					if (msg.utentiScaduti){
 						$rootScope.utentiScaduti=msg.utentiScaduti;
 					}
+					if($rootScope.timeStart==3 && $rootScope.offertaVincente.nomegiocatore==$rootScope.giocatore) $rootScope.stileScritta='finitoVincente';
+					if($rootScope.timeStart==3 && $rootScope.offertaVincente.nomegiocatore!=$rootScope.giocatore) $rootScope.stileScritta='finitoPerdente';
+					if($rootScope.timeStart<3 && $rootScope.offertaVincente.nomegiocatore==$rootScope.giocatore) $rootScope.stileScritta='correnteVincente';
+					if($rootScope.timeStart<3 && $rootScope.offertaVincente.nomegiocatore!=$rootScope.giocatore) $rootScope.stileScritta='correntePerdente';
 				}
 			}
-			var a = $interval(function() {
+			$rootScope.pinga = function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'ping', 'nomegiocatore':$rootScope.nomegiocatore}));
+			}
+			var a = $interval(function() {
+				$rootScope.pinga();
 	          }, 1000);
 			$rootScope.start = function(){
 				$rootScope.bSemaforoAttivo=false;
@@ -110,9 +128,13 @@ app.run(
 				$rootScope.sendMsg(JSON.stringify({'operazione':'start', 'nomegiocatore':$rootScope.nomegiocatore, 'bSemaforoAttivo':$rootScope.bSemaforoAttivo, 'durataAsta':$rootScope.durataAsta}));
 			}
 			$rootScope.conferma = function(){
+				$rootScope.messaggi=[];
 				$rootScope.bSemaforoAttivo=true;
 				$rootScope.offertaVincente="";
 				$rootScope.sendMsg(JSON.stringify({'operazione':'ripristinaSemaforoAttivo', 'nomegiocatore':$rootScope.nomegiocatore}));
+			}
+			$rootScope.allinea = function(){
+				$rootScope.offerta=$rootScope.offertaVincente.offerta;
 			}
 			$rootScope.inviaOfferta = function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':$rootScope.nomegiocatore, 'offerta':$rootScope.offerta}));
@@ -127,16 +149,14 @@ app.run(
 				$rootScope.sendMsg(JSON.stringify({'operazione':'start', 'nomegiocatore':u, 'durataAsta':$rootScope.durataAsta}));
 			}
 			$rootScope.incrementa = function(inc) {
-				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':$rootScope.nomegiocatore, 'offerta':$rootScope.offertaVincente.offerta+inc}));
+				$rootScope.offerta=$rootScope.offerta+inc;
+				$rootScope.inviaOfferta();
+//				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':$rootScope.nomegiocatore, 'offerta':$rootScope.offertaVincente.offerta+inc}));
 			}
 	}
 )
 
-// Directive that tracks playback progress. Usage in the player:
-// <track-progress-bar
-//   cur-val='{{playPosition}}'
-//   max-val='{{playDuration}}'></track-progress-bar>
-// adapted from http://codepen.io/marknalepka/pen/Ewzxc
+
 app.directive('trackProgressBar', [function () {
 
   return {
@@ -180,4 +200,26 @@ app.directive('trackProgressBar', [function () {
     }
   };
 }]);
-
+app.directive('capitalize', function() {
+    return {
+      require: 'ngModel',
+      link: function(scope, element, attrs, modelCtrl) {
+        var capitalize = function(inputValue) {
+          if (inputValue == undefined) inputValue = '';
+          var capitalized = inputValue.toUpperCase();
+          if (capitalized !== inputValue) {
+            // see where the cursor is before the update so that we can set it back
+            var selection = element[0].selectionStart;
+            modelCtrl.$setViewValue(capitalized);
+            modelCtrl.$render();
+            // set back the cursor after rendering
+            element[0].selectionStart = selection;
+            element[0].selectionEnd = selection;
+          }
+          return capitalized;
+        }
+        modelCtrl.$parsers.push(capitalize);
+        capitalize(scope[attrs.ngModel]); // capitalize initial value
+      }
+    }});
+$rootScope.pinga();
