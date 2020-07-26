@@ -31,6 +31,18 @@ app.run(
 					});
 				return ret;
 			}
+			
+			
+
+			$rootScope.sonoLoggato = function(u){
+				var ret = false;
+				angular.forEach($rootScope.utenti, function(value,chiave) {
+					if($rootScope.giocatore == u.nome)
+						ret = true;
+					});
+				return ret;
+			}
+			
 			$rootScope.utenteCollegato = function(u){
 				var ret = false;
 				angular.forEach($rootScope.utenti, function(value,chiave) {
@@ -100,7 +112,7 @@ app.run(
 //					console.log(msg);
 					if (msg.RICHIESTA){
 						var t=msg.RICHIESTA + "-" + new Date().getTime();
-						console.log(t);
+//						console.log(t);
 						$rootScope.RICHIESTA=t;
 					}
 					if (msg.calciatori){
@@ -174,7 +186,7 @@ app.run(
 				$rootScope.bSemaforoAttivo=false;
 				$rootScope.timeStart=0;
 				$rootScope.contaTempo=0;
-				$rootScope.sendMsg(JSON.stringify({'operazione':'start', 'selCalciatore':$rootScope.selCalciatore,'nomegiocatore':ng,'idgiocatore':ig, 'bSemaforoAttivo':$rootScope.bSemaforoAttivo, 'durataAsta':$rootScope.durataAsta}));
+				$rootScope.sendMsg(JSON.stringify({'operazione':'start', 'selCalciatore':$rootScope.selCalciatore, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore,'nomegiocatore':ng,'idgiocatore':ig, 'bSemaforoAttivo':$rootScope.bSemaforoAttivo, 'durataAsta':$rootScope.durataAsta}));
 				$rootScope.selCalciatore="";
 			}
 			$rootScope.conferma = function(){
@@ -201,7 +213,7 @@ app.run(
 					var ng = $rootScope.nomegiocatoreOperaCome;
 					var ig = $rootScope.idgiocatoreOperaCome;
 				}
-				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':ng, 'idgiocatore':ig, 'offerta':$rootScope.offerta}));
+				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':$rootScope.offerta}));
 			}
 			$rootScope.aggiornaDurataAsta = function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'aggiornaDurataAsta', 'giocatoreDurataAsta':$rootScope.nomegiocatore, 'durataAsta':$rootScope.durataAsta}));
@@ -215,6 +227,9 @@ app.run(
 			}
 			$rootScope.resetOperaCome= function() {
 				$rootScope.selAllenatoreOperaCome="";
+			}
+			$rootScope.terminaAsta= function() {
+				$rootScope.sendMsg(JSON.stringify({'operazione':'terminaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 			}
 			$rootScope.$watch("selAllenatore", function(newValue, oldValue) {
 				if (newValue){

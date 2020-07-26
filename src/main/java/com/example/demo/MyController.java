@@ -32,6 +32,11 @@ public class MyController {
 	PreparedStatement psElencoCalciatori;
 	PreparedStatement psInserisciCalciaotre;
 	PreparedStatement psElencoAllenatori;
+	PreparedStatement psElencoOffertePerAllenatore;
+	PreparedStatement psElencoCronologiaOfferte;
+	PreparedStatement psRiepilogoAllenatori;
+	PreparedStatement psSpesoAllenatori;
+	
 	public MyController() {
 		initDb();
 	}
@@ -67,8 +72,6 @@ public class MyController {
 		psInserisciCalciaotre.executeUpdate();
 	}
 
-
-
 	@RequestMapping("/elencoCalciatori")
 	public List<Map<String, Object>>  elencoCalciatori() {
 		try {
@@ -81,6 +84,68 @@ public class MyController {
 				m.put("nome", rs.getString("Nome"));
 				m.put("ruolo", rs.getString("Ruolo"));
 				m.put("quotazione", rs.getLong("quotazione"));
+				l.add(m);
+			}
+			return l;
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	@RequestMapping("/elencoOfferte")
+	public List<Map<String, Object>>  elencoOfferte() {
+		try {
+			ResultSet rs = psElencoOffertePerAllenatore.executeQuery();
+			List<Map<String, Object>> l = new ArrayList<>();
+			while (rs.next()) {
+				Map<String, Object> m = new HashMap<>();
+				m.put("allenatore", rs.getString("allenatore"));
+				m.put("squadra", rs.getString("Squadra"));
+				m.put("ruolo", rs.getString("Ruolo"));
+				m.put("giocatore", rs.getString("giocatore"));
+				m.put("costo", rs.getLong("Costo"));
+				m.put("sqlTime", rs.getString("sqlTime"));
+				l.add(m);
+			}
+			return l;
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	@RequestMapping("/riepilogoAllenatori")
+	public List<Map<String, Object>>  riepilogoAllenatori() {
+		try {
+			ResultSet rs = psRiepilogoAllenatori.executeQuery();
+			List<Map<String, Object>> l = new ArrayList<>();
+			while (rs.next()) {
+				Map<String, Object> m = new HashMap<>();
+				m.put("conta", rs.getLong("conta"));
+				m.put("ruolo", rs.getString("ruolo"));
+				m.put("nome", rs.getString("nome"));
+				l.add(m);
+			}
+			return l;
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	@RequestMapping("/spesoAllenatori")
+	public List<Map<String, Object>>  spesoAllenatori() {
+		try {
+			ResultSet rs = psSpesoAllenatori.executeQuery();
+			List<Map<String, Object>> l = new ArrayList<>();
+			while (rs.next()) {
+				Map<String, Object> m = new HashMap<>();
+				m.put("costo", rs.getLong("costo"));
+				m.put("nome", rs.getString("nome"));
 				l.add(m);
 			}
 			return l;
@@ -114,6 +179,30 @@ public class MyController {
 		}
 	}
 
+	@RequestMapping("/elencoCronologiaOfferte")
+	public List<Map<String, Object>>  elencoCronologiaOfferte() {
+		try {
+			ResultSet rs = psElencoCronologiaOfferte.executeQuery();
+			List<Map<String, Object>> l = new ArrayList<>();
+			while (rs.next()) {
+				Map<String, Object> m = new HashMap<>();
+				m.put("allenatore", rs.getString("allenatore"));
+				m.put("squadra", rs.getString("Squadra"));
+				m.put("ruolo", rs.getString("Ruolo"));
+				m.put("giocatore", rs.getString("giocatore"));
+				m.put("costo", rs.getLong("Costo"));
+				m.put("sqlTime", rs.getString("sqlTime"));
+				m.put("idGiocatore", rs.getString("idGiocatore"));
+				m.put("idAllenatore", rs.getString("idAllenatore"));
+				l.add(m);
+			}
+			return l;
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 
 	private void initDb() {
 		try {
@@ -123,30 +212,14 @@ public class MyController {
 			psElencoCalciatori = conn.prepareStatement("select * from giocatori g where not exists (select 1 from fantarose where id=idGiocatore)");
 			psInserisciCalciaotre = conn.prepareStatement(" insert into fantarose (idGiocatore , idAllenatore , Costo , sqltime ) values (?,?,?,?);");
 			psElencoAllenatori = conn.prepareStatement("select * from allenatori order by id");
+			psElencoOffertePerAllenatore = conn.prepareStatement("select a.Nome allenatore, g.Squadra, g.Ruolo, g.nome giocatore, Costo, sqlTime from fantarose f, giocatori g, allenatori a where g.id = idGiocatore and a.id = idAllenatore order by allenatore, ruolo desc, giocatore");
+			psRiepilogoAllenatori = conn.prepareStatement("select count(ruolo) conta, ruolo, a.nome nome from fantarose f, allenatori a, giocatori g where g.id=idGiocatore and a.id = idAllenatore group by a.nome ,ruolo order by a.nome, ruolo desc");
+			psSpesoAllenatori = conn.prepareStatement("select sum(costo) costo, a.nome from fantarose f, allenatori a where a.id = idAllenatore group by a.nome");
+			psElencoCronologiaOfferte = conn.prepareStatement("select a.Nome allenatore, g.Squadra, g.Ruolo, g.nome giocatore, Costo, sqlTime, idGiocatore, idAllenatore   from  fantarose f, giocatori g, allenatori a  where g.id = idGiocatore and a.id = idAllenatore order by sqlTime desc");
 		}
 		catch (Exception e)
 		{
 			throw new RuntimeException(e);
 		}
 	}
-
-	/*
-	public HttpSession getSession()
-	{
-		try
-		{
-			RequestAttributes parentAttrs = RequestContextHolder.currentRequestAttributes();
-			System.out.println(parentAttrs);
-			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-			return attr.getRequest().getSession();
-		}
-		catch (Exception e)
-		{
-			System.out.println(httpSession);
-			return httpSession;
-//			throw new RuntimeException(e);
-		}
-	}	
-		*/
-
 }

@@ -58,7 +58,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		}
 		if (operazione != null && operazione.equals("connetti")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
-			String idgiocatore = (String) jsonToMap.get("idgiocatore");
+			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			Long tokenUtente = (Long)jsonToMap.get("tokenUtente");
 			Map<String, Object> m = new HashMap<>();
 			if (utentiScaduti.contains(nomegiocatore)) {
@@ -97,7 +97,21 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}		
+		else if (operazione != null && operazione.equals("terminaAsta")) {
+			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			String idgiocatore = jsonToMap.get("idgiocatore").toString();
+			calInizioOfferta.set(Calendar.YEAR, 1971);
+			Calendar now = Calendar.getInstance();
+			Map<String, Object> m = new HashMap<>();
+			messaggi.add(simpleDateFormat.format(now.getTime()) + " Offerta terminata in anticipo da " + nomegiocatore);
+			m.put("messaggi", messaggi);
+			invia(toJson(m));
+		}
 		else if (operazione != null && operazione.equals("start")) {
+			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			String idgiocatore = jsonToMap.get("idgiocatore").toString();
+			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
+			String idgiocatoreOperaCome = jsonToMap.get("idgiocatoreOperaCome").toString();
 			durataAsta = (Integer) jsonToMap.get("durataAsta");
 			String selCalciatore = (String)jsonToMap.get("selCalciatore");
 			String[] split = selCalciatore.split("@");
@@ -108,8 +122,6 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				sSemaforoAttivo="S";
 			else
 				sSemaforoAttivo="N";
-			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
-			String idgiocatore = (String) jsonToMap.get("idgiocatore");
 			calInizioOfferta = Calendar.getInstance();
 			offertaVincente = new HashMap<>();
 			offertaVincente.put("nomegiocatore", nomegiocatore);
@@ -119,12 +131,16 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			offertaVincente.put("idCalciatore", idCalciatore);
 			Map<String, Object> m = new HashMap<>();
 			m.put("offertaVincente", offertaVincente);
-			messaggi.add(simpleDateFormat.format(calInizioOfferta.getTime()) + " Offerta avviata da " + nomegiocatore);
+			String str = " Offerta avviata da " + nomegiocatore;
+			if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
+				str = str + "(" + nomegiocatoreOperaCome + ")";
+			}
+			messaggi.add(simpleDateFormat.format(calInizioOfferta.getTime()) + str);
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("disconnetti")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
-			String idgiocatore = (String) jsonToMap.get("idgiocatore");
+			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			utenti.remove(nomegiocatore);
 			utentiScaduti.remove(nomegiocatore);
 			pingUtenti.remove(nomegiocatore);
@@ -145,7 +161,9 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		}
 		else if (operazione != null && operazione.equals("inviaOfferta")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
-			String idgiocatore = (String) jsonToMap.get("idgiocatore");
+			String idgiocatore = jsonToMap.get("idgiocatore").toString();
+			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
+			String idgiocatoreOperaCome = jsonToMap.get("idgiocatoreOperaCome").toString();
 			Integer offerta = (Integer) jsonToMap.get("offerta");
 			Integer attOfferta = (Integer) offertaVincente.get("offerta");
 			Calendar now = Calendar.getInstance();
@@ -154,27 +172,36 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			scadenzaAsta.add(Calendar.SECOND, durataAsta);
 			Map<String, Object> m = new HashMap<>();
 			if (now.after(scadenzaAsta)) {
-//				throw new RuntimeException("Asta scaduta");
-//				m.put("messaggio", simpleDateFormat.format(now.getTime()) + " Offerta di " + nomegiocatore + " arrivata dopo : " + (now.getTimeInMillis()-scadenzaAsta.getTimeInMillis()) + "millisecondi da scadenza asta");
-				messaggi.add(simpleDateFormat.format(now.getTime()) + " Offerta di " + nomegiocatore + " arrivata dopo : " + (now.getTimeInMillis()-scadenzaAsta.getTimeInMillis()) + "millisecondi da scadenza asta");
-			} else  if (attOfferta != null && offerta<=attOfferta) {
-//				throw new RuntimeException("Offerta superata");
-//				m.put("messaggio", simpleDateFormat.format(now.getTime()) + " Offerta di " + offerta + " fatta da " + nomegiocatore + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
-				messaggi.add(simpleDateFormat.format(now.getTime()) + " Offerta di " + offerta + " fatta da " + nomegiocatore + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
-			}
-			else {
-				calInizioOfferta = Calendar.getInstance();
-				offertaVincente.put("nomegiocatore", nomegiocatore);
-				offertaVincente.put("idgiocatore", idgiocatore);
-				offertaVincente.put("offerta", offerta);
-				m.put("offertaVincente", offertaVincente);
-				messaggi.add(simpleDateFormat.format(now.getTime()) + " Offerta di " + offerta + " fatta da " + nomegiocatore);
+				String str = " Offerta di " + nomegiocatore + " arrivata dopo : " + (now.getTimeInMillis()-scadenzaAsta.getTimeInMillis()) + "millisecondi da scadenza asta";
+				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
+					str = str + "(" + nomegiocatoreOperaCome + ")";
+				}
+				messaggi.add(simpleDateFormat.format(now.getTime()) + str);
+			} else {
+				String str = " Offerta di " + offerta + " fatta da " + nomegiocatore;
+				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
+					str = str + "(" + nomegiocatoreOperaCome + ")";
+				}
+				if (attOfferta != null && offerta<=attOfferta) {
+					messaggi.add(simpleDateFormat.format(now.getTime()) + str + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
+				}
+				else {
+					calInizioOfferta = Calendar.getInstance();
+					offertaVincente.put("nomegiocatore", nomegiocatore);
+					offertaVincente.put("idgiocatore", idgiocatore);
+					offertaVincente.put("offerta", offerta);
+					m.put("offertaVincente", offertaVincente);
+					messaggi.add(simpleDateFormat.format(now.getTime()) + str);
+				}
 			}
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("ping")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
-			String idgiocatore = (String) jsonToMap.get("idgiocatore");
+			String idgiocatore="";
+			if(jsonToMap.get("idgiocatore")!=null) {
+				idgiocatore = jsonToMap.get("idgiocatore").toString();
+			}
 			utentiScaduti = new ArrayList<>();
 			Calendar now = Calendar.getInstance();
 			if (nomegiocatore != null) {
