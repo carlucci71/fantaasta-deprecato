@@ -25,9 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SocketHandler extends TextWebSocketHandler implements WebSocketHandler {
 	
 	List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-	List<Map<String, String>> utenti = new ArrayList<Map<String, String>>();
-	List<Map<String,String>> utentiScaduti=new ArrayList<>();
-	Map<Map<String,String>, Map<String, Object>> pingUtenti = new HashMap<>();
+	List<String> utenti = new ArrayList<>();
+	List<String> utentiScaduti=new ArrayList<>();
+	Map<String, Map<String, Object>> pingUtenti = new HashMap<>();
 	Map<String, Object> offertaVincente = new HashMap<>();
 	Calendar calInizioOfferta;
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ssZ");
@@ -49,12 +49,9 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		if (operazione != null && operazione.equals("cancellaUtente")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			Integer iIdgiocatore = (Integer) jsonToMap.get("idgiocatore");
-			Map<String, String> mu = new HashMap<>();
-			mu.put("nomegiocatore", nomegiocatore);
-			mu.put("idgiocatore", Integer.toString(iIdgiocatore));
-			utenti.remove(mu);
-			utentiScaduti.remove(mu);
-			pingUtenti.remove(mu);
+			utenti.remove(nomegiocatore);
+			utentiScaduti.remove(nomegiocatore);
+			pingUtenti.remove(nomegiocatore);
 			Map<String, Object> m = new HashMap<>();
 			m.put("utenti", utenti);
 			invia(toJson(m));
@@ -62,22 +59,19 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		if (operazione != null && operazione.equals("connetti")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = (String) jsonToMap.get("idgiocatore");
-			Map<String, String> mu = new HashMap<>();
-			mu.put("nomegiocatore", nomegiocatore);
-			mu.put("idgiocatore", idgiocatore);
 			Long tokenUtente = (Long)jsonToMap.get("tokenUtente");
 			Map<String, Object> m = new HashMap<>();
-			if (utentiScaduti.contains(mu)) {
-				utenti.remove(mu);
-				utentiScaduti.remove(mu);
-				pingUtenti.remove(mu);
+			if (utentiScaduti.contains(nomegiocatore)) {
+				utenti.remove(nomegiocatore);
+				utentiScaduti.remove(nomegiocatore);
+				pingUtenti.remove(nomegiocatore);
 			}
-			if (utenti != null && utenti.contains(mu)) {
+			if (utenti != null && utenti.contains(nomegiocatore)) {
 				m.put("RESET_UTENTE",tokenUtente);
 			} else {
 				httpSession.setAttribute("giocatoreLoggato", nomegiocatore);
 				httpSession.setAttribute("idLoggato", idgiocatore);
-				utenti.add(mu);
+				utenti.add(nomegiocatore);
 				m.put("calciatori", myController.elencoCalciatori());
 				m.put("utenti", utenti);
 			}
@@ -131,10 +125,9 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else if (operazione != null && operazione.equals("disconnetti")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = (String) jsonToMap.get("idgiocatore");
-			Map<String, String> mu = new HashMap<>();
-			mu.put("nomegiocatore", nomegiocatore);
-			mu.put("idgiocatore", idgiocatore);
-			utenti.remove(mu);
+			utenti.remove(nomegiocatore);
+			utentiScaduti.remove(nomegiocatore);
+			pingUtenti.remove(nomegiocatore);
 			httpSession.removeAttribute("giocatoreLoggato");
 			httpSession.removeAttribute("idLoggato");
 			Map<String, Object> m = new HashMap<>();
@@ -182,25 +175,25 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else if (operazione != null && operazione.equals("ping")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = (String) jsonToMap.get("idgiocatore");
-			utentiScaduti = new ArrayList<Map<String,String>>();
-			Map<String, String> mu = new HashMap<>();
-			mu.put("nomegiocatore", nomegiocatore);
-			mu.put("idgiocatore", idgiocatore);
+			utentiScaduti = new ArrayList<>();
 			Calendar now = Calendar.getInstance();
 			if (nomegiocatore != null) {
 				Map<String, Object> mp = new HashMap<>();
 				mp.put("lastPing", now);
 				mp.put("checkPing", 0);
-				pingUtenti.put(mu, mp);
+				pingUtenti.put(nomegiocatore, mp);
 			}
 			Map<String, Object> m = new HashMap<>();
-			for (Map<String, String> utente : utenti) {
+			for (String utente : utenti) {
 				Map<String, Object> map = pingUtenti.get(utente);
-				Calendar c = (Calendar) map.get("lastPing");
-				long checkPing = now.getTimeInMillis() - c.getTimeInMillis();
-				map.put("checkPing", checkPing);
-				if (checkPing>20000) {
-					utentiScaduti.add(utente);
+				if (map!= null)
+				{
+					Calendar c = (Calendar) map.get("lastPing");
+					long checkPing = now.getTimeInMillis() - c.getTimeInMillis();
+					map.put("checkPing", checkPing);
+					if (checkPing>20000) {
+						utentiScaduti.add(utente);
+					}
 				}
 			}
 			if (calInizioOfferta != null) m.put("contaTempo", now.getTimeInMillis() - calInizioOfferta.getTimeInMillis());
@@ -213,6 +206,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("offertaVincente", offertaVincente);
 			m.put("pingUtenti", pingUtenti);
 			m.put("messaggi", messaggi);
+			m.put("RICHIESTA", nomegiocatore);
 			invia(toJson(m));
 			aggiorna();
 		}

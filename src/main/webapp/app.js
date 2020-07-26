@@ -26,7 +26,7 @@ app.run(
 			$rootScope.utenteScaduto = function(u){
 				var ret = false;
 				angular.forEach($rootScope.utentiScaduti, function(value,chiave) {
-					if(value.idgiocatore == u.id)
+					if(value == u.nome)
 						ret = true;
 					});
 				return ret;
@@ -34,7 +34,7 @@ app.run(
 			$rootScope.utenteCollegato = function(u){
 				var ret = false;
 				angular.forEach($rootScope.utenti, function(value,chiave) {
-					if(value.idgiocatore == u.id)
+					if(value == u.nome)
 						ret = true;
 					});
 				return ret;
@@ -85,7 +85,7 @@ app.run(
 			$rootScope.latenza = function(u){
 				var ret = -1;
 				angular.forEach($rootScope.pingUtenti, function(value,chiave) {
-					if(chiave.idgiocatore == u.id)
+					if(chiave == u.nome)
 						ret = value.checkPing;
 					});
 				return ret;
@@ -98,6 +98,11 @@ app.run(
 				if (message){
 					var msg = JSON.parse(message);
 //					console.log(msg);
+					if (msg.RICHIESTA){
+						var t=msg.RICHIESTA + "-" + new Date().getTime();
+						console.log(t);
+						$rootScope.RICHIESTA=t;
+					}
 					if (msg.calciatori){
 						$rootScope.calciatori=msg.calciatori;
 					}
@@ -151,10 +156,11 @@ app.run(
 					if($rootScope.timeStart==3 && $rootScope.offertaVincente.nomegiocatore!=$rootScope.giocatore) $rootScope.stileScritta='finitoPerdente';
 					if($rootScope.timeStart<3 && $rootScope.offertaVincente.nomegiocatore==$rootScope.giocatore) $rootScope.stileScritta='correnteVincente';
 					if($rootScope.timeStart<3 && $rootScope.offertaVincente.nomegiocatore!=$rootScope.giocatore) $rootScope.stileScritta='correntePerdente';
+					$rootScope.$apply();
 				}
 			}
 			$rootScope.pinga = function(){
-				if ($rootScope.isLoggato)
+				if ($rootScope.giocatore)
 					$rootScope.sendMsg(JSON.stringify({'operazione':'ping', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 			}
 			var a = $interval(function() {
@@ -189,7 +195,13 @@ app.run(
 				$rootScope.offerta=$rootScope.offertaVincente.offerta;
 			}
 			$rootScope.inviaOfferta = function(){
-				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore, 'offerta':$rootScope.offerta}));
+				var ng = $rootScope.nomegiocatore;
+				var ig = $rootScope.idgiocatore;
+				if ($rootScope.idgiocatoreOperaCome) {
+					var ng = $rootScope.nomegiocatoreOperaCome;
+					var ig = $rootScope.idgiocatoreOperaCome;
+				}
+				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':ng, 'idgiocatore':ig, 'offerta':$rootScope.offerta}));
 			}
 			$rootScope.aggiornaDurataAsta = function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'aggiornaDurataAsta', 'giocatoreDurataAsta':$rootScope.nomegiocatore, 'durataAsta':$rootScope.durataAsta}));
@@ -201,7 +213,9 @@ app.run(
 				$rootScope.offerta=$rootScope.offerta+inc;
 				$rootScope.inviaOfferta();
 			}
-			
+			$rootScope.resetOperaCome= function() {
+				$rootScope.selAllenatoreOperaCome="";
+			}
 			$rootScope.$watch("selAllenatore", function(newValue, oldValue) {
 				if (newValue){
 					var posToken = newValue.indexOf("@");
@@ -210,6 +224,18 @@ app.run(
 				}
 			});
 
+			$rootScope.$watch("selAllenatoreOperaCome", function(newValue, oldValue) {
+				if (newValue){
+					var posToken = newValue.indexOf("@");
+					$rootScope.idgiocatoreOperaCome=newValue.substr(0,posToken);
+					$rootScope.nomegiocatoreOperaCome=newValue.substr(posToken+1);
+				}
+				else {
+					$rootScope.idgiocatoreOperaCome="";
+					$rootScope.nomegiocatoreOperaCome="";
+				}
+			});
+			
 	}
 )
 
