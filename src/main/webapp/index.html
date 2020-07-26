@@ -24,30 +24,51 @@
     <a href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" height="25" width="25"/></a>
 </div>
 <br>
-<label>Utenti collegati:</label>
-<ul ng-repeat="utente in utenti">  
-    <li>{{utente}} 
-    	<span ng-show="utenteOK(utente)">
-	<!--      		<a href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente)" height="20" width="20"/></a> -->
+<label>Utenti:</label>
+<ul ng-repeat="utente in elencoAllenatori">  
+    <li>{{utente.nome}} 
+    	<span ng-show="utenteCollegato(utente)">
+			<a ng-show="isAdmin && selCalciatore && durataAsta>0" href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente.nomegiocatore, utente.idgiocatore)" height="20" width="20"/></a>
     	</span>
-    	<span ng-show="!utenteOK(utente)">
+    	<span ng-hide="utenteCollegato(utente)">
+			<img style="margin-bottom:2px" src='./nonconnesso.jpeg' height="20" width="20"/>
+			<label>({{latenza(utente)}}))</label>
+    	</span>
+
+    	<span ng-show="utenteScaduto(utente)">
     		<a href=#><img src='./cestino.png' ng-click="cancellaUtente(utente)" height="20" width="20"/></a>
     	</span>
     </li>
 </ul> 
 <div ng-show="!isLoggato()">
 	<label>Utente:</label>
+	
+		<select ng-model="selAllenatore">
+  			<option ng-repeat="allenatore in elencoAllenatori" value="{{allenatore.id}}@{{allenatore.nome}}">{{allenatore.nome}}</option>
+		</select>
+<!-- 
 	<input type=text ng-model="nomegiocatore" capitalize></input>
+ -->	
+	
+	
+	
     <a href=# ng-show="nomegiocatore"><img style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="doConnect()" height="25" width="25"/></a>
 </div>
 
 <span ng-show="isLoggato()">
 	<br>
 	<div ng-show="bSemaforoAttivo">
-		<a href=#><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
-		<label>Durata Asta: </label>
-		<input style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
-		<label ng-show="giocatoreDurataAsta">Modificata da: {{giocatoreDurataAsta}}</label>
+	
+		<label>Calciatore: </label>
+		<select ng-model="selCalciatore">
+  			<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}}</option>
+		</select>
+	
+		<a href=# ng-show="selCalciatore && durataAsta>0"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
+		<label>Secondi durata Asta: </label>
+			<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
+			<label ng-hide="isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
+			<label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>
 	</div>
 
 	<div ng-show="timeStart<3">
@@ -71,8 +92,12 @@
 		<br><br>
 		<div align=center>
 	
-		<label ng-class="stileScritta">Vincitore: {{offertaVincente.nomegiocatore}} con {{offertaVincente.offerta}}</label>
-			&nbsp;&nbsp;<a ng-show="timeStart==3" href=#><img src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/></a> 
+		<label ng-class="stileScritta">Vincitore({{offertaVincente.nomeCalciatore}}): {{offertaVincente.nomegiocatore}} con {{offertaVincente.offerta}}</label>
+			&nbsp;&nbsp;
+			<a ng-show="timeStart==3 && isAdmin" href=#>
+				<img src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
+				<img src='./annulla.jpeg' ng-click="annulla()" height="30" width="30"/>
+			</a> 
 		</div>
 	</div>
 

@@ -1,5 +1,10 @@
 package com.example.demo;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -10,76 +15,138 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Component
 @RestController
 @RequestMapping({ "/" })
 public class MyController {
 
 	@Autowired Environment environment;	
-	@Autowired HttpSession httpSession;	
+	@Autowired HttpSession httpSession;
+
+	PreparedStatement psElencoCalciatori;
+	PreparedStatement psInserisciCalciaotre;
+	PreparedStatement psElencoAllenatori;
+	public MyController() {
+		initDb();
+	}
+
 	@RequestMapping("/init")
 	public Map<String, Object> init() {
 		Map<String, Object> m = new HashMap<>();
-	       String giocatore = (String) httpSession.getAttribute("giocatore");
-	       if (giocatore != null) m.put("giocatore", giocatore);
-//	       m.put("utenti", utenti);
-	       return m;
-	}
-/*
-	@RequestMapping(value="/cancellaUtente", method = RequestMethod.POST)
-	public Map<String, Object> cancellaUtente(@RequestParam String nomegiocatore) {
-		Map<String, Object> ret = new HashMap<>();
-		utenti.remove(nomegiocatore);
-		pingUtenti.remove(nomegiocatore);
-		ret.put("utenti", utenti);
-		return ret;
-	}
-	*/
-	/*
-	@RequestMapping("/inizia")
-	public void  inizia(@RequestParam String nomegiocatore,@RequestParam int durata) {
-		durataAsta=durata;
-		calInizioOfferta = Calendar.getInstance();
-		offertaVincente = new HashMap<>();
-		offertaVincente.put("nomegiocatore", nomegiocatore);
-		offertaVincente.put("offerta", 1);
-	}
-	*/
-	@RequestMapping("/aggiorna")
-	public Map<String, Object>  aggiorna(@RequestParam(required=false) String nomegiocatore) {
-		Map<String, Object> m = new HashMap<>();
-	    /*
-		List<String> utentiScaduti = new ArrayList<String>();
-		Calendar instance2 = Calendar.getInstance();
-		if (nomegiocatore != null) pingUtenti.put(nomegiocatore, Calendar.getInstance());
-		instance2.add(Calendar.SECOND, -20);
-		for (String utente : utenti) {
-			Calendar cal = (Calendar) pingUtenti.get(utente);
-			if (instance2.after(cal)) {
-				utentiScaduti.add(utente);
-			}
+		String giocatoreLoggato = (String) httpSession.getAttribute("giocatoreLoggato");
+		String idLoggato = (String) httpSession.getAttribute("idLoggato");
+		if (giocatoreLoggato != null) {
+			m.put("giocatoreLoggato", giocatoreLoggato);
+			m.put("idLoggato", idLoggato);
 		}
-	    m.put("utentiScaduti", utentiScaduti);
-    	long l = 0;
-    	int conta=0;
-	    if (calInizioOfferta != null) {
-	    	Calendar now = Calendar.getInstance();
-	    	l = (now.getTimeInMillis() - calInizioOfferta.getTimeInMillis())/1000;
-	    	l = 100*l/durataAsta;
-	    	if (l<33) conta = 0;
-	    	else if (l<66) conta = 1;
-	    	else if (l<99) conta = 2;
-	    	else conta = 3;
-	    }
-		m.put("timeStart", conta);
-	    m.put("offertaVincente", offertaVincente);
-		*/
+		m.put("elencoAllenatori", elencoAllenatori());
 		return m;
 	}
 
+
+	@PostMapping("/confermaAsta")
+	public void confermaAsta(@RequestBody Map<String, Object> body) throws Exception {
+		String nomegiocatore = (String) body.get("nomegiocatore");
+		String idgiocatore = (String) body.get("idgiocatore");
+		Integer offerta = (Integer) body.get("offerta");
+		String nomeCalciatore = (String) body.get("nomeCalciatore");
+		String idCalciatore = (String) body.get("idCalciatore");
+		Calendar c = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+		String stm = sdf.format(c.getTime());
+		psInserisciCalciaotre.setString(1, idCalciatore);
+		psInserisciCalciaotre.setString(2, idgiocatore);
+		psInserisciCalciaotre.setLong(3, offerta);
+		psInserisciCalciaotre.setString(4, stm);
+		psInserisciCalciaotre.executeUpdate();
+	}
+
+
+
+	@RequestMapping("/elencoCalciatori")
+	public List<Map<String, Object>>  elencoCalciatori() {
+		try {
+			ResultSet rs = psElencoCalciatori.executeQuery();
+			List<Map<String, Object>> l = new ArrayList<>();
+			while (rs.next()) {
+				Map<String, Object> m = new HashMap<>();
+				m.put("id", rs.getLong("Id"));
+				m.put("squadra", rs.getString("Squadra"));
+				m.put("nome", rs.getString("Nome"));
+				m.put("ruolo", rs.getString("Ruolo"));
+				m.put("quotazione", rs.getLong("quotazione"));
+				l.add(m);
+			}
+			return l;
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static List<Map<String, Object>> elencoAllenatoriCache=null;
 	
+	@RequestMapping("/elencoAllenatori")
+	public List<Map<String, Object>>  elencoAllenatori() {
+		if (elencoAllenatoriCache != null) return elencoAllenatoriCache;
+		try {
+			ResultSet rs = psElencoAllenatori.executeQuery();
+			List<Map<String, Object>> l = new ArrayList<>();
+			while (rs.next()) {
+				Map<String, Object> m = new HashMap<>();
+				m.put("id", rs.getLong("Id"));
+				m.put("nome", rs.getString("Nome"));
+				l.add(m);
+			}
+			elencoAllenatoriCache=l;
+			return l;
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+
+	private void initDb() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			String server ="jdbc:mysql://localhost:3306/asta?user=almaviva&password=almaviva";
+			Connection conn = DriverManager.getConnection(server);
+			psElencoCalciatori = conn.prepareStatement("select * from giocatori g where not exists (select 1 from fantarose where id=idGiocatore)");
+			psInserisciCalciaotre = conn.prepareStatement(" insert into fantarose (idGiocatore , idAllenatore , Costo , sqltime ) values (?,?,?,?);");
+			psElencoAllenatori = conn.prepareStatement("select * from allenatori order by id");
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	/*
+	public HttpSession getSession()
+	{
+		try
+		{
+			RequestAttributes parentAttrs = RequestContextHolder.currentRequestAttributes();
+			System.out.println(parentAttrs);
+			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+			return attr.getRequest().getSession();
+		}
+		catch (Exception e)
+		{
+			System.out.println(httpSession);
+			return httpSession;
+//			throw new RuntimeException(e);
+		}
+	}	
+		*/
+
 }
