@@ -45,6 +45,7 @@ public class MyController {
 	public Map<String, Object> init() {
 		Map<String, Object> m = new HashMap<>();
 		String giocatoreLoggato = (String) httpSession.getAttribute("giocatoreLoggato");
+		System.out.println(httpSession.getId() + "-" + giocatoreLoggato + "-" + "init");
 		String idLoggato = (String) httpSession.getAttribute("idLoggato");
 		if (giocatoreLoggato != null) {
 			m.put("giocatoreLoggato", giocatoreLoggato);
