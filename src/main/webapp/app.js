@@ -169,10 +169,6 @@ app.run(
 					if (msg.utentiScaduti){
 						$rootScope.utentiScaduti=msg.utentiScaduti;
 					}
-					if($rootScope.timeStart==3 && $rootScope.offertaVincente.nomegiocatore==$rootScope.giocatore) $rootScope.stileScritta='finitoVincente';
-					if($rootScope.timeStart==3 && $rootScope.offertaVincente.nomegiocatore!=$rootScope.giocatore) $rootScope.stileScritta='finitoPerdente';
-					if($rootScope.timeStart<3 && $rootScope.offertaVincente.nomegiocatore==$rootScope.giocatore) $rootScope.stileScritta='correnteVincente';
-					if($rootScope.timeStart<3 && $rootScope.offertaVincente.nomegiocatore!=$rootScope.giocatore) $rootScope.stileScritta='correntePerdente';
 					$rootScope.$apply();
 				}
 			}

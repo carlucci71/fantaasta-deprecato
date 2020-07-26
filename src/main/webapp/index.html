@@ -27,27 +27,32 @@
 <br>
 -->
 
-<ul ng-repeat="utente in elencoAllenatori">  
-    <li>{{utente.nome}}
-    	<span ng-show="!isLoggato() && !utenteCollegato(utente)">
+<table>
+  <tr ng-repeat="utente in elencoAllenatori">
+    <td>{{utente.nome}}</td>
+    	<td ng-show="!isLoggato() && !utenteCollegato(utente)">
 		    <a href=#><img style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id)" height="25" width="25"/></a>
-    	</span>
-    	<span ng-show="sonoLoggato(utente)">
-		    <a href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" height="20" width="20"/></a>
-    	</span>
-		<a ng-show="isAdmin && selCalciatore && durataAsta>0" href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente.nome, utente.id)" height="20" width="20"/></a>
-    	<span ng-show="utenteCollegato(utente)">
+    	</td>
+    	<td>
+		    <a ng-show="sonoLoggato(utente)" href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" height="20" width="20"/></a>
+    	</td>
+    	<td ng-show="isAdmin && selCalciatore && durataAsta>0">
+		<a  href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente.nome, utente.id)" height="20" width="20"/></a>
+    	</td>
+    	<td ng-show="utenteCollegato(utente)">
 			<img style="margin-bottom:2px" src='./connesso.jpeg' height="20" width="20"/>
-    	</span>
-    	<span ng-hide="utenteCollegato(utente)">
+    	</td>
+    	<td ng-hide="utenteCollegato(utente)">
 			<img style="margin-bottom:2px" src='./nonconnesso.jpeg' height="20" width="20"/>
-    	</span>
-    	<span ng-show="utenteScaduto(utente)">
+    	</td>
+    	<td ng-show="utenteScaduto(utente)">
     		<a href=#><img src='./cestino.png' ng-click="cancellaUtente(utente)" height="20" width="20"/></a>
-    	</span>
+    	</td>
+    	<td>
 		<label style="font-size:10" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
-    </li>
-</ul> 
+		</td>
+  </tr>
+</table>
 <!--  
 <div ng-show="!isLoggato()">
 	<label>Utente:</label>
@@ -105,7 +110,18 @@
 		<br><br>
 		<div align=center>
 	
-		<label ng-class="stileScritta">Vincitore({{offertaVincente.nomeCalciatore}}): {{offertaVincente.nomegiocatore}} con {{offertaVincente.offerta}}</label>
+		<label ng-show="timeStart==3 && offertaVincente.nomegiocatore==giocatore" class="finitoVincente">
+			Hai vinto {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+		</label>
+		<label ng-show="timeStart==3 && offertaVincente.nomegiocatore!=giocatore" class="finitoPerdente">
+			{{offertaVincente.nomegiocatore}} ha vinto {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+		</label>
+		<label ng-show="timeStart<3 && offertaVincente.nomegiocatore==giocatore" class="correnteVincente">
+			Stai vincendo {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+		</label>
+		<label ng-show="timeStart<3 && offertaVincente.nomegiocatore!=giocatore" class="correntePerdente">
+			{{offertaVincente.nomegiocatore}} sta vincendo {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+		</label>
 			&nbsp;&nbsp;
 			<a ng-show="timeStart==3 && isAdmin" href=#>
 				<img src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
