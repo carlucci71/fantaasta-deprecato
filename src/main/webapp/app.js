@@ -15,6 +15,11 @@ app.run(
 				if (!$rootScope.giocatore) return false;
 				return $rootScope.giocatore!='';
 			};
+			$rootScope.callDoConnect = function(nome,id) {
+				$rootScope.nomegiocatore=nome,id;
+				$rootScope.idgiocatore=nome,id;
+				$rootScope.doConnect();
+			}
 			$rootScope.doConnect = function() {
 		        console.log('Connected');
 		        if (!$rootScope.giocatore){
