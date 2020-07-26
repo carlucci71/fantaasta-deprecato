@@ -83,6 +83,12 @@ app.run(
 			$resource(window.location.pathname + 'elencoCalciatori',{}).query().$promise.then(function(data) {
 				$rootScope.calciatori=data;
 			});
+
+			$rootScope.aggiornaCronologiaOfferte=function(){
+				$resource('./elencoCronologiaOfferte',{}).query().$promise.then(function(data) {
+					$rootScope.cronologiaOfferte=data;
+				});
+			}
 			
 			
 			$resource(window.location.pathname + 'init',{}).get().$promise.then(function(data) {
