@@ -73,7 +73,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 //				System.out.println(httpSession.getId() + "-" + httpSession.getAttribute("giocatoreLoggato") + "-" + "connetti");
 				httpSession.setAttribute("idLoggato", idgiocatore);
 				utenti.add(nomegiocatore);
-				m.put("calciatori", myController.elencoCalciatori());
+				m.put("calciatori", myController.getGiocatoriLiberi());
 				m.put("utenti", utenti);
 			}
 			invia(toJson(m));
@@ -83,7 +83,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			offertaVincente = new HashMap<>();
 			messaggi = new ArrayList<>();
 			Map<String, Object> m = new HashMap<>();
-			m.put("calciatori", myController.elencoCalciatori());
+			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("selCalciatore", "x");
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
@@ -93,7 +93,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			offertaVincente = new HashMap<>();
 			messaggi = new ArrayList<>();
 			Map<String, Object> m = new HashMap<>();
-//			m.put("calciatori", myController.elencoCalciatori());
+//			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("selCalciatore", "x");
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
@@ -227,7 +227,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			}
 			if (calInizioOfferta != null) m.put("contaTempo", now.getTimeInMillis() - calInizioOfferta.getTimeInMillis());
 			m.put("utentiScaduti", utentiScaduti);
-			m.put("elencoAllenatori", myController.elencoAllenatori());
+			m.put("elencoAllenatori", myController.getAllAllenatori());
 			m.put("utenti", utenti);
 			m.put("durataAsta", durataAsta);
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);

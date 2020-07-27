@@ -82,7 +82,7 @@ app.run(
 			    }
 			    console.log("Disconnected");
 			}
-			$resource(window.location.pathname + 'elencoCalciatori',{}).query().$promise.then(function(data) {
+			$resource(window.location.pathname + 'giocatoriLiberi',{}).query().$promise.then(function(data) {
 				$rootScope.calciatori=data;
 			});
 
