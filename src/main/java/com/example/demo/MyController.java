@@ -45,7 +45,7 @@ public class MyController {
 	public Map<String, Object> init() {
 		Map<String, Object> m = new HashMap<>();
 		String giocatoreLoggato = (String) httpSession.getAttribute("giocatoreLoggato");
-		System.out.println(httpSession.getId() + "-" + giocatoreLoggato + "-" + "init");
+//		System.out.println(httpSession.getId() + "-" + giocatoreLoggato + "-" + "init");
 		String idLoggato = (String) httpSession.getAttribute("idLoggato");
 		if (giocatoreLoggato != null) {
 			m.put("giocatoreLoggato", giocatoreLoggato);
@@ -57,7 +57,7 @@ public class MyController {
 
 
 	@PostMapping("/confermaAsta")
-	public void confermaAsta(@RequestBody Map<String, Object> body) throws Exception {
+	public int confermaAsta(@RequestBody Map<String, Object> body) throws Exception {
 		String nomegiocatore = (String) body.get("nomegiocatore");
 		String idgiocatore = (String) body.get("idgiocatore");
 		Integer offerta = (Integer) body.get("offerta");
@@ -70,7 +70,8 @@ public class MyController {
 		psInserisciCalciaotre.setString(2, idgiocatore);
 		psInserisciCalciaotre.setLong(3, offerta);
 		psInserisciCalciaotre.setString(4, stm);
-		psInserisciCalciaotre.executeUpdate();
+		int executeUpdate = psInserisciCalciaotre.executeUpdate();
+		return executeUpdate;
 	}
 
 	@RequestMapping("/elencoCalciatori")

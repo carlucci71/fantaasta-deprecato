@@ -70,7 +70,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				m.put("RESET_UTENTE",tokenUtente);
 			} else {
 				httpSession.setAttribute("giocatoreLoggato", nomegiocatore);
-				System.out.println(httpSession.getId() + "-" + httpSession.getAttribute("giocatoreLoggato") + "-" + "connetti");
+//				System.out.println(httpSession.getId() + "-" + httpSession.getAttribute("giocatoreLoggato") + "-" + "connetti");
 				httpSession.setAttribute("idLoggato", idgiocatore);
 				utenti.add(nomegiocatore);
 				m.put("calciatori", myController.elencoCalciatori());
@@ -145,7 +145,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			utenti.remove(nomegiocatore);
 			utentiScaduti.remove(nomegiocatore);
 			pingUtenti.remove(nomegiocatore);
-			System.out.println(httpSession.getId() + "-" + httpSession.getAttribute("giocatoreLoggato") + "-" + "disconnetti");
+//			System.out.println(httpSession.getId() + "-" + httpSession.getAttribute("giocatoreLoggato") + "-" + "disconnetti");
 			httpSession.removeAttribute("giocatoreLoggato");
 			httpSession.removeAttribute("idLoggato");
 			Map<String, Object> m = new HashMap<>();
@@ -275,7 +275,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 //		this.wsSession = session;
 		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTPSESSIONID");
 		sessions.add(session);
-		System.out.println(httpSession.getId() + "-" + "sessssionnss");
+//		System.out.println(httpSession.getId() + "-" + "sessssionnss");
 		
 	}
 	private ObjectMapper mapper = new ObjectMapper();

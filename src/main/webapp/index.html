@@ -87,13 +87,19 @@
 		<input type="button" value="+1" ng-click="incrementa(1)"></input>
 		<input type="button" value="+5" ng-click="incrementa(5)"></input>
 		<input type="button" value="+10" ng-click="incrementa(10)"></input>
-		<span ng-show="isAdmin">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<span ng-show="isAdmin" style="background-color:yellow;  border: double;">
 			<label>Opera come: </label>
-			<select ng-model="selAllenatoreOperaCome">
+			<select ng-model="selAllenatoreOperaCome"">
 	  			<option ng-repeat="allenatore in elencoAllenatori" value="{{allenatore.id}}@{{allenatore.nome}}">{{allenatore.nome}}</option>
 			</select>
-			<input type="button" value="reset opera come" ng-click="resetOperaCome()"></input>
-			<input type="button" value="termina asta" ng-click="terminaAsta()"></input>
+			<input  style='width: 60px;' type="number"  ng-model="offertaOC"></input>
+			<input type="button" value="allinea" ng-click="allinea('OC')"></input>
+
+		    <a href=#><img style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC')" height="35" width="35"/></a>
+			<input type="button" value="+1" ng-click="incrementa(1, 'OC')"></input>
+			<input type="button" value="+5" ng-click="incrementa(5, 'OC')"></input>
+			<input type="button" value="+10" ng-click="incrementa(10, 'OC')"></input>
 		</span>
 		
 	</div>
@@ -127,6 +133,9 @@
 				<img src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
 				<img src='./annulla.jpeg' ng-click="annulla()" height="30" width="30"/>
 			</a> 
+		</div>
+		<div  ng-show="isAdmin && timeStart<3" align=center>
+			<a href=#><img src='./stop.jpg' ng-click="terminaAsta()" height="50" width="50"/></a>
 		</div>
 	</div>
 
