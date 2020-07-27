@@ -12,9 +12,16 @@
 <script type="text/javascript" src="./app.js"></script>
 
 <body x-ng-app="app" style="margin-left:20px">
-
-
-
+ADMIN
+<table>
+	  <tr ng-repeat="utente in elencoAllenatori">
+	  	<td>
+				<input  style='width: 60px;' type="text"  ng-model="utente.nome"></input>
+				<input  style='width: 60px;' type="text"  ng-model="utente.isAdmin"></input>
+		</td>
+	  </tr>
+</table>
+<input type="button" value="aggiorna" ng-click="aggiornaUtenti()"></input>
 
 </body>
 </html>

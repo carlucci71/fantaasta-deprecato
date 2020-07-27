@@ -10,138 +10,126 @@
 <script type="text/javascript" src="./angular.js"></script>
 <script type="text/javascript" src="./angular-resource.js"></script>
 <script type="text/javascript" src="./app.js"></script>
-<!--  -->
 <script src="./sockjs.min.js"></script>
 <script src="./stomp.min.js"></script>
-<!--  -->
 
 <script>
 </script>
 <body x-ng-app="app" style="margin-left:20px">
+<div ng-show="config">
+<label>CONFIGURAZIONE</label>
 <br>
-<!--  
-<div ng-show="isLoggato()">
-	Ciao, {{giocatore}}
-    <a href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" height="25" width="25"/></a>
+Numero utenti:<input  style='width: 60px;' type="number"  ng-model="numeroUtenti"></input>
+<input type="button" value="conferma" ng-click="confermaNumUtenti()"></input>
+
 </div>
-<br>
--->
-<a ng-show="isAdmin" href="./admin.html" target="_blank">Modulo amministrazione</a>
-<a href="./cronologiaOfferte.html" target="_blank">Cronologia Offerte</a>
-<table>
-  <tr ng-repeat="utente in elencoAllenatori">
-    <td>{{utente.nome}}</td>
-    	<td ng-show="!isLoggato() && !utenteCollegato(utente)">
-		    <a href=#><img style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id)" height="25" width="25"/></a>
-    	</td>
-    	<td>
-		    <a ng-show="sonoLoggato(utente)" href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" height="20" width="20"/></a>
-    	</td>
-    	<td ng-show="isAdmin && selCalciatore && durataAsta>0">
-		<a  href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente.nome, utente.id)" height="20" width="20"/></a>
-    	</td>
-    	<td ng-show="utenteCollegato(utente)">
-			<img style="margin-bottom:2px" src='./connesso.jpeg' height="20" width="20"/>
-    	</td>
-    	<td ng-hide="utenteCollegato(utente)">
-			<img style="margin-bottom:2px" src='./nonconnesso.jpeg' height="20" width="20"/>
-    	</td>
-    	<td ng-show="utenteScaduto(utente)">
-    		<a href=#><img src='./cestino.png' ng-click="cancellaUtente(utente)" height="20" width="20"/></a>
-    	</td>
-    	<td>
-		<label style="font-size:10" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
-		</td>
-  </tr>
-</table>
-<!--  
-<div ng-show="!isLoggato()">
-	<label>Utente:</label>
-	
-		<select ng-model="selAllenatore">
-  			<option ng-repeat="allenatore in elencoAllenatori" value="{{allenatore.id}}@{{allenatore.nome}}">{{allenatore.nome}}</option>
-		</select>
-    <a href=# ng-show="nomegiocatore"><img style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="doConnect()" height="25" width="25"/></a>
-</div>
--->	
-
-<span ng-show="isLoggato()">
-	<br>
-	<div ng-show="bSemaforoAttivo">
-	
-		<label>Calciatore: </label>
-		<select ng-model="selCalciatore">
-  			<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}}</option>
-		</select>
-	
-		<a href=# ng-show="selCalciatore && durataAsta>0"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
-		<label>Secondi durata Asta: </label>
-			<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
-			<label ng-hide="isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
-			<label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>
-	</div>
-
-	<div ng-show="offertaVincente.nomegiocatore">
-		<input  style='width: 60px;' type="number"  ng-model="offerta"></input>
-		<input type="button" value="allinea" ng-click="allinea()"></input>
-	    <a href=#><img style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta()" height="35" width="35"/></a>
-		<input type="button" value="+1" ng-click="incrementa(1)"></input>
-		<input type="button" value="+5" ng-click="incrementa(5)"></input>
-		<input type="button" value="+10" ng-click="incrementa(10)"></input>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<span ng-show="isAdmin" style="background-color:yellow;  border: double;">
-			<label>Opera come: </label>
-			<select ng-model="selAllenatoreOperaCome"">
-	  			<option ng-repeat="allenatore in elencoAllenatori" value="{{allenatore.id}}@{{allenatore.nome}}">{{allenatore.nome}}</option>
-			</select>
-			<input  style='width: 60px;' type="number"  ng-model="offertaOC"></input>
-			<input type="button" value="allinea" ng-click="allinea('OC')"></input>
-
-		    <a href=#><img style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC')" height="35" width="35"/></a>
-			<input type="button" value="+1" ng-click="incrementa(1, 'OC')"></input>
-			<input type="button" value="+5" ng-click="incrementa(5, 'OC')"></input>
-			<input type="button" value="+10" ng-click="incrementa(10, 'OC')"></input>
-		</span>
+<div ng-hide="config">
+	<a ng-show="isAdmin" href="./admin.html" target="_blank">Modulo amministrazione</a>
+	<a href="./cronologiaOfferte.html" target="_blank">Cronologia Offerte</a>
+	<table>
+	  <tr ng-repeat="utente in elencoAllenatori">
+	    <td>{{utente.nome}}</td>
+	    	<td ng-show="!isLoggato() && !utenteCollegato(utente)">
+			    <a href=#><img style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id)" height="25" width="25"/></a>
+	    	</td>
+	    	<td>
+			    <a ng-show="sonoLoggato(utente)" href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" height="20" width="20"/></a>
+	    	</td>
+	    	<td ng-show="isAdmin && selCalciatore && durataAsta>0">
+			<a  href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente.nome, utente.id)" height="20" width="20"/></a>
+	    	</td>
+	    	<td ng-show="utenteCollegato(utente)">
+				<img style="margin-bottom:2px" src='./connesso.jpeg' height="20" width="20"/>
+	    	</td>
+	    	<td ng-hide="utenteCollegato(utente)">
+				<img style="margin-bottom:2px" src='./nonconnesso.jpeg' height="20" width="20"/>
+	    	</td>
+	    	<td ng-show="utenteScaduto(utente)">
+	    		<a href=#><img src='./cestino.png' ng-click="cancellaUtente(utente)" height="20" width="20"/></a>
+	    	</td>
+	    	<td>
+			<label style="font-size:10" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
+			</td>
+	  </tr>
+	</table>
+	<span ng-show="isLoggato()">
+		<br>
+		<div ng-show="bSemaforoAttivo">
 		
-	</div>
-
-
-
-	<div ng-show="offertaVincente.nomegiocatore">
-		<div ng-show="timeStart<3">
-	 		<div class="pb"> 
-	 				<track-progress-bar col-val='{{timeStart}}' cur-val='{{contaTempo}}' max-val='{{durataAsta*1000}}'></track-progress-bar>
-	 				<label>{{contaTempo}}/{{durataAsta*1000}}</label>
-	 		</div>
-	 	</div>
-		<br><br>
-		<div align=center>
-	
-		<label ng-show="timeStart==3 && offertaVincente.nomegiocatore==giocatore" class="finitoVincente">
-			Hai vinto {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
-		</label>
-		<label ng-show="timeStart==3 && offertaVincente.nomegiocatore!=giocatore" class="finitoPerdente">
-			{{offertaVincente.nomegiocatore}} ha vinto {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
-		</label>
-		<label ng-show="timeStart<3 && offertaVincente.nomegiocatore==giocatore" class="correnteVincente">
-			Stai vincendo {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
-		</label>
-		<label ng-show="timeStart<3 && offertaVincente.nomegiocatore!=giocatore" class="correntePerdente">
-			{{offertaVincente.nomegiocatore}} sta vincendo {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
-		</label>
-			&nbsp;&nbsp;
-			<a ng-show="timeStart==3 && isAdmin" href=#>
-				<img src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
-				<img src='./annulla.jpeg' ng-click="annulla()" height="30" width="30"/>
-			</a> 
+			<label>Calciatore: </label>
+			<select ng-model="selCalciatore">
+	  			<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}}</option>
+			</select>
+		
+			<a href=# ng-show="selCalciatore && durataAsta>0"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
+			<label>Secondi durata Asta: </label>
+				<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
+				<label ng-hide="isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
+				<label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>
 		</div>
-		<div  ng-show="isAdmin && timeStart<3" align=center>
-			<a href=#><img src='./stop.jpg' ng-click="terminaAsta()" height="50" width="50"/></a>
-		</div>
-	</div>
-
-	<label ng-repeat="messaggio in messaggi" for="{{messaggio}}">{{messaggio}}<br></label>
 	
-</span>
+		<div ng-show="offertaVincente.nomegiocatore">
+			<input  style='width: 60px;' type="number"  ng-model="offerta"></input>
+			<input type="button" value="allinea" ng-click="allinea()"></input>
+		    <a href=#><img style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta()" height="35" width="35"/></a>
+			<input type="button" value="+1" ng-click="incrementa(1)"></input>
+			<input type="button" value="+5" ng-click="incrementa(5)"></input>
+			<input type="button" value="+10" ng-click="incrementa(10)"></input>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<span ng-show="isAdmin" style="background-color:yellow;  border: double;">
+				<label>Opera come: </label>
+				<select ng-model="selAllenatoreOperaCome"">
+		  			<option ng-repeat="allenatore in elencoAllenatori" value="{{allenatore.id}}@{{allenatore.nome}}">{{allenatore.nome}}</option>
+				</select>
+				<input  style='width: 60px;' type="number"  ng-model="offertaOC"></input>
+				<input type="button" value="allinea" ng-click="allinea('OC')"></input>
+	
+			    <a href=#><img style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC')" height="35" width="35"/></a>
+				<input type="button" value="+1" ng-click="incrementa(1, 'OC')"></input>
+				<input type="button" value="+5" ng-click="incrementa(5, 'OC')"></input>
+				<input type="button" value="+10" ng-click="incrementa(10, 'OC')"></input>
+			</span>
+			
+		</div>
+	
+	
+	
+		<div ng-show="offertaVincente.nomegiocatore">
+			<div ng-show="timeStart<3">
+		 		<div class="pb"> 
+		 				<track-progress-bar col-val='{{timeStart}}' cur-val='{{contaTempo}}' max-val='{{durataAsta*1000}}'></track-progress-bar>
+		 				<label>{{contaTempo}}/{{durataAsta*1000}}</label>
+		 		</div>
+		 	</div>
+			<br><br>
+			<div align=center>
+		
+			<label ng-show="timeStart==3 && offertaVincente.nomegiocatore==giocatore" class="finitoVincente">
+				Hai vinto {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+			</label>
+			<label ng-show="timeStart==3 && offertaVincente.nomegiocatore!=giocatore" class="finitoPerdente">
+				{{offertaVincente.nomegiocatore}} ha vinto {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+			</label>
+			<label ng-show="timeStart<3 && offertaVincente.nomegiocatore==giocatore" class="correnteVincente">
+				Stai vincendo {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+			</label>
+			<label ng-show="timeStart<3 && offertaVincente.nomegiocatore!=giocatore" class="correntePerdente">
+				{{offertaVincente.nomegiocatore}} sta vincendo {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+			</label>
+				&nbsp;&nbsp;
+				<a ng-show="timeStart==3 && isAdmin" href=#>
+					<img src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
+					<img src='./annulla.jpeg' ng-click="annulla()" height="30" width="30"/>
+				</a> 
+			</div>
+			<div  ng-show="isAdmin && timeStart<3" align=center>
+				<a href=#><img src='./stop.jpg' ng-click="terminaAsta()" height="50" width="50"/></a>
+			</div>
+		</div>
+	
+		<label ng-repeat="messaggio in messaggi" for="{{messaggio}}">{{messaggio}}<br></label>
+		
+	</span>
+</div>
 </body>
 </html>

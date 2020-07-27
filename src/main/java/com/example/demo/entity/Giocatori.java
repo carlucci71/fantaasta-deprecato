@@ -12,7 +12,6 @@ import javax.persistence.Table;
 public class Giocatori {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
 	private String squadra;
 	private String nome;

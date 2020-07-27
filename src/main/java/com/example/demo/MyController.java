@@ -1,9 +1,5 @@
 package com.example.demo;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,9 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Allenatori;
+import com.example.demo.entity.Configurazione;
 import com.example.demo.entity.Fantarose;
 import com.example.demo.entity.Giocatori;
 import com.example.demo.repository.AllenatoriRepository;
+import com.example.demo.repository.ConfigurazioneRepository;
 import com.example.demo.repository.FantaroseRepository;
 import com.example.demo.repository.GiocatoriRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,15 +44,17 @@ public class MyController {
 	@Autowired AllenatoriRepository allenatoriRepository;
 	@Autowired FantaroseRepository fantaroseRepository;
 	@Autowired GiocatoriRepository giocatoriRepository;
+	@Autowired ConfigurazioneRepository configurazioneRepository;
 	@Autowired EntityManager em;
-
-
-	public MyController() {
-	}
 
 	@RequestMapping("/init")
 	public Map<String, Object> init() {
 		Map<String, Object> m = new HashMap<>();
+		Configurazione configurazione = getConfigurazione();
+		if (configurazione.getNumeroGiocatori()==null) {
+			m.put("DA_CONFIGURARE", "x");
+		}
+		else {
 		String giocatoreLoggato = (String) httpSession.getAttribute("giocatoreLoggato");
 		//		System.out.println(httpSession.getId() + "-" + giocatoreLoggato + "-" + "init");
 		String idLoggato = (String) httpSession.getAttribute("idLoggato");
@@ -63,9 +63,50 @@ public class MyController {
 			m.put("idLoggato", idLoggato);
 		}
 		m.put("elencoAllenatori", getAllAllenatori());
+		}
 		return m;
 	}
 
+	@PostMapping("/aggiornaNumUtenti")
+	public void aggiornaNumUtenti(@RequestBody int numUtenti) throws Exception {
+		Configurazione configurazione = getConfigurazione();
+		configurazione.setNumeroGiocatori(numUtenti);
+		configurazioneRepository.save(configurazione);
+		for(int i=0;i<numUtenti;i++) {
+			Allenatori al = new Allenatori();
+			al.setId(i);
+			al.setNome("GIOC"+i);
+			al.setIsAdmin(true);
+			allenatoriRepository.save(al);
+		}
+	}
+	
+	@PostMapping("/aggiornaUtenti")
+	public void aggiornaUtenti(@RequestBody List<Map<String, Object>> body) throws Exception {
+		System.out.println(body);
+		for (Map<String, Object> map : body) {
+			Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
+			al.setNome((String) map.get("nome"));
+			if("true".equalsIgnoreCase(map.get("isAdmin").toString()))
+				al.setIsAdmin(true);
+			else
+				al.setIsAdmin(false);
+			allenatoriRepository.save(al);
+		}
+		
+		/*
+		Configurazione configurazione = getConfigurazione();
+		configurazione.setNumeroGiocatori(numUtenti);
+		configurazioneRepository.save(configurazione);
+		for(int i=0;i<numUtenti;i++) {
+			Allenatori al = new Allenatori();
+			al.setId(i);
+			al.setNome("GIOC"+i);
+			al.setIsAdmin(true);
+			allenatoriRepository.save(al);
+		}
+		*/
+	}
 
 	@PostMapping("/confermaAsta")
 	public void confermaAsta(@RequestBody Map<String, Object> body) throws Exception {
@@ -77,12 +118,12 @@ public class MyController {
 		Calendar c = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 		String stm = sdf.format(c.getTime());
-		Fantarose fantarose = new Fantarose();
-		fantarose.setCosto(offerta);
-		fantarose.setIdAllenatore(Integer.parseInt(idgiocatore));
-		fantarose.setIdGiocatore(Integer.parseInt(idCalciatore));
-		fantarose.setSqlTime(stm);
-		fantaroseRepository.save(fantarose);
+		Fantarose fantarosa = new Fantarose();
+		fantarosa.setCosto(offerta);
+		fantarosa.setIdAllenatore(Integer.parseInt(idgiocatore));
+		fantarosa.setIdGiocatore(Integer.parseInt(idCalciatore));
+		fantarosa.setSqlTime(stm);
+		fantaroseRepository.save(fantarosa);
 	}
 
 
@@ -223,6 +264,11 @@ public class MyController {
 		return giocatoriRepository.findAll();
 	}	
 
+	@GetMapping(path="/configurazione")
+	public @ResponseBody Configurazione getConfigurazione() {
+		return configurazioneRepository.findOne(1);
+	}	
+	
 	@GetMapping(path="/giocatoriLiberi")
 	public @ResponseBody List<Map<String, Object>> getGiocatoriLiberi() {
 //		Iterable<Giocatori> giocatoriLiberi = giocatoriRepository.getGiocatoriLiberi();

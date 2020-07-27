@@ -37,7 +37,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	String giocatoreDurataAsta="";
 	String sSemaforoAttivo;
 	List<String> messaggi=new ArrayList<>();
-	@Autowired MyController myController;// = new MyController();
+	@Autowired MyController myController;
 	
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws InterruptedException, IOException {

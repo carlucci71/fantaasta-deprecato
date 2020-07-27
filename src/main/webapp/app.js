@@ -2,6 +2,7 @@ var app=angular.module("app",["ngResource"]);
 var app = angular.module('app', [ 'ngResource' ]);
 app.run(
 		function($rootScope, $resource, $interval){
+			$rootScope.config=false;
 			$rootScope.giocatore="";
 			$rootScope.offerta=1;
 			$rootScope.offertaOC=1;
@@ -11,6 +12,7 @@ app.run(
 			$rootScope.tokenUtente;
 			$rootScope.isAdmin=false;
 			$rootScope.calciatori=[];
+			$rootScope.numeroUtenti=6;
 			$rootScope.isLoggato= function(){
 				if (!$rootScope.giocatore) return false;
 				return $rootScope.giocatore!='';
@@ -27,7 +29,7 @@ app.run(
 					$rootScope.sendMsg(JSON.stringify({'operazione':'connetti', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore, 'tokenUtente':$rootScope.tokenUtente}));
 		        }
 				$rootScope.giocatore=$rootScope.nomegiocatore;
-				if ($rootScope.giocatore=="Daniele") $rootScope.isAdmin=true; else $rootScope.isAdmin=false;
+				$rootScope.calcolaIsAdmin();
 				if ($rootScope.isAdmin) $rootScope.selAllenatoreOperaCome=1 + "@" + "Daniele";
 			}
 			$rootScope.utenteScaduto = function(u){
@@ -58,6 +60,11 @@ app.run(
 					});
 				return ret;
 			}
+			$rootScope.aggiornaUtenti= function() {
+				$resource('./aggiornaUtenti',{}).save($rootScope.elencoAllenatori).$promise.then(function(data) {
+//					$rootScope.cronologiaOfferte=data;
+				});
+			}
 			$rootScope.doDisconnect = function() {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'disconnetti', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				$rootScope.giocatore="";
@@ -70,7 +77,8 @@ app.run(
 	                 new_uri = "ws:";
 	             }
 	             new_uri += "//" + loc.host;
-	             new_uri += loc.pathname + "messaggi-websocket";
+//	             new_uri += loc.pathname + "messaggi-websocket";
+	             new_uri += '/' + "messaggi-websocket";
 	             ws = new WebSocket(new_uri);
                  ws.onmessage = function(data){
 					$rootScope.getMessaggio(data.data);
@@ -82,27 +90,35 @@ app.run(
 			    }
 			    console.log("Disconnected");
 			}
-			$resource(window.location.pathname + 'giocatoriLiberi',{}).query().$promise.then(function(data) {
+			$resource('./giocatoriLiberi',{}).query().$promise.then(function(data) {
 				$rootScope.calciatori=data;
 			});
-
 			$rootScope.aggiornaCronologiaOfferte=function(){
 				$resource('./elencoCronologiaOfferte',{}).query().$promise.then(function(data) {
 					$rootScope.cronologiaOfferte=data;
 				});
 			}
-			
-			
-			$resource(window.location.pathname + 'init',{}).get().$promise.then(function(data) {
-				$rootScope.connect();
-				$rootScope.giocatore=data.giocatoreLoggato;
-				if ($rootScope.giocatore){
-					$rootScope.nomegiocatore=$rootScope.giocatore;
-					$rootScope.idgiocatore=data.idLoggato;
-					$rootScope.doConnect();
+			$rootScope.confermaNumUtenti=function(){
+				if ($rootScope.numeroUtenti>0){
+				$resource('./aggiornaNumUtenti',{}).save($rootScope.numeroUtenti).$promise.then(function(data) {
+//					$rootScope.cronologiaOfferte=data;
+				});
 				}
+			}
+			$resource('./init',{}).get().$promise.then(function(data) {
+				if (data.DA_CONFIGURARE){
+					$rootScope.config=true;
+				} else {
+					$rootScope.connect();
+					$rootScope.giocatore=data.giocatoreLoggato;
+					if ($rootScope.giocatore){
+						$rootScope.nomegiocatore=$rootScope.giocatore;
+						$rootScope.idgiocatore=data.idLoggato;
+						$rootScope.doConnect();
+					}
 
-				$rootScope.elencoAllenatori=data.elencoAllenatori;
+					$rootScope.elencoAllenatori=data.elencoAllenatori;
+				}
 			});
 			$rootScope.sendMsg=function(s){
 				ws.send(s);
@@ -201,7 +217,7 @@ app.run(
 			$rootScope.conferma = function(){
 				$rootScope.messaggi=[];
 				$rootScope.bSemaforoAttivo=true;
-				$resource(window.location.pathname + 'confermaAsta',{}).save($rootScope.offertaVincente).$promise.then(function(data) {
+				$resource('./confermaAsta',{}).save($rootScope.offertaVincente).$promise.then(function(data) {
 					$rootScope.sendMsg(JSON.stringify({'operazione':'confermaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 					$rootScope.offertaVincente="";
 				});
@@ -253,6 +269,22 @@ app.run(
 			$rootScope.terminaAsta= function() {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'terminaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 			}
+			
+			$rootScope.calcolaIsAdmin= function() {
+				$rootScope.isAdmin=false;
+				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
+					if(value.id == $rootScope.idgiocatore)
+						if(value.isAdmin) $rootScope.isAdmin=true;
+					});
+			}
+			
+			$rootScope.$watch("elencoAllenatori", function(newValue, oldValue) {
+				$rootScope.calcolaIsAdmin();
+			});
+			
+			
+			
+			
 			$rootScope.$watch("selAllenatore", function(newValue, oldValue) {
 				if (newValue){
 					var posToken = newValue.indexOf("@");
@@ -260,7 +292,6 @@ app.run(
 					$rootScope.nomegiocatore=newValue.substr(posToken+1);
 				}
 			});
-			
 			$rootScope.$watch("selAllenatoreOperaCome", function(newValue, oldValue) {
 				if (newValue){
 					var posToken = newValue.indexOf("@");
