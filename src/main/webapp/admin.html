@@ -19,10 +19,10 @@
 <table >
 	  <tr>
 	  	<td>Nome</td>
-	  	<td>Pwd</td>
-		<td>Admin</td>
+	  	<td>Password</td>
+		<td ng-show="isAdmin">Admin</td>
 	  </tr>
-	  <tr ng-repeat="utente in elencoAllenatori">
+	  <tr ng-repeat="utente in elencoAllenatori" ng-show="isAdmin || utente.nome==giocatore">
 	  	<td>
 				<input  style='width: 300px;' type="text"  ng-model="utente.nome"></input>
 		</td>
@@ -30,11 +30,10 @@
 				<input  style='width: 300px;' type="password"  ng-model="utente.pwd"></input>
 		</td>
 		<td>
-					<input  style='width: 60px;' type="checkbox"  ng-model="utente.isAdmin"></input>
+					<input  style='width: 60px;' type="checkbox"  ng-show="isAdmin" ng-model="utente.isAdmin"></input>
 		</td>	
 	  </tr>
 </table>
 <input type="button" value="aggiorna" ng-click="aggiornaUtenti()"></input>
-
 </body>
 </html>

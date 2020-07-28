@@ -95,7 +95,8 @@ public class MyController {
 			String nome = (String) map.get("nome");
 			al.setNome(nome);
 			String pwd = (String) map.get("pwd");
-			al.setPwd(criptaggio.encrypt(pwd,nome));
+			if (!pwd.equalsIgnoreCase(al.getPwd()))
+				al.setPwd(criptaggio.encrypt(pwd,nome));
 			if("true".equalsIgnoreCase(map.get("isAdmin").toString()))
 				al.setIsAdmin(true);
 			else

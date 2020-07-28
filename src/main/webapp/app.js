@@ -76,6 +76,7 @@ app.run(
 			$rootScope.doDisconnect = function() {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'disconnetti', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				$rootScope.giocatore="";
+				$rootScope.isAdmin=false;
 			}
 			$rootScope.connect = function() {
 				 var loc = window.location, new_uri;
