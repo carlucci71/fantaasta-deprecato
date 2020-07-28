@@ -17,16 +17,14 @@ app.run(
 				return $rootScope.giocatore!='';
 			};
 			$rootScope.callDoConnect = function(nome,id, pwd) {
-				var inputPwd="";
 				var esci=false;
-				$rootScope.ModalDemoCtrl.open();
-				while (pwd != inputPwd) {
-					inputPwd=window.prompt("Immetti la password","");
-					if (inputPwd==null) esci=true;
-					$rootScope.cripta(inputPwd);
-					alert("....");
+				if (pwd != '') {
+					$rootScope.origPwd=pwd;
+					$rootScope.tmpNpme=nome;
+					$rootScope.tmpId=id;
+					$rootScope.open(pwd);
 				}
-				if (!esci) {
+				else {
 					$rootScope.nomegiocatore=nome;
 					$rootScope.idgiocatore=id;
 					$rootScope.doConnect();
@@ -115,10 +113,10 @@ app.run(
 				});
 				}
 			}
-			$rootScope.cripta=function(v){
-				$rootScope.ret=null;
-				$resource('./cripta',{}).get({'pwd':v,'key':'k'}).$promise.then(function(data) {
-					$rootScope.ret= data;
+			$rootScope.cripta=function(v,k){
+				$rootScope.retCripta=null;
+				$resource('./cripta',{}).get({'pwd':v,'key':k}).$promise.then(function(data) {
+					$rootScope.retCripta= data.value;
 				});
 			}
 			$resource('./init',{}).get().$promise.then(function(data) {
@@ -390,11 +388,11 @@ app.directive('capitalize', function() {
         capitalize(scope[attrs.ngModel]);
       }
     }});
-app.controller('ModalDemoCtrl', function ($uibModal, $log) {
+app.controller('ModalDemoCtrl', function ($uibModal, $log, $rootScope) {
 	  var pc = this;
-	  pc.data = "Lorem Name Test"; 
+	  pc.data = "..."; 
 
-	  pc.open = function (size) {
+	  $rootScope.open = function (size,pwd) {
 	    var modalInstance = $uibModal.open({
 	      animation: true,
 	      ariaLabelledBy: 'modal-title',
@@ -405,30 +403,47 @@ app.controller('ModalDemoCtrl', function ($uibModal, $log) {
 	      size: size,
 	      resolve: {
 	        data: function () {
-	          return pc.data;
+	          return pwd;
 	        }
 	      }
 	    });
+		pc.data=pwd;
 
 	    modalInstance.result.then(function () {
-	      alert("now I'll close the modal");
+//	      alert("now I'll close the modal");
 	    });
 	  };
 	});
 
-app.controller('ModalInstanceCtrl', function ($uibModalInstance, data) {
+app.controller('ModalInstanceCtrl', function ($uibModalInstance, data, $rootScope) {
 	  var pc = this;
 	  pc.data = data;
 	  
-	  pc.ok = function () {
+	  pc.ok = function (modalePwd) {
 	    //{...}
-	    alert("You clicked the ok button."); 
-	    $uibModalInstance.close();
+//	    alert("You clicked the ok button."); 
+		  
+		$rootScope.cripta(modalePwd,$rootScope.tmpNpme);
+
+		pc.data="CONTROLLO PASSWORD...";
+		var millisecondsToWait = 2000;
+		setTimeout(function() {
+			if ($rootScope.retCripta==$rootScope.origPwd){
+				$rootScope.nomegiocatore=$rootScope.tmpNpme;
+				$rootScope.idgiocatore=$rootScope.tmpId;
+				$rootScope.doConnect();
+			    $uibModalInstance.close();
+	        }
+			else{
+				pc.data="PASSWORD ERRATA";
+			}
+		}, millisecondsToWait);
+		
 	  };
 
 	  pc.cancel = function () {
 	    //{...}
-	    alert("You clicked the cancel button."); 
+//	    alert("You clicked the cancel button."); 
 	    $uibModalInstance.dismiss('cancel');
 	  };
 	});

@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -10,34 +10,29 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Criptaggio {
-    private  final String ALGORITHM = "AES";
-    private static final byte[] keyValue = "ADBSJHJS12547896".getBytes();
-    public  String encrypt(String valueToEnc, String x) throws Exception {
-    	if (valueToEnc == null || "".equals(valueToEnc.trim())) return "";
-        Key key = generateKey(x);
-        Cipher c = Cipher.getInstance(ALGORITHM);
-        c.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encValue = c.doFinal(valueToEnc.getBytes());
-        byte[] encryptedByteValue = new Base64().encode(encValue);
-        String encryptedValue = encryptedByteValue.toString();
-        return encryptedValue;
-    }
-
-    public  String decrypt(String encryptedValue, String x) throws Exception {
-    	if (encryptedValue == null || "".equals(encryptedValue.trim())) return "";
-        Key key = generateKey(x);
-        Cipher c = Cipher.getInstance(ALGORITHM);
-        c.init(Cipher.DECRYPT_MODE, key);
-        byte[] enctVal = c.doFinal(encryptedValue.getBytes());
-        byte[] decordedValue = new Base64().decode(enctVal);
-        return decordedValue.toString();
-    }
-
-    private  Key generateKey(String x) throws Exception {
-    	x="ADBSJHJS12547896";
-        byte[] keyValue = x.getBytes();
-        Key key = new SecretKeySpec(keyValue, ALGORITHM);
-        return key;
-    }
+	protected static String encrypt(String sPlainText, String x) throws Exception
+	{
+		if (sPlainText==null || sPlainText.trim().equals("")) return "";
+		byte[] plainText = sPlainText.getBytes();
+		byte[] key = "A1.xMCPP0x-!log?".getBytes(StandardCharsets.UTF_8);
+		SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+		Cipher cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+		byte[] doFinal = cipher.doFinal(plainText);
+		String encodeBase64String = Base64.encodeBase64String(doFinal);
+		return encodeBase64String;
+	}
+	/*
+	protected static String decrypt(String cipherText, String x) throws Exception
+	{
+		byte[] key = "A1.xMCPP0x-!log?".getBytes(StandardCharsets.UTF_8);
+		byte[] decode = Base64.decodeBase64(cipherText);
+		SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+		Cipher cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.DECRYPT_MODE, secretKey);
+		byte[] doFinal = cipher.doFinal(decode);
+		return new String(doFinal);
+	}
+	*/
 
 }

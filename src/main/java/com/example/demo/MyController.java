@@ -89,7 +89,7 @@ public class MyController {
 	
 	@PostMapping("/aggiornaUtenti")
 	public void aggiornaUtenti(@RequestBody List<Map<String, Object>> body) throws Exception {
-		System.out.println(body);
+//		System.out.println(body);
 		for (Map<String, Object> map : body) {
 			Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
 			String nome = (String) map.get("nome");
@@ -105,15 +105,17 @@ public class MyController {
 	}
 
 	@GetMapping("/cripta")
-	public String cripta(@RequestParam(name = "pwd") String pwd,@RequestParam(name = "key") String key) throws Exception {
-		return criptaggio.encrypt(pwd, key);
+	public Map<String,String> cripta(@RequestParam(name = "pwd") String pwd,@RequestParam(name = "key") String key) throws Exception {
+		Map <String, String> m = new HashMap<>();
+		m.put("value", criptaggio.encrypt(pwd, key));
+		return m;
 	}
-
+/*
 	@GetMapping("/decripta")
 	public String decripta(@RequestParam(name = "pwd") String pwd,@RequestParam(name = "key") String key) throws Exception {
 		return criptaggio.decrypt(pwd, key);
 	}
-	
+*/	
 	@PostMapping("/confermaAsta")
 	public void confermaAsta(@RequestBody Map<String, Object> body) throws Exception {
 		//		String nomegiocatore = (String) body.get("nomegiocatore");
