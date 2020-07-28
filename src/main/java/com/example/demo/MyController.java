@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,6 +46,7 @@ public class MyController {
 	@Autowired FantaroseRepository fantaroseRepository;
 	@Autowired GiocatoriRepository giocatoriRepository;
 	@Autowired ConfigurazioneRepository configurazioneRepository;
+	@Autowired Criptaggio criptaggio; 
 	@Autowired EntityManager em;
 
 	@RequestMapping("/init")
@@ -76,7 +78,11 @@ public class MyController {
 			Allenatori al = new Allenatori();
 			al.setId(i);
 			al.setNome("GIOC"+i);
-			al.setIsAdmin(true);
+			if (i==0)
+				al.setIsAdmin(true);
+			else
+				al.setIsAdmin(false);
+			al.setPwd("");
 			allenatoriRepository.save(al);
 		}
 	}
@@ -86,28 +92,28 @@ public class MyController {
 		System.out.println(body);
 		for (Map<String, Object> map : body) {
 			Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
-			al.setNome((String) map.get("nome"));
+			String nome = (String) map.get("nome");
+			al.setNome(nome);
+			String pwd = (String) map.get("pwd");
+			al.setPwd(criptaggio.encrypt(pwd,nome));
 			if("true".equalsIgnoreCase(map.get("isAdmin").toString()))
 				al.setIsAdmin(true);
 			else
 				al.setIsAdmin(false);
 			allenatoriRepository.save(al);
 		}
-		
-		/*
-		Configurazione configurazione = getConfigurazione();
-		configurazione.setNumeroGiocatori(numUtenti);
-		configurazioneRepository.save(configurazione);
-		for(int i=0;i<numUtenti;i++) {
-			Allenatori al = new Allenatori();
-			al.setId(i);
-			al.setNome("GIOC"+i);
-			al.setIsAdmin(true);
-			allenatoriRepository.save(al);
-		}
-		*/
 	}
 
+	@GetMapping("/cripta")
+	public String cripta(@RequestParam(name = "pwd") String pwd,@RequestParam(name = "key") String key) throws Exception {
+		return criptaggio.encrypt(pwd, key);
+	}
+
+	@GetMapping("/decripta")
+	public String decripta(@RequestParam(name = "pwd") String pwd,@RequestParam(name = "key") String key) throws Exception {
+		return criptaggio.decrypt(pwd, key);
+	}
+	
 	@PostMapping("/confermaAsta")
 	public void confermaAsta(@RequestBody Map<String, Object> body) throws Exception {
 		//		String nomegiocatore = (String) body.get("nomegiocatore");

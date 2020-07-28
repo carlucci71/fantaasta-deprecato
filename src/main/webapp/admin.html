@@ -12,13 +12,22 @@
 <script type="text/javascript" src="./app.js"></script>
 
 <body x-ng-app="app" style="margin-left:20px">
-ADMIN
-<table>
+<table >
+	  <tr>
+	  	<td>Nome</td>
+	  	<td>Pwd</td>
+		<td>Admin</td>
+	  </tr>
 	  <tr ng-repeat="utente in elencoAllenatori">
 	  	<td>
-				<input  style='width: 60px;' type="text"  ng-model="utente.nome"></input>
-				<input  style='width: 60px;' type="text"  ng-model="utente.isAdmin"></input>
+				<input  style='width: 300px;' type="text"  ng-model="utente.nome"></input>
 		</td>
+	  	<td>
+				<input  style='width: 300px;' type="password"  ng-model="utente.pwd"></input>
+		</td>
+		<td>
+					<input  style='width: 60px;' type="checkbox"  ng-model="utente.isAdmin"></input>
+		</td>	
 	  </tr>
 </table>
 <input type="button" value="aggiorna" ng-click="aggiornaUtenti()"></input>

@@ -13,6 +13,7 @@ public class Allenatori {
 	@Id
 	private Integer id;
 	private String nome;
+	private String pwd;
 	private Boolean isAdmin;
 	public Integer getId() {
 		return id;
@@ -32,8 +33,14 @@ public class Allenatori {
 	public void setIsAdmin(Boolean isAdmin) {
 		this.isAdmin = isAdmin;
 	}
+	public String getPwd() {
+		return pwd;
+	}
+	public void setPwd(String pwd) {
+		this.pwd = pwd;
+	}
 	@Override
 	public String toString() {
-		return "Allenatori [id=" + id + ", nome=" + nome + ", isAdmin=" + isAdmin + "]";
+		return "Allenatori [id=" + id + ", nome=" + nome + ", pwd=" + pwd + ", isAdmin=" + isAdmin + "]";
 	}
 }

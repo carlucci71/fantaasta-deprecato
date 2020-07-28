@@ -30,7 +30,7 @@ Numero utenti:<input  style='width: 60px;' type="number"  ng-model="numeroUtenti
 	  <tr ng-repeat="utente in elencoAllenatori">
 	    <td>{{utente.nome}}</td>
 	    	<td ng-show="!isLoggato() && !utenteCollegato(utente)">
-			    <a href=#><img style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id)" height="25" width="25"/></a>
+			    <a href=#><img style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)" height="25" width="25"/></a>
 	    	</td>
 	    	<td>
 			    <a ng-show="sonoLoggato(utente)" href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" height="20" width="20"/></a>

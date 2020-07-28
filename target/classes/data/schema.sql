@@ -1,7 +1,7 @@
-drop table IF EXISTS fantarose;
-drop table IF EXISTS allenatori ;
-drop table IF EXISTS giocatori;
-drop table IF EXISTS configurazione;
+#drop table IF EXISTS fantarose;
+#drop table IF EXISTS allenatori ;
+#drop table IF EXISTS giocatori;
+#drop table IF EXISTS configurazione;
 create table IF NOT EXISTS  fantarose (
     idgiocatore INT not null
 );

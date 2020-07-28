@@ -1,4 +1,3 @@
-var app=angular.module("app",["ngResource"]);
 var app = angular.module('app', [ 'ngResource' ]);
 app.run(
 		function($rootScope, $resource, $interval){
@@ -12,15 +11,25 @@ app.run(
 			$rootScope.tokenUtente;
 			$rootScope.isAdmin=false;
 			$rootScope.calciatori=[];
-			$rootScope.numeroUtenti=6;
+			$rootScope.numeroUtenti=8;
 			$rootScope.isLoggato= function(){
 				if (!$rootScope.giocatore) return false;
 				return $rootScope.giocatore!='';
 			};
-			$rootScope.callDoConnect = function(nome,id) {
-				$rootScope.nomegiocatore=nome;
-				$rootScope.idgiocatore=id;
-				$rootScope.doConnect();
+			$rootScope.callDoConnect = function(nome,id, pwd) {
+				var inputPwd="";
+				var esci=false;
+				while (pwd != inputPwd) {
+					inputPwd=window.prompt("Immetti la password","");
+					if (inputPwd==null) esci=true;
+					$rootScope.cripta(inputPwd);
+					alert("....");
+				}
+				if (!esci) {
+					$rootScope.nomegiocatore=nome;
+					$rootScope.idgiocatore=id;
+					$rootScope.doConnect();
+				}
 			}
 			$rootScope.doConnect = function() {
 		        console.log('Connected');
@@ -62,7 +71,7 @@ app.run(
 			}
 			$rootScope.aggiornaUtenti= function() {
 				$resource('./aggiornaUtenti',{}).save($rootScope.elencoAllenatori).$promise.then(function(data) {
-//					$rootScope.cronologiaOfferte=data;
+					window.location.href = './index.html';
 				});
 			}
 			$rootScope.doDisconnect = function() {
@@ -101,9 +110,15 @@ app.run(
 			$rootScope.confermaNumUtenti=function(){
 				if ($rootScope.numeroUtenti>0){
 				$resource('./aggiornaNumUtenti',{}).save($rootScope.numeroUtenti).$promise.then(function(data) {
-//					$rootScope.cronologiaOfferte=data;
+					window.location.href = './admin.html';
 				});
 				}
+			}
+			$rootScope.cripta=function(v){
+				$rootScope.ret=null;
+				$resource('./cripta',{}).get({'pwd':v,'key':'k'}).$promise.then(function(data) {
+					$rootScope.ret= data;
+				});
 			}
 			$resource('./init',{}).get().$promise.then(function(data) {
 				if (data.DA_CONFIGURARE){
