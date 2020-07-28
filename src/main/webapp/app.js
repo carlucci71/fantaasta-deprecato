@@ -1,4 +1,4 @@
-var app = angular.module('app', [ 'ngResource' ]);
+var app = angular.module('app', [ 'ngResource','ngAnimate', 'ngSanitize', 'ui.bootstrap' ]);
 app.run(
 		function($rootScope, $resource, $interval){
 			$rootScope.config=false;
@@ -19,6 +19,7 @@ app.run(
 			$rootScope.callDoConnect = function(nome,id, pwd) {
 				var inputPwd="";
 				var esci=false;
+				$rootScope.ModalDemoCtrl.open();
 				while (pwd != inputPwd) {
 					inputPwd=window.prompt("Immetti la password","");
 					if (inputPwd==null) esci=true;
@@ -389,3 +390,45 @@ app.directive('capitalize', function() {
         capitalize(scope[attrs.ngModel]);
       }
     }});
+app.controller('ModalDemoCtrl', function ($uibModal, $log) {
+	  var pc = this;
+	  pc.data = "Lorem Name Test"; 
+
+	  pc.open = function (size) {
+	    var modalInstance = $uibModal.open({
+	      animation: true,
+	      ariaLabelledBy: 'modal-title',
+	      ariaDescribedBy: 'modal-body',
+	      templateUrl: 'modale.html',
+	      controller: 'ModalInstanceCtrl',
+	      controllerAs: 'pc',
+	      size: size,
+	      resolve: {
+	        data: function () {
+	          return pc.data;
+	        }
+	      }
+	    });
+
+	    modalInstance.result.then(function () {
+	      alert("now I'll close the modal");
+	    });
+	  };
+	});
+
+app.controller('ModalInstanceCtrl', function ($uibModalInstance, data) {
+	  var pc = this;
+	  pc.data = data;
+	  
+	  pc.ok = function () {
+	    //{...}
+	    alert("You clicked the ok button."); 
+	    $uibModalInstance.close();
+	  };
+
+	  pc.cancel = function () {
+	    //{...}
+	    alert("You clicked the cancel button."); 
+	    $uibModalInstance.dismiss('cancel');
+	  };
+	});
