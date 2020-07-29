@@ -114,9 +114,9 @@ app.run(
 				});
 				}
 			}
-			$rootScope.cripta=function(v,k){
+			$rootScope.cripta=function(){//
 				$rootScope.retCripta=null;
-				$resource('./cripta',{}).get({'pwd':v,'key':k}).$promise.then(function(data) {
+				$resource('./cripta',{}).get({'pwd':$rootScope.modalePwd,'key':$rootScope.tmpNpme}).$promise.then(function(data) {
 					$rootScope.retCripta= data.value;
 				});
 			}
@@ -423,7 +423,7 @@ app.controller('ModalInstanceCtrl', function ($uibModalInstance, data, $rootScop
 	  pc.ok = function (modalePwd) {
 	    //{...}
 //	    alert("You clicked the ok button."); 
-		  
+		$rootScope.modalePwd=modalePwd;
 		$rootScope.cripta(modalePwd,$rootScope.tmpNpme);
 
 		pc.data="CONTROLLO PASSWORD...";
