@@ -1,6 +1,6 @@
 var app = angular.module('app', [ 'ngResource','ngAnimate', 'ngSanitize', 'ui.bootstrap' ]);
 app.run(
-		function($rootScope, $resource, $interval){
+		function($rootScope, $resource, $interval, $q){
 			$rootScope.config=false;
 			$rootScope.giocatore="";
 			$rootScope.offerta=1;
@@ -114,11 +114,8 @@ app.run(
 				});
 				}
 			}
-			$rootScope.cripta=function(){//
-				$rootScope.retCripta=null;
-				$resource('./cripta',{}).get({'pwd':$rootScope.modalePwd,'key':$rootScope.tmpNpme}).$promise.then(function(data) {
-					$rootScope.retCripta= data.value;
-				});
+			$rootScope.cripta=function(pwd){//
+				return $resource('./cripta',{}).get({'pwd':pwd,'key':$rootScope.tmpNpme});
 			}
 			$resource('./init',{}).get().$promise.then(function(data) {
 				if (data.DA_CONFIGURARE){
@@ -416,30 +413,24 @@ app.controller('ModalDemoCtrl', function ($uibModal, $log, $rootScope) {
 	  };
 	});
 
-app.controller('ModalInstanceCtrl', function ($uibModalInstance, data, $rootScope) {
+app.controller('ModalInstanceCtrl', function ($uibModalInstance, data, $rootScope, $q) {
 	  var pc = this;
 	  pc.data = data;
 	  
 	  pc.ok = function (modalePwd) {
-	    //{...}
-//	    alert("You clicked the ok button."); 
-		$rootScope.modalePwd=modalePwd;
-		$rootScope.cripta(modalePwd,$rootScope.tmpNpme);
-
+		$rootScope.cripta(modalePwd).$promise.then(function (data){
 		pc.data="CONTROLLO PASSWORD...";
-		var millisecondsToWait = 2000;
-		setTimeout(function() {
-			if ($rootScope.retCripta==$rootScope.origPwd){
-				$rootScope.nomegiocatore=$rootScope.tmpNpme;
-				$rootScope.idgiocatore=$rootScope.tmpId;
-				$rootScope.doConnect();
-			    $uibModalInstance.close();
-	        }
-			else{
-				pc.data="PASSWORD ERRATA";
-			}
-		}, millisecondsToWait);
-		
+		if (data.value==$rootScope.origPwd){
+			$rootScope.nomegiocatore=$rootScope.tmpNpme;
+			$rootScope.idgiocatore=$rootScope.tmpId;
+			$rootScope.doConnect();
+		    $uibModalInstance.close();
+        }
+		else{
+			pc.data="PASSWORD ERRATA";
+		}
+		}
+		)
 	  };
 
 	  pc.cancel = function () {
