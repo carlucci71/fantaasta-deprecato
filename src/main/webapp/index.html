@@ -140,8 +140,10 @@ Numero utenti:<input  style='width: 60px;' type="number"  ng-model="numeroUtenti
 				<a href=#><img src='./stop.jpg' ng-click="terminaAsta()" height="50" width="50"/></a>
 			</div>
 		</div>
-	
-		<label ng-repeat="messaggio in messaggi" for="{{messaggio}}">{{messaggio}}<br></label>
+		
+		<div ng-repeat="messaggio in messaggi" for="{{messaggio}}">
+		<label >{{messaggio}}</label><br>
+		</div>
 		
 	</span>
 </div>
