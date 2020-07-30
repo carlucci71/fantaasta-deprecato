@@ -153,6 +153,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 				str = str + "(" + nomegiocatoreOperaCome + ")";
 			}
+			messaggi=new ArrayList<>();
 			messaggi.add(simpleDateFormat.format(calInizioOfferta.getTime()) + str);
 			invia(toJson(m));
 		}
