@@ -124,7 +124,7 @@ public class MyController {
 				{	
 					giocatori.setQuotazione(-1);
 				}
-				giocatori.setRuolo(colonne[1]);
+				giocatori.setRuolo(colonne[1].replaceAll("\"", ""));
 				giocatori.setSquadra(colonne[3]);
 				giocatoriRepository.save(giocatori);
 			}

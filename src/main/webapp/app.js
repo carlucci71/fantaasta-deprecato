@@ -301,10 +301,30 @@ app.run(
 						if(value.isAdmin) $rootScope.isAdmin=true;
 					});
 			}
-			
 			$rootScope.$watch("elencoAllenatori", function(newValue, oldValue) {
 				$rootScope.calcolaIsAdmin();
 			});
+
+
+			$rootScope.sort = {
+				    column: 'Ruolo',
+				    descending: false
+				};
+
+			$rootScope.selectedCls = function(column) {
+				    return column == $rootScope.sort.column && 'sort-' + $rootScope.sort.descending;
+				};
+
+				$rootScope.changeSorting = function(column) {
+				    var sort = $rootScope.sort;
+				    if (sort.column == column) {
+				        sort.descending = !sort.descending;
+				    } else {
+				        sort.column = column;
+				        sort.descending = false;
+				    }
+				};			
+			
 			
 			
 			
