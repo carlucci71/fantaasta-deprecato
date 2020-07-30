@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,6 +11,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,6 +25,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import com.example.demo.entity.Allenatori;
 import com.example.demo.entity.Configurazione;
@@ -69,6 +77,64 @@ public class MyController {
 		return m;
 	}
 
+	@PostMapping("/caricaFileFS")
+	public void caricaFileFS(@RequestBody Map<String,String> obj) throws Exception {
+		String content = obj.get("file");
+		String tipoFile = obj.get("tipo");
+		giocatoriRepository.deleteAll();
+		if("FS".equalsIgnoreCase(tipoFile)) {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			InputSource is = new InputSource(new StringReader(content));
+			Document parse = builder.parse(is);
+			NodeList childNodes = parse.getChildNodes().item(0).getChildNodes();
+			for (int i=0;i<childNodes.getLength();i++) {
+				if (i>0) {
+					Node tr = childNodes.item(i);
+					NodeList childNodesTr = tr.getChildNodes();
+					String id = childNodesTr.item(0).getTextContent(); 
+					String squadra = childNodesTr.item(3).getTextContent(); 
+					String nome = childNodesTr.item(2).getTextContent() + " " + childNodesTr.item(1).getTextContent(); 
+					String ruolo = childNodesTr.item(4).getTextContent(); 
+					String quotazione = childNodesTr.item(6).getTextContent(); 
+					System.out.println(id + "-" +squadra + "-" +nome + "-" +ruolo + "-" +quotazione + "-" );
+					Giocatori giocatori = new Giocatori();
+					giocatori.setId(Integer.parseInt(id));
+					giocatori.setNome(nome);
+					giocatori.setQuotazione(Integer.parseInt(quotazione));
+					giocatori.setRuolo(ruolo);
+					giocatori.setSquadra(squadra);
+					giocatoriRepository.save(giocatori);
+				}
+			}
+		}
+		else if("MANTRA".equalsIgnoreCase(tipoFile)) {
+			String[] split = content.split("\n");
+			for(int i=1;i<split.length;i++) {
+				String riga = split[i];
+				String[] colonne = riga.split("\t");
+				Giocatori giocatori = new Giocatori();
+				giocatori.setId(Integer.parseInt(colonne[0]));
+				giocatori.setNome(colonne[2]);
+				try
+				{
+					giocatori.setQuotazione(Integer.parseInt(colonne[6].replace("\r", "")));
+				}
+				catch (Exception e)
+				{	
+					giocatori.setQuotazione(-1);
+				}
+				giocatori.setRuolo(colonne[1]);
+				giocatori.setSquadra(colonne[3]);
+				giocatoriRepository.save(giocatori);
+			}
+		}
+		else {
+			throw new RuntimeException("Tipo file non riconoscituo:" + tipoFile);
+		}
+
+	}
+	
 	@PostMapping("/aggiornaNumUtenti")
 	public void aggiornaNumUtenti(@RequestBody int numUtenti) throws Exception {
 		Configurazione configurazione = getConfigurazione();

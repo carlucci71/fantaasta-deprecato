@@ -48,9 +48,19 @@ app.run(
 					});
 				return ret;
 			}
-			
-			
+			$rootScope.caricaFile = function(tipoFile){
+				 var f = document.getElementById('file').files[0],
+			        r = new FileReader();
 
+			    r.onloadend = function(e) {
+			      var data = e.target.result;
+					$resource('./caricaFileFS',{}).save({'file':data, 'tipo' : tipoFile}).$promise.then(function(ret) {
+						
+					});
+			    }
+
+			    r.readAsBinaryString(f);
+			}
 			$rootScope.sonoLoggato = function(u){
 				var ret = false;
 				angular.forEach($rootScope.utenti, function(value,chiave) {

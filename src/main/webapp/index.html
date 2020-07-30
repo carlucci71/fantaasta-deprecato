@@ -72,7 +72,7 @@ Numero utenti:<input  style='width: 60px;' type="number"  ng-model="numeroUtenti
 		
 			<label>Calciatore: </label>
 			<select ng-model="selCalciatore">
-	  			<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}}</option>
+	  			<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}} ({{calciatore.ruolo}}) {{calciatore.squadra}}</option>
 			</select>
 		
 			<a href=# ng-show="selCalciatore && durataAsta>0"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
@@ -119,16 +119,16 @@ Numero utenti:<input  style='width: 60px;' type="number"  ng-model="numeroUtenti
 			<div align=center>
 		
 			<label ng-show="timeStart==3 && offertaVincente.nomegiocatore==giocatore" class="finitoVincente">
-				Hai vinto {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+				Hai vinto {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}    
 			</label>
 			<label ng-show="timeStart==3 && offertaVincente.nomegiocatore!=giocatore" class="finitoPerdente">
-				{{offertaVincente.nomegiocatore}} ha vinto {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+				{{offertaVincente.nomegiocatore}} ha vinto {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}
 			</label>
 			<label ng-show="timeStart<3 && offertaVincente.nomegiocatore==giocatore" class="correnteVincente">
-				Stai vincendo {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+				Stai vincendo {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}
 			</label>
 			<label ng-show="timeStart<3 && offertaVincente.nomegiocatore!=giocatore" class="correntePerdente">
-				{{offertaVincente.nomegiocatore}} sta vincendo {{offertaVincente.nomeCalciatore}} con {{offertaVincente.offerta}}
+				{{offertaVincente.nomegiocatore}} sta vincendo {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}
 			</label>
 				&nbsp;&nbsp;
 				<a ng-show="timeStart==3 && isAdmin" href=#>

@@ -17,6 +17,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.example.demo.repository.GiocatoriRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +39,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	String sSemaforoAttivo;
 	List<String> messaggi=new ArrayList<>();
 	@Autowired MyController myController;
-	
+	@Autowired GiocatoriRepository giocatoriRepository;	
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws InterruptedException, IOException {
 		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTPSESSIONID");
@@ -54,6 +55,9 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			pingUtenti.remove(nomegiocatore);
 			Map<String, Object> m = new HashMap<>();
 			m.put("utenti", utentiLoggati);
+			Calendar now = Calendar.getInstance();
+			messaggi.add(simpleDateFormat.format(now.getTime()) + " Utente cancellato: " + nomegiocatore);
+			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}
 		if (operazione != null && operazione.equals("connetti")) {
@@ -90,6 +94,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("selCalciatore", "x");
+			Calendar now = Calendar.getInstance();
+			messaggi.add(simpleDateFormat.format(now.getTime()) + " Asta confermata");
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}		
@@ -100,6 +106,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 //			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("selCalciatore", "x");
+			Calendar now = Calendar.getInstance();
+			messaggi.add(simpleDateFormat.format(now.getTime()) + " Asta annullata");
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}		
@@ -130,11 +138,13 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				sSemaforoAttivo="N";
 			calInizioOfferta = Calendar.getInstance();
 			offertaVincente = new HashMap<>();
+			offertaVincente.put("giocatore", giocatoriRepository.findOne(Integer.parseInt(idCalciatore)));
 			offertaVincente.put("nomegiocatore", nomegiocatore);
 			offertaVincente.put("idgiocatore", idgiocatore);
 			offertaVincente.put("offerta", 1);
 			offertaVincente.put("nomeCalciatore", nomeCalciatore);
 			offertaVincente.put("idCalciatore", idCalciatore);
+			
 			Map<String, Object> m = new HashMap<>();
 			m.put("offertaVincente", offertaVincente);
 			String str = " Offerta avviata da " + nomegiocatore;
@@ -154,6 +164,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			httpSession.removeAttribute("giocatoreLoggato");
 			httpSession.removeAttribute("idLoggato");
 			Map<String, Object> m = new HashMap<>();
+			Calendar now = Calendar.getInstance();
+			messaggi.add(simpleDateFormat.format(now.getTime()) + " Utente disconnesso: " + nomegiocatore);
 			m.put("utenti", utentiLoggati);
 			invia(toJson(m));
 		}
@@ -163,6 +175,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 			m.put("durataAsta", durataAsta);
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
+			Calendar now = Calendar.getInstance();
+			messaggi.add(simpleDateFormat.format(now.getTime()) + " Durata asta modificata da: " + giocatoreDurataAsta);
 			invia(toJson(m));
 			
 		}

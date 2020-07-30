@@ -7,24 +7,36 @@
 <link href="./stile.css" rel="stylesheet" type="text/css">
 <link href="./bootstrap.css" rel="stylesheet" type="text/css">
 <link href="./bootstrap-theme.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="./angular.js"></script>
-<script type="text/javascript" src="./angular-resource.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-resource.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
+<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="./app.js"></script>
 
 <body x-ng-app="app" style="margin-left:20px">
 
 <input type="button" value="aggiorna" ng-click="aggiornaCronologiaOfferte()"></input>
 
-<table border>
+<table border >
+  <tr>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">Ruolo</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">Id</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">Giocatore</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">Squadra</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">Costo</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">Allenatore</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">SqlTime</td>
+  </tr>
   <tr ng-repeat="offerta in cronologiaOfferte">
-    <td>{{offerta.ruolo}}</td>
-    <td>{{offerta.idGiocatore}}</td>
-    <td>{{offerta.giocatore}}</td>
-    <td>{{offerta.squadra}}</td>
-    <td>{{offerta.costo}}</td>
-    <td>{{offerta.allenatore}}</td>
-    <td>{{offerta.sqlTime}}</td>
-
+    <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.ruolo}}</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.idGiocatore}}</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.giocatore}}</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.squadra}}</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.costo}}</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.allenatore}}</td>
+    <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.sqlTime}}</td>
   </tr>
 </table>
 
