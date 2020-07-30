@@ -453,3 +453,27 @@ app.controller('ModalInstanceCtrl', function ($uibModalInstance, data, $rootScop
 	    $uibModalInstance.dismiss('cancel');
 	  };
 	});
+
+app.filter('myTableFilter', function($rootScope){
+	  return function(dataArray) {
+	      if (!dataArray) {
+	          return;
+	      }
+	      else {
+	    	  console.log();
+	           return dataArray.filter(function(item){
+	              var termInRuolo=true;
+	              if($rootScope.filterRuolo) termInRuolo=item.ruolo.toLowerCase().indexOf($rootScope.filterRuolo.toLowerCase()) > -1;
+	              var termInNome=true;
+	              if($rootScope.filterNome) termInNome = item.nome.toLowerCase().indexOf($rootScope.filterNome.toLowerCase()) > -1;
+	              var termInSquadra=true;
+	              if($rootScope.filterSquadra) termInSquadra = item.squadra.toLowerCase().indexOf($rootScope.filterSquadra.toLowerCase()) > -1;
+	              var termInQuotazione=true;
+	              if($rootScope.filterQuotazione) termInQuotazione = item.quotazione >= $rootScope.filterQuotazione;
+	              return termInRuolo && termInNome && termInSquadra && termInQuotazione;
+	              
+	              
+	           });
+	      } 
+	  }    
+	});

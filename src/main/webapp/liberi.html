@@ -25,9 +25,15 @@
             <th>Squadra</th>
             <th>Quotazione</th>
         </tr>
+        <tr>
+            <th><input type=text ng-model="filterRuolo"></input></th>
+            <th><input type=text ng-model="filterNome"></input></th>
+            <th><input type=text ng-model="filterSquadra"></input></th>
+            <th><input type=number ng-model="filterQuotazione"></input></th>
+        </tr>
     </thead>
     <tbody>
-  <tr ng-repeat="calciatore in calciatori">
+  <tr ng-repeat="calciatore in calciatori | myTableFilter">
         <td>{{calciatore.ruolo}}</td>
         <td>{{calciatore.nome}}</td>
       	<td>{{calciatore.squadra}}</td>
