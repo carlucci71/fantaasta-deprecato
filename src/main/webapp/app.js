@@ -1,6 +1,6 @@
 var app = angular.module('app', [ 'ngResource','ngAnimate', 'ngSanitize', 'ui.bootstrap' ]);
 app.run(
-		function($rootScope, $resource, $interval, $q){
+		function($rootScope, $resource, $interval){
 			$rootScope.config=false;
 			$rootScope.giocatore="";
 			$rootScope.offerta=1;
@@ -113,9 +113,6 @@ app.run(
 					window.location.href = './admin.html';
 				});
 				}
-			}
-			$rootScope.cripta=function(pwd){//
-				return $resource('./cripta',{}).get({'pwd':pwd,'key':$rootScope.tmpNpme});
 			}
 			$resource('./init',{}).get().$promise.then(function(data) {
 				if (data.DA_CONFIGURARE){
@@ -413,24 +410,26 @@ app.controller('ModalDemoCtrl', function ($uibModal, $log, $rootScope) {
 	  };
 	});
 
-app.controller('ModalInstanceCtrl', function ($uibModalInstance, data, $rootScope, $q) {
+app.controller('ModalInstanceCtrl', function ($uibModalInstance, data, $rootScope, $resource) {
 	  var pc = this;
 	  pc.data = data;
 	  
 	  pc.ok = function (modalePwd) {
-		$rootScope.cripta(modalePwd).$promise.then(function (data){
-		pc.data="CONTROLLO PASSWORD...";
-		if (data.value==$rootScope.origPwd){
-			$rootScope.nomegiocatore=$rootScope.tmpNpme;
-			$rootScope.idgiocatore=$rootScope.tmpId;
-			$rootScope.doConnect();
-		    $uibModalInstance.close();
-        }
-		else{
-			pc.data="PASSWORD ERRATA";
-		}
-		}
-		)
+		  
+			$resource('./cripta',{}).get({'pwd':modalePwd,'key':$rootScope.tmpNpme}).$promise.then(function(data) {
+				pc.data="CONTROLLO PASSWORD...";
+				if (data.value==$rootScope.origPwd){
+					$rootScope.nomegiocatore=$rootScope.tmpNpme;
+					$rootScope.idgiocatore=$rootScope.tmpId;
+					$rootScope.doConnect();
+				    $uibModalInstance.close();
+		        }
+				else{
+					pc.data="PASSWORD ERRATA";
+				}
+			});
+		  
+		  
 	  };
 
 	  pc.cancel = function () {
