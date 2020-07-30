@@ -82,32 +82,34 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			httpSession.setAttribute("idLoggato", idgiocatore);
 			utentiLoggati.add(nomegiocatore);
 			m.put("calciatori", myController.getGiocatoriLiberi());
+			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			m.put("utenti", utentiLoggati);
 			messaggi.add(simpleDateFormat.format(now.getTime()) + " Connesso: " + nomegiocatore);
 			m.put("messaggi", messaggi);
+			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("confermaAsta")) {
 			sSemaforoAttivo="S";
-			offertaVincente = new HashMap<>();
 			messaggi = new ArrayList<>();
+			Calendar now = Calendar.getInstance();
+			messaggi.add(simpleDateFormat.format(now.getTime()) + " Asta confermata per:" + offertaVincente.get("nomeCalciatore"));
+			offertaVincente = new HashMap<>();
 			Map<String, Object> m = new HashMap<>();
 			m.put("calciatori", myController.getGiocatoriLiberi());
+			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			m.put("selCalciatore", "x");
-			Calendar now = Calendar.getInstance();
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Asta confermata");
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}		
 		else if (operazione != null && operazione.equals("annullaAsta")) {
 			sSemaforoAttivo="S";
-			offertaVincente = new HashMap<>();
 			messaggi = new ArrayList<>();
-			Map<String, Object> m = new HashMap<>();
-//			m.put("calciatori", myController.getGiocatoriLiberi());
-			m.put("selCalciatore", "x");
 			Calendar now = Calendar.getInstance();
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Asta annullata");
+			messaggi.add(simpleDateFormat.format(now.getTime()) + " Asta annullata per:" + offertaVincente.get("nomeCalciatore"));
+			offertaVincente = new HashMap<>();
+			Map<String, Object> m = new HashMap<>();
+			m.put("selCalciatore", "x");
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}		

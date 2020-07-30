@@ -112,11 +112,13 @@ app.run(
 			$resource('./giocatoriLiberi',{}).query().$promise.then(function(data) {
 				$rootScope.calciatori=data;
 			});
+			/*
 			$rootScope.aggiornaCronologiaOfferte=function(){
 				$resource('./elencoCronologiaOfferte',{}).query().$promise.then(function(data) {
 					$rootScope.cronologiaOfferte=data;
 				});
 			}
+			*/
 			$rootScope.confermaNumUtenti=function(){
 				if ($rootScope.numeroUtenti>0){
 				$resource('./aggiornaNumUtenti',{}).save($rootScope.numeroUtenti).$promise.then(function(data) {
@@ -165,6 +167,9 @@ app.run(
 					}
 					if (msg.calciatori){
 						$rootScope.calciatori=msg.calciatori;
+					}
+					if (msg.cronologiaOfferte){
+						$rootScope.cronologiaOfferte=msg.cronologiaOfferte;
 					}
 					if (msg.messaggi){
 						//$rootScope.messaggi.push(msg.messaggio);

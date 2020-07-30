@@ -1,0 +1,40 @@
+<html>
+<head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+</head>
+<link href="./stile.css" rel="stylesheet" type="text/css">
+<link href="./bootstrap.css" rel="stylesheet" type="text/css">
+<link href="./bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-resource.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
+<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="./app.js"></script>
+
+
+<body x-ng-app="app" style="margin-left:20px">
+ <table>
+    <thead>
+        <tr>
+            <th>Ruolo</th>
+            <th>Nome</th>
+            <th>Squadra</th>
+            <th>Quotazione</th>
+        </tr>
+    </thead>
+    <tbody>
+  <tr ng-repeat="calciatore in calciatori">
+        <td>{{calciatore.ruolo}}</td>
+        <td>{{calciatore.nome}}</td>
+      	<td>{{calciatore.squadra}}</td>
+      	<td>{{calciatore.quotazione}}</td></tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>
