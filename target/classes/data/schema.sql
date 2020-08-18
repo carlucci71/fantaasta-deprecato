@@ -1,12 +1,19 @@
 #drop table IF EXISTS fantarose;
-#drop table IF EXISTS allenatori ;
 #drop table IF EXISTS giocatori;
 #drop table IF EXISTS configurazione;
+#drop table IF EXISTS leghe_allenatori;
+#drop table IF EXISTS leghe;
+#drop table IF EXISTS allenatori;
 create table IF NOT EXISTS  fantarose (
     idgiocatore INT not null
 );
 create table IF NOT EXISTS  allenatori (
-    id INT not null
+    id INT not null AUTO_INCREMENT,
+   PRIMARY KEY (id)
+);
+create table IF NOT EXISTS  leghe (
+    id INT not null AUTO_INCREMENT,
+   PRIMARY KEY (id)
 );
 create table IF NOT EXISTS  giocatori (
     id INT not null

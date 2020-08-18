@@ -32,3 +32,4 @@ target/classes/application.properties
 target/classes/data/schema.sql
 target/classes/application.properties
 target/classes/data/schema.sql
+target/classes/data/schema.sql
