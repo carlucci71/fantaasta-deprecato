@@ -28,3 +28,5 @@ target/classes/application.properties
 .classpath
 .settings/org.eclipse.jdt.core.prefs
 .classpath
+target/classes/application.properties
+target/classes/data/schema.sql
