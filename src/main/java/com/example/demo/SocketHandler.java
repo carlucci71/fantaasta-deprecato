@@ -17,13 +17,23 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.example.demo.entity.Logger;
 import com.example.demo.repository.GiocatoriRepository;
+import com.example.demo.repository.LoggerRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class SocketHandler extends TextWebSocketHandler implements WebSocketHandler {
+	
+	private void creaMessaggio(String messaggio) {
+		messaggi.add(messaggio);
+		Logger entity= new Logger();
+		entity.setId(System.currentTimeMillis());
+		entity.setMessaggio(messaggio);
+		loggerRepository.save(entity);
+	}
 	
 	List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 	List<String> utentiLoggati = new ArrayList<>();
@@ -37,6 +47,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	String nomeCalciatore;
 	String giocatoreDurataAsta="";
 	String sSemaforoAttivo;
+	@Autowired LoggerRepository loggerRepository;
 	List<String> messaggi=new ArrayList<>();
 	@Autowired MyController myController;
 	@Autowired GiocatoriRepository giocatoriRepository;	
@@ -56,9 +67,15 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 			m.put("utenti", utentiLoggati);
 			Calendar now = Calendar.getInstance();
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Utente cancellato: " + nomegiocatore);
+			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Utente cancellato: " + nomegiocatore);
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
+		}
+		if (operazione != null && operazione.equals("azzera")) {
+			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			String idgiocatore = jsonToMap.get("idgiocatore").toString();
+			Calendar now = Calendar.getInstance();
+			creaMessaggio(simpleDateFormat.format(now.getTime()) + " AZZERATO DA: " + nomegiocatore);
 		}
 		if (operazione != null && operazione.equals("connetti")) {
 //			messaggi = new ArrayList<>();
@@ -74,7 +91,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			}
 			if (utentiLoggati != null && utentiLoggati.contains(nomegiocatore)) {
 //				m.put("RESET_UTENTE",tokenUtente);
-				messaggi.add(simpleDateFormat.format(now.getTime()) + " Sessione RUBATA da " + nomegiocatore);
+				creaMessaggio(simpleDateFormat.format(now.getTime()) + " Sessione RUBATA da " + nomegiocatore);
 			} 
 
 			httpSession.setAttribute("giocatoreLoggato", nomegiocatore);
@@ -84,7 +101,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			m.put("utenti", utentiLoggati);
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Connesso: " + nomegiocatore);
+			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Connesso: " + nomegiocatore);
 			m.put("messaggi", messaggi);
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			invia(toJson(m));
@@ -93,7 +110,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			sSemaforoAttivo="S";
 			messaggi = new ArrayList<>();
 			Calendar now = Calendar.getInstance();
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Asta confermata per:" + offertaVincente.get("nomeCalciatore"));
+			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Asta confermata per:" + offertaVincente.get("nomeCalciatore"));
 			offertaVincente = new HashMap<>();
 			Map<String, Object> m = new HashMap<>();
 			m.put("calciatori", myController.getGiocatoriLiberi());
@@ -106,7 +123,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			sSemaforoAttivo="S";
 			messaggi = new ArrayList<>();
 			Calendar now = Calendar.getInstance();
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Asta annullata per:" + offertaVincente.get("nomeCalciatore"));
+			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Asta annullata per:" + offertaVincente.get("nomeCalciatore"));
 			offertaVincente = new HashMap<>();
 			Map<String, Object> m = new HashMap<>();
 			m.put("selCalciatore", "x");
@@ -119,7 +136,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			calInizioOfferta.set(Calendar.YEAR, 1971);
 			Calendar now = Calendar.getInstance();
 			Map<String, Object> m = new HashMap<>();
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Offerta terminata in anticipo da " + nomegiocatore);
+			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Offerta terminata in anticipo da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore"));
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}
@@ -149,12 +166,12 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			
 			Map<String, Object> m = new HashMap<>();
 			m.put("offertaVincente", offertaVincente);
-			String str = " Offerta avviata da " + nomegiocatore;
+			String str = " Offerta avviata da " + nomegiocatore + " per " + nomeCalciatore;
 			if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 				str = str + "(" + nomegiocatoreOperaCome + ")";
 			}
 			messaggi=new ArrayList<>();
-			messaggi.add(simpleDateFormat.format(calInizioOfferta.getTime()) + str);
+			creaMessaggio(simpleDateFormat.format(calInizioOfferta.getTime()) + str);
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("disconnetti")) {
@@ -168,7 +185,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			httpSession.removeAttribute("idLoggato");
 			Map<String, Object> m = new HashMap<>();
 			Calendar now = Calendar.getInstance();
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Utente disconnesso: " + nomegiocatore);
+			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Utente disconnesso: " + nomegiocatore);
 			m.put("utenti", utentiLoggati);
 			invia(toJson(m));
 		}
@@ -179,7 +196,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("durataAsta", durataAsta);
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
 			Calendar now = Calendar.getInstance();
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Durata asta modificata da: " + giocatoreDurataAsta);
+			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Durata asta modificata da: " + giocatoreDurataAsta);
 			invia(toJson(m));
 			
 		}
@@ -200,14 +217,15 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 					str = str + "(" + nomegiocatoreOperaCome + ")";
 				}
-				messaggi.add(simpleDateFormat.format(now.getTime()) + str);
+				creaMessaggio(simpleDateFormat.format(now.getTime()) + str);
 			} else {
 				String str = " Offerta di " + offerta + " fatta da " + nomegiocatore;
 				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 					str = str + "(" + nomegiocatoreOperaCome + ")";
 				}
+				str = str + " per " + offertaVincente.get("nomeCalciatore");
 				if (attOfferta != null && offerta<=attOfferta) {
-					messaggi.add(simpleDateFormat.format(now.getTime()) + str + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
+					creaMessaggio(simpleDateFormat.format(now.getTime()) + str + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
 				}
 				else {
 					calInizioOfferta = Calendar.getInstance();
@@ -215,7 +233,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 					offertaVincente.put("idgiocatore", idgiocatore);
 					offertaVincente.put("offerta", offerta);
 					m.put("offertaVincente", offertaVincente);
-					messaggi.add(simpleDateFormat.format(now.getTime()) + str);
+					creaMessaggio(simpleDateFormat.format(now.getTime()) + str);
 				}
 			}
 			invia(toJson(m));

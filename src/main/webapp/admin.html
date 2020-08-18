@@ -35,14 +35,19 @@
 			</td>	
 		  </tr>
 	</table>
-	<input type="button" value="aggiorna password" ng-click="aggiornaUtenti()"></input>
+	<input type="button" value="aggiorna" ng-click="aggiornaUtenti()"></input>
 	<br><br>
 	<div ng-show="isAdmin">
+		<input type="button" value="AZZERA" ng-click="azzera()"></input>
+		<br>
 		<label >Carica file</label><br><input type="file" id="file" name="file"/>
 		<button ng-click="caricaFile('FS')">Carica FS</button>
 	<!-- scarica lista svincolati, apri excel, rimuovi prime 2 righe, -esporta - cambia tipo file - testo delimitato da tabulazione  -->
 		<button ng-click="caricaFile('MANTRA')">Carica Mantra</button>
+		<label ng-if="caricamentoInCorso">CARICAMENTO IN CORSO</label>
 	</div>
+	<br>
+	<input type="button" value="chiudi" ng-click="ritornaIndex()"></input>
 </div>
 </body>
 </html>

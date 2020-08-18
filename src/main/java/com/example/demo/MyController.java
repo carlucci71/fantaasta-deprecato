@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -35,10 +34,12 @@ import com.example.demo.entity.Allenatori;
 import com.example.demo.entity.Configurazione;
 import com.example.demo.entity.Fantarose;
 import com.example.demo.entity.Giocatori;
+import com.example.demo.entity.Logger;
 import com.example.demo.repository.AllenatoriRepository;
 import com.example.demo.repository.ConfigurazioneRepository;
 import com.example.demo.repository.FantaroseRepository;
 import com.example.demo.repository.GiocatoriRepository;
+import com.example.demo.repository.LoggerRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +54,7 @@ public class MyController {
 	@Autowired AllenatoriRepository allenatoriRepository;
 	@Autowired FantaroseRepository fantaroseRepository;
 	@Autowired GiocatoriRepository giocatoriRepository;
+	@Autowired LoggerRepository loggerRepository;
 	@Autowired ConfigurazioneRepository configurazioneRepository;
 	@Autowired Criptaggio criptaggio; 
 	@Autowired EntityManager em;
@@ -76,9 +78,8 @@ public class MyController {
 		}
 		return m;
 	}
-
-	@PostMapping("/caricaFileFS")
-	public void caricaFileFS(@RequestBody Map<String,String> obj) throws Exception {
+	@PostMapping("/caricaFile")
+	public void caricaFile(@RequestBody Map<String,String> obj) throws Exception {
 		String content = obj.get("file");
 		String tipoFile = obj.get("tipo");
 		giocatoriRepository.deleteAll();
@@ -134,7 +135,15 @@ public class MyController {
 		}
 
 	}
-	
+	@PostMapping("/azzera")
+	public void azzera() throws Exception {
+		giocatoriRepository.deleteAll();
+		fantaroseRepository.deleteAll();
+		allenatoriRepository.deleteAll();
+		Configurazione configurazione = getConfigurazione();
+		configurazione.setNumeroGiocatori(null);
+		configurazioneRepository.save(configurazione);
+	}
 	@PostMapping("/aggiornaNumUtenti")
 	public void aggiornaNumUtenti(@RequestBody int numUtenti) throws Exception {
 		Configurazione configurazione = getConfigurazione();
@@ -338,7 +347,11 @@ public class MyController {
 	public @ResponseBody Iterable<Giocatori> getAllGiocatori() {
 		return giocatoriRepository.findAll();
 	}	
-
+	@GetMapping(path="/elencoLogger")
+	public @ResponseBody Iterable<Logger> elencoLogger() {
+		return loggerRepository.findAll();
+	}	
+	
 	@GetMapping(path="/configurazione")
 	public @ResponseBody Configurazione getConfigurazione() {
 		return configurazioneRepository.findOne(1);

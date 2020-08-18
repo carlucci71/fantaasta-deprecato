@@ -34,12 +34,13 @@
 <label>CONFIGURAZIONE</label>
 <br>
 Numero utenti:<input  style='width: 60px;' type="number"  ng-model="numeroUtenti"></input>
-<input type="button" value="conferma" ng-click="confermaNumUtenti()"></input>
+<input type="button" value="conferma" ng-if="numeroUtenti>1" ng-click="confermaNumUtenti()"></input>
 
 </div>
 <div ng-hide="config">
-	<a href="./admin.html" target="_blank">Modulo amministrazione</a>
+	<a ng-if="isLoggato()" href="#" ng-click="caricaAdmin()">Modulo amministrazione</a>
 	<a href="./cronologiaOfferte.html" target="_blank">Cronologia Offerte</a>
+	<a href="./logger.html" target="_blank">Log</a>
 	<a href="./liberi.html" target="_blank">Liberi</a>
 	<table>
 	  <tr ng-repeat="utente in elencoAllenatori">

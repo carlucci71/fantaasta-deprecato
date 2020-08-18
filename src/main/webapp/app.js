@@ -12,6 +12,7 @@ app.run(
 			$rootScope.isAdmin=false;
 			$rootScope.calciatori=[];
 			$rootScope.numeroUtenti=8;
+			$rootScope.caricamentoInCorso=false;
 			$rootScope.isLoggato= function(){
 				if (!$rootScope.giocatore) return false;
 				return $rootScope.giocatore!='';
@@ -49,13 +50,13 @@ app.run(
 				return ret;
 			}
 			$rootScope.caricaFile = function(tipoFile){
-				 var f = document.getElementById('file').files[0],
-			        r = new FileReader();
+				$rootScope.caricamentoInCorso=true;
+				 var f = document.getElementById('file').files[0], r = new FileReader();
 
 			    r.onloadend = function(e) {
 			      var data = e.target.result;
-					$resource('./caricaFileFS',{}).save({'file':data, 'tipo' : tipoFile}).$promise.then(function(ret) {
-						
+					$resource('./caricaFile',{}).save({'file':data, 'tipo' : tipoFile}).$promise.then(function(ret) {
+						$rootScope.caricamentoInCorso=false;
 					});
 			    }
 
@@ -112,35 +113,60 @@ app.run(
 			$resource('./giocatoriLiberi',{}).query().$promise.then(function(data) {
 				$rootScope.calciatori=data;
 			});
-			/*
+			$rootScope.aggiornaLogger=function(){
+				$resource('./elencoLogger',{}).query().$promise.then(function(data) {
+					$rootScope.logger=data;
+				});
+			}
 			$rootScope.aggiornaCronologiaOfferte=function(){
 				$resource('./elencoCronologiaOfferte',{}).query().$promise.then(function(data) {
 					$rootScope.cronologiaOfferte=data;
 				});
 			}
-			*/
 			$rootScope.confermaNumUtenti=function(){
 				if ($rootScope.numeroUtenti>0){
 				$resource('./aggiornaNumUtenti',{}).save($rootScope.numeroUtenti).$promise.then(function(data) {
-					window.location.href = './admin.html';
+//					window.location.href = './admin.html';
+					$rootScope.inizializza(false);
 				});
 				}
 			}
-			$resource('./init',{}).get().$promise.then(function(data) {
-				if (data.DA_CONFIGURARE){
-					$rootScope.config=true;
-				} else {
-					$rootScope.connect();
-					$rootScope.giocatore=data.giocatoreLoggato;
-					if ($rootScope.giocatore){
-						$rootScope.nomegiocatore=$rootScope.giocatore;
-						$rootScope.idgiocatore=data.idLoggato;
-						$rootScope.doConnect();
-					}
-
-					$rootScope.elencoAllenatori=data.elencoAllenatori;
+			$rootScope.ritornaIndex=function(){
+				window.location.href = './index.html';
+			}
+			$rootScope.caricaAdmin=function(){
+				window.location.href = './admin.html';
+			}
+			$rootScope.azzera=function(){
+				if (window.confirm("Sicuro???????????")){
+					$resource('./azzera',{}).save().$promise.then(function(data) {
+						$rootScope.sendMsg(JSON.stringify({'operazione':'azzera', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
+						$rootScope.inizializza(true);
+					});
 				}
-			});
+			}
+			$rootScope.inizializza=function(chiudi){
+				$resource('./init',{}).get().$promise.then(function(data) {
+					if (data.DA_CONFIGURARE){
+						$rootScope.config=true;
+						if(chiudi){
+							window.location.href = './index.html';
+						}
+					} else {
+						$rootScope.config=false;
+						$rootScope.connect();
+						$rootScope.giocatore=data.giocatoreLoggato;
+						if ($rootScope.giocatore){
+							$rootScope.nomegiocatore=$rootScope.giocatore;
+							$rootScope.idgiocatore=data.idLoggato;
+							$rootScope.doConnect();
+						}
+	
+						$rootScope.elencoAllenatori=data.elencoAllenatori;
+					}
+				});
+			}
+			$rootScope.inizializza(false);
 			$rootScope.sendMsg=function(s){
 				ws.send(s);
 			}
@@ -304,8 +330,6 @@ app.run(
 			$rootScope.$watch("elencoAllenatori", function(newValue, oldValue) {
 				$rootScope.calcolaIsAdmin();
 			});
-
-
 			$rootScope.sort = {
 				    column: 'Ruolo',
 				    descending: false
