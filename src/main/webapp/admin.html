@@ -16,11 +16,12 @@
 <script type="text/javascript" src="./app.js"></script>
 
 <body x-ng-app="app" style="margin-left:20px">
+<label>Sei collegato come {{idgiocatore}}-{{giocatore}} nella lega {{legaUtente}}-{{nomeLegaUtente}}</label>
 <div ng-show="giocatore">
 	<table >
 		  <tr>
 		  	<td>Nome</td>
-		  	<td>Password</td>
+		  	<td>Alias</td>
 			<td ng-show="isAdmin">Admin</td>
 		  </tr>
 		  <tr ng-repeat="utente in elencoAllenatori" ng-show="isAdmin || utente.nome==giocatore">
@@ -28,14 +29,14 @@
 					<input  style='width: 300px;' type="text"  ng-model="utente.nome"></input>
 			</td>
 		  	<td>
-					<input  style='width: 300px;' type="password"  ng-model="utente.pwd"></input>
+					<input  style='width: 300px;' type="text"  ng-model="utente.alias"></input>
 			</td>
 			<td>
 						<input  style='width: 60px;' type="checkbox"  ng-show="isAdmin" ng-model="utente.isAdmin"></input>
 			</td>	
 		  </tr>
 	</table>
-	<input type="button" value="aggiorna password" ng-click="aggiornaUtenti()"></input>
+	<input type="button" value="aggiorna" ng-click="aggiornaUtenti()"></input>
 	<br><br>
 	<div ng-show="isAdmin">
 		<label >Carica file</label><br><input type="file" id="file" name="file"/>

@@ -26,19 +26,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import com.example.demo.dto.AllenatoriDTO;
 import com.example.demo.entity.Allenatori;
 import com.example.demo.entity.Configurazione;
 import com.example.demo.entity.Fantarose;
 import com.example.demo.entity.Giocatori;
+import com.example.demo.entity.Leghe;
+import com.example.demo.entity.LegheAllenatori;
+import com.example.demo.entity.LegheAllenatoriId;
 import com.example.demo.repository.AllenatoriRepository;
 import com.example.demo.repository.ConfigurazioneRepository;
 import com.example.demo.repository.FantaroseRepository;
 import com.example.demo.repository.GiocatoriRepository;
+import com.example.demo.repository.LegheAllenatoriRepository;
+import com.example.demo.repository.LegheRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +58,8 @@ public class MyController {
 	@Autowired AllenatoriRepository allenatoriRepository;
 	@Autowired FantaroseRepository fantaroseRepository;
 	@Autowired GiocatoriRepository giocatoriRepository;
+	@Autowired LegheRepository legheRepository;
+	@Autowired LegheAllenatoriRepository legheAllenatoriRepository;
 	@Autowired ConfigurazioneRepository configurazioneRepository;
 	@Autowired Criptaggio criptaggio; 
 	@Autowired EntityManager em;
@@ -60,11 +67,11 @@ public class MyController {
 	@RequestMapping("/init")
 	public Map<String, Object> init() {
 		Map<String, Object> m = new HashMap<>();
-		Configurazione configurazione = getConfigurazione();
-		if (configurazione.getNumeroGiocatori()==null) {
-			m.put("DA_CONFIGURARE", "x");
-		}
-		else {
+//		Configurazione configurazione = getConfigurazione();
+//		if (configurazione.getNumeroGiocatori()==null) {
+//			m.put("DA_CONFIGURARE", "x");
+//		}
+//		else {
 		String giocatoreLoggato = (String) httpSession.getAttribute("giocatoreLoggato");
 		//		System.out.println(httpSession.getId() + "-" + giocatoreLoggato + "-" + "init");
 		String idLoggato = (String) httpSession.getAttribute("idLoggato");
@@ -72,16 +79,29 @@ public class MyController {
 			m.put("giocatoreLoggato", giocatoreLoggato);
 			m.put("idLoggato", idLoggato);
 		}
-		m.put("elencoAllenatori", getAllAllenatori());
+		String legaUtente = (String) httpSession.getAttribute("legaUtente");
+		if (legaUtente != null) {
+			m.put("legaUtente", legaUtente);
+			LegheAllenatoriId legheAllenatoriId = new LegheAllenatoriId();
+			legheAllenatoriId.setAllenatori( Integer.parseInt(idLoggato));
+			legheAllenatoriId.setLeghe(Integer.parseInt(legaUtente));
+			LegheAllenatori findById = legheAllenatoriRepository.findById(legheAllenatoriId);
+			m.put("aliasGiocatore",findById.getAlias());
+			m.put("nomeLegaUtente",findById.getLeghe().getNome());
+			m.put("elencoAllenatori", getAllenatoriByLega(legheRepository.findOne(Integer.parseInt(legaUtente))));
 		}
+		m.put("elencoLeghe", getAllLeghe());
+//		}
 		return m;
 	}
 
-	@PostMapping("/caricaFileFS")
-	public void caricaFileFS(@RequestBody Map<String,String> obj) throws Exception {
+	@PostMapping("/caricaFile")
+	public void caricaFile(@RequestBody Map<String,String> obj) throws Exception {
 		String content = obj.get("file");
+		String legaUtente = obj.get("legaUtente");
 		String tipoFile = obj.get("tipo");
-		giocatoriRepository.deleteAll();
+		Leghe findOneLega = legheRepository.findOne(Integer.parseInt(legaUtente));
+		giocatoriRepository.deleteGiocatoryByLegaId(findOneLega.getId());
 		if("FS".equalsIgnoreCase(tipoFile)) {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -104,6 +124,7 @@ public class MyController {
 					giocatori.setQuotazione(Integer.parseInt(quotazione));
 					giocatori.setRuolo(ruolo);
 					giocatori.setSquadra(squadra);
+					giocatori.setLegheId(findOneLega.getId());
 					giocatoriRepository.save(giocatori);
 				}
 			}
@@ -126,6 +147,7 @@ public class MyController {
 				}
 				giocatori.setRuolo(colonne[1].replaceAll("\"", ""));
 				giocatori.setSquadra(colonne[3]);
+				giocatori.setLegheId(findOneLega.getId());
 				giocatoriRepository.save(giocatori);
 			}
 		}
@@ -144,30 +166,30 @@ public class MyController {
 			Allenatori al = new Allenatori();
 			al.setId(i);
 			al.setNome("GIOC"+i);
-			if (i==0)
-				al.setIsAdmin(true);
-			else
-				al.setIsAdmin(false);
+//			if (i==0)
+//				al.setIsAdmin(true);
+//			else
+//				al.setIsAdmin(false);
 			al.setPwd("");
 			allenatoriRepository.save(al);
 		}
 	}
-	
 	@PostMapping("/aggiornaUtenti")
-	public void aggiornaUtenti(@RequestBody List<Map<String, Object>> body) throws Exception {
-//		System.out.println(body);
-		for (Map<String, Object> map : body) {
-			Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
-			String nome = (String) map.get("nome");
-			al.setNome(nome);
-			String pwd = (String) map.get("pwd");
-			if (!pwd.equalsIgnoreCase(al.getPwd()))
-				al.setPwd(criptaggio.encrypt(pwd,nome));
+	public void aggiornaUtenti(@RequestBody Map<String, Object> body) throws Exception {
+		String legaUtente = body.get("legaUtente").toString();
+		List<Map<String, Object>> elencoAllenatori = (List<Map<String, Object>>) body.get("elencoAllenatori");
+		for (Map<String, Object> map : elencoAllenatori) {
+			LegheAllenatoriId legheAllenatoriId = new LegheAllenatoriId();
+			legheAllenatoriId.setAllenatori( (int) map.get("id"));
+			legheAllenatoriId.setLeghe(Integer.parseInt(legaUtente));
+			LegheAllenatori findById = legheAllenatoriRepository.findById(legheAllenatoriId);
 			if("true".equalsIgnoreCase(map.get("isAdmin").toString()))
-				al.setIsAdmin(true);
+				findById.setAdmin(true);
 			else
-				al.setIsAdmin(false);
-			allenatoriRepository.save(al);
+				findById.setAdmin(false);
+			String alias = (String) map.get("alias");
+			findById.setAlias(alias);
+			legheAllenatoriRepository.save(findById);
 		}
 	}
 
@@ -300,6 +322,110 @@ public class MyController {
 			throw new RuntimeException(e);
 		}
 	}
+	@PostMapping("/selezionaLega")
+	public Map<String,Object>  selezionaLega(@RequestBody Map<String, Object> body) throws Exception {
+		String idgiocatore =  body.get("idgiocatore").toString();
+		String legaUtente = (String) body.get("legaUtente");
+		String legaPwd = (String) body.get("legaPwd");
+		Map<String,Object> ret = new HashMap<>();
+		Leghe findLega = legheRepository.findOne(Integer.parseInt(legaUtente));
+		if (findLega != null && cripta(legaPwd,findLega.getNome()).get("value").equals(findLega.getPwd())) {
+			httpSession.setAttribute("legaUtente",legaUtente);
+			ret.put("stato", "OK");
+			ret.put("nomeLegaUtente", findLega.getNome());
+			ret.put("legaUtente", findLega.getId());
+			LegheAllenatoriId legheAllenatoriId = new LegheAllenatoriId();
+			legheAllenatoriId.setAllenatori( Integer.parseInt(idgiocatore));
+			legheAllenatoriId.setLeghe(Integer.parseInt(legaUtente));
+			LegheAllenatori findById = legheAllenatoriRepository.findById(legheAllenatoriId);
+			ret.put("aliasGiocatore",findById.getAlias());
+			ret.put("elencoAllenatori", getAllenatoriByLega(legheRepository.findOne(Integer.parseInt(legaUtente))));
+		} else {
+			ret.put("stato", "Errore!! Password di lega errata");
+		}
+		return ret;
+	}
+	@PostMapping("/creaLega")
+	public Map<String,Object>  creaLega(@RequestBody Map<String, Object> body) throws Exception {
+		String nomeLegaCreata = (String) body.get("nomeLegaCreata");
+		String pwdLegaCreata = (String) body.get("pwdLegaCreata");
+		Integer numeroUtenti = (Integer) body.get("numeroUtenti");
+		String idgiocatore =  body.get("idgiocatore").toString();
+
+		Map<String,Object> ret = new HashMap<>();
+		Leghe findByNome = legheRepository.findByNome(nomeLegaCreata);
+		if (findByNome == null) {
+			Leghe leghe = new Leghe();
+			leghe.setPwd(criptaggio.encrypt(pwdLegaCreata,nomeLegaCreata));
+			leghe.setNome(nomeLegaCreata);
+			leghe.setNumUtenti(numeroUtenti);
+			legheRepository.save(leghe);
+			LegheAllenatori legheAllenatori = new LegheAllenatori();
+			Allenatori findOne = allenatoriRepository.findOne(Integer.parseInt(idgiocatore));
+			legheAllenatori.setAllenatori(findOne);
+			legheAllenatori.setLeghe(leghe);
+			legheAllenatori.setAlias(findOne.getNome());
+			legheAllenatori.setAdmin(true);
+			legheAllenatori.setFittizio(false);
+			legheAllenatoriRepository.save(legheAllenatori);
+
+			for (int i=1;i<numeroUtenti;i++) {
+				legheAllenatori = new LegheAllenatori();
+				Allenatori a=new Allenatori();
+				a.setNome("GIOC_" + nomeLegaCreata + "_" + i);
+				allenatoriRepository.save(a);
+				legheAllenatori.setAllenatori(a);
+				legheAllenatori.setAlias(a.getNome());
+				legheAllenatori.setLeghe(leghe);
+				legheAllenatori.setAdmin(false);
+				legheAllenatori.setFittizio(true);
+				legheAllenatoriRepository.save(legheAllenatori);
+
+			}
+			ret.put("stato", "OK");
+			ret.put("elencoLeghe", getAllLeghe());
+		}
+		else {
+			ret.put("stato", "Errore!! Lega esistente");
+		}
+		return ret;
+	}
+	@PostMapping("/registra")
+	public Map<String,Object>  registra(@RequestBody Map<String, String> body) throws Exception {
+		String registraUtente = body.get("registraUtente");
+		String registraPwd = body.get("registraPwd");
+		Map<String,Object> ret = new HashMap<>();
+		Allenatori findByNome = allenatoriRepository.findByNome(registraUtente);
+		if (findByNome == null) {
+			Allenatori allenatori = new Allenatori();
+			//		allenatori.setIsAdmin(false);
+			allenatori.setNome(registraUtente);
+			allenatori.setPwd(criptaggio.encrypt(registraPwd,registraUtente));
+			allenatoriRepository.save(allenatori);
+			ret.put("stato", "OK");
+		}
+		else {
+			ret.put("stato", "Errore!! Utente esistente");
+		}
+		return ret;
+	}
+	@PostMapping("/login")
+	public Map<String,Object>  login(@RequestBody Map<String, String> body) throws Exception {
+		String loginUtente = body.get("loginUtente");
+		String loginPwd = body.get("loginPwd");
+		if (loginPwd==null) loginPwd="";
+		Allenatori findByNome = allenatoriRepository.findByNome(loginUtente);
+		Map<String,Object> ret = new HashMap<>();
+		String stato = "Utente non trovato";
+		if (findByNome != null ) stato = "Password errata";
+		if (findByNome != null && cripta(loginPwd,loginUtente).get("value").equals(findByNome.getPwd())) {
+			ret.put("allenatore", findByNome);
+			stato="OK";
+		}
+		ret.put("stato", stato);
+		return ret;
+	}
+
 	@RequestMapping("/riepilogoAllenatori")
 	public List<Map<String, Object>>  riepilogoAllenatori() {
 		try {
@@ -328,7 +454,27 @@ public class MyController {
 	public @ResponseBody Iterable<Allenatori> getAllAllenatori() {
 		return allenatoriRepository.findAll();
 	}	
-
+	@GetMapping(path="/getAllenatoriByLega")
+	public @ResponseBody Iterable<AllenatoriDTO> getAllenatoriByLega(Leghe lega) {
+		List<AllenatoriDTO> ret = new ArrayList<>();
+		Iterable<LegheAllenatori> findByLega = allenatoriRepository.findByLega(lega);
+		for (LegheAllenatori legheAllenatori : findByLega) {
+			AllenatoriDTO a = new AllenatoriDTO();
+			a.setId(legheAllenatori.getAllenatori().getId());
+			a.setNome(legheAllenatori.getAllenatori().getNome());
+			a.setAlias(legheAllenatori.getAlias());
+			a.setIsAdmin(legheAllenatori.isAdmin());
+			a.setIsFittizio(legheAllenatori.isFittizio());
+			ret.add(a);
+		}
+		return ret;
+	}	
+	@GetMapping(path="/allLeghe")
+	public @ResponseBody Iterable<Leghe> getAllLeghe() {
+		return legheRepository.findAll();
+	}	
+	
+	
 	@GetMapping(path="/allFantarose")
 	public @ResponseBody Iterable<Fantarose> getAllFantarose() {
 		return fantaroseRepository.findAll();
@@ -345,7 +491,8 @@ public class MyController {
 	}	
 	
 	@GetMapping(path="/giocatoriLiberi")
-	public @ResponseBody List<Map<String, Object>> getGiocatoriLiberi() {
+	public @ResponseBody List<Map<String, Object>> getGiocatoriLiberi(@RequestParam(name = "legaUtente") String legaUtente) {
+
 //		Iterable<Giocatori> giocatoriLiberi = giocatoriRepository.getGiocatoriLiberi();
 		List<Object[]> resultList = giocatoriRepository.getGiocatoriLiberi();
 		List<Map<String, Object>> ret = new ArrayList<>();

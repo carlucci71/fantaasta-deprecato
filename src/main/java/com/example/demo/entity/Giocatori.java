@@ -1,14 +1,14 @@
 package com.example.demo.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.IdClass;
+import javax.persistence.ManyToOne;
 
 //@Entity(name = "giocatori")
 //@Table(name = "giocatori")
 @Entity
+@IdClass(GiocatoriLeghe.class)
 public class Giocatori {
 
 	@Id
@@ -17,11 +17,9 @@ public class Giocatori {
 	private String nome;
 	private String ruolo;
 	private Integer quotazione;
-	@Override
-	public String toString() {
-		return "Giocatori [id=" + id + ", squadra=" + squadra + ", nome=" + nome + ", ruolo=" + ruolo + ", quotazione="
-				+ quotazione + "]";
-	}
+//	@ManyToOne
+	@Id
+	private Integer legheId;
 	public Integer getId() {
 		return id;
 	}
@@ -51,5 +49,16 @@ public class Giocatori {
 	}
 	public void setQuotazione(Integer quotazione) {
 		this.quotazione = quotazione;
+	}
+	public Integer getLegheId() {
+		return legheId;
+	}
+	public void setLegheId(Integer legheId) {
+		this.legheId = legheId;
+	}
+	@Override
+	public String toString() {
+		return "Giocatori [id=" + id + ", squadra=" + squadra + ", nome=" + nome + ", ruolo=" + ruolo + ", quotazione="
+				+ quotazione + ", legheId=" + legheId + "]";
 	}
 }

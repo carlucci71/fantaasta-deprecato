@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Criptaggio {
-	protected static String encrypt(String sPlainText, String x) throws Exception
+	protected String encrypt(String sPlainText, String x) throws Exception
 	{
 		if (sPlainText==null || sPlainText.trim().equals("")) return "";
 		byte[] plainText = sPlainText.getBytes();

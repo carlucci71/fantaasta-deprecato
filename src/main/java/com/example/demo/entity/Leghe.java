@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -11,21 +12,30 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-
 @Table(
 	    uniqueConstraints=
 	        @UniqueConstraint(columnNames={"nome"})
 	)
-//@Table(name = "allenatori")
-public class Allenatori {
 
+public class Leghe {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	private String nome;
 	private String pwd;
-//	private Boolean isAdmin;
-
+	private Integer numUtenti;
+/*	
+	@ManyToMany
+	private
+    Set<Allenatori> allenatori=new HashSet<>();	
+	public Set<Allenatori> getAllenatori() {
+		return allenatori;
+	}
+	public void setAllenatori(Set<Allenatori> allenatori) {
+		this.allenatori = allenatori;
+	}
+*/	
 	public Integer getId() {
 		return id;
 	}
@@ -38,25 +48,24 @@ public class Allenatori {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-//	public Boolean getIsAdmin() {
-//		return isAdmin;
-//	}
-//	public void setIsAdmin(Boolean isAdmin) {
-//		this.isAdmin = isAdmin;
-//	}
+	public Integer getNumUtenti() {
+		return numUtenti;
+	}
+	public void setNumUtenti(Integer numUtenti) {
+		this.numUtenti = numUtenti;
+	}
+	@OneToMany(mappedBy = "allenatori")
+    private List<LegheAllenatori> allenatori=new ArrayList<LegheAllenatori>();
 	public String getPwd() {
 		return pwd;
 	}
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
-	@OneToMany(mappedBy = "leghe")
-	private List<LegheAllenatori> leghe;
-
 	@Override
 	public String toString() {
-		return "Allenatori [id=" + id + ", nome=" + nome + ", pwd=" + pwd + ", leghe=" + leghe + "]";
+		return "Leghe [id=" + id + ", nome=" + nome + ", pwd=" + pwd + ", numUtenti=" + numUtenti + ", allenatori="
+				+ allenatori + "]";
 	}
-	
-	
+
 }

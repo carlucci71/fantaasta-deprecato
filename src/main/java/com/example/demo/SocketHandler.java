@@ -63,6 +63,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		if (operazione != null && operazione.equals("connetti")) {
 //			messaggi = new ArrayList<>();
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			String legaUtente = (String) jsonToMap.get("legaUtente");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			Long tokenUtente = (Long)jsonToMap.get("tokenUtente");
 			Calendar now = Calendar.getInstance();
@@ -81,7 +82,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 //				System.out.println(httpSession.getId() + "-" + httpSession.getAttribute("giocatoreLoggato") + "-" + "connetti");
 			httpSession.setAttribute("idLoggato", idgiocatore);
 			utentiLoggati.add(nomegiocatore);
-			m.put("calciatori", myController.getGiocatoriLiberi());
+			m.put("calciatori", myController.getGiocatoriLiberi(legaUtente));
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			m.put("utenti", utentiLoggati);
 			messaggi.add(simpleDateFormat.format(now.getTime()) + " Connesso: " + nomegiocatore);
@@ -90,13 +91,14 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("confermaAsta")) {
+			String legaUtente = (String) jsonToMap.get("legaUtente");
 			sSemaforoAttivo="S";
 			messaggi = new ArrayList<>();
 			Calendar now = Calendar.getInstance();
 			messaggi.add(simpleDateFormat.format(now.getTime()) + " Asta confermata per:" + offertaVincente.get("nomeCalciatore"));
 			offertaVincente = new HashMap<>();
 			Map<String, Object> m = new HashMap<>();
-			m.put("calciatori", myController.getGiocatoriLiberi());
+			m.put("calciatori", myController.getGiocatoriLiberi(legaUtente));
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			m.put("selCalciatore", "x");
 			m.put("messaggi", messaggi);
@@ -124,6 +126,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("start")) {
+			String legaUtente = jsonToMap.get("legaUtente").toString();
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
@@ -140,7 +143,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				sSemaforoAttivo="N";
 			calInizioOfferta = Calendar.getInstance();
 			offertaVincente = new HashMap<>();
-			offertaVincente.put("giocatore", giocatoriRepository.findOne(Integer.parseInt(idCalciatore)));
+			offertaVincente.put("giocatore", giocatoriRepository.findGiocatoriByLegheAndId(Integer.parseInt(legaUtente),Integer.parseInt(idCalciatore)));
 			offertaVincente.put("nomegiocatore", nomegiocatore);
 			offertaVincente.put("idgiocatore", idgiocatore);
 			offertaVincente.put("offerta", 1);
@@ -179,11 +182,13 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("durataAsta", durataAsta);
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
 			Calendar now = Calendar.getInstance();
-			messaggi.add(simpleDateFormat.format(now.getTime()) + " Durata asta modificata da: " + giocatoreDurataAsta);
+//			messaggi.add(simpleDateFormat.format(now.getTime()) + " Durata asta modificata da: " + giocatoreDurataAsta);
 			invia(toJson(m));
 			
 		}
 		else if (operazione != null && operazione.equals("inviaOfferta")) {
+			String legaUtente = jsonToMap.get("legaUtente").toString();
+
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
