@@ -1,9 +1,9 @@
-package com.example.demo.repository;
+package com.daniele.asta.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.example.demo.entity.Fantarose;
+import com.daniele.asta.entity.Fantarose;
 
 
 public interface FantaroseRepository extends CrudRepository<Fantarose, Integer> {

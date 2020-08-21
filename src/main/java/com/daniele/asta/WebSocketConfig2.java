@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.daniele.asta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 /*

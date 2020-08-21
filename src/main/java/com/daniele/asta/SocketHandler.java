@@ -1,11 +1,13 @@
-package com.example.demo;
+package com.daniele.asta;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.http.HttpSession;
@@ -17,9 +19,10 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.example.demo.entity.Logger;
-import com.example.demo.repository.GiocatoriRepository;
-import com.example.demo.repository.LoggerRepository;
+import com.daniele.asta.entity.Allenatori;
+import com.daniele.asta.entity.Logger;
+import com.daniele.asta.repository.GiocatoriRepository;
+import com.daniele.asta.repository.LoggerRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,9 +31,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SocketHandler extends TextWebSocketHandler implements WebSocketHandler {
 	
 	private void creaMessaggio(String messaggio) {
-		messaggi.add(messaggio);
+		Long now = System.currentTimeMillis();
+		UUID uuid = UUID.randomUUID();
+		Map<String, Object> msg = new HashMap<>();
+		msg.put("key",uuid.toString());
+		msg.put("data",now);
+		msg.put("testo", messaggio);
+		messaggi.add(msg);
 		Logger entity= new Logger();
-		entity.setId(System.currentTimeMillis());
+		entity.setId(now);
 		entity.setMessaggio(messaggio);
 		loggerRepository.save(entity);
 	}
@@ -44,17 +53,19 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ssZ");
 	int durataAsta;
 	String idCalciatore;
+	String timeOut="N";
 	String nomeCalciatore;
+	Long millisFromPausa;
+	String giocatoreTimeout;
 	String giocatoreDurataAsta="";
 	String sSemaforoAttivo;
 	@Autowired LoggerRepository loggerRepository;
-	List<String> messaggi=new ArrayList<>();
+	List<Map<String,Object>> messaggi=new ArrayList<>();
 	@Autowired MyController myController;
 	@Autowired GiocatoriRepository giocatoriRepository;	
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws InterruptedException, IOException {
 		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTPSESSIONID");
-//		utentiLoggati.add("GIOC0");//FIXME toglimi
 		String payload = message.getPayload();
 		Map<String, Object> jsonToMap = jsonToMap(payload);
 		String operazione = (String) jsonToMap.get("operazione");
@@ -66,23 +77,20 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			pingUtenti.remove(nomegiocatore);
 			Map<String, Object> m = new HashMap<>();
 			m.put("utenti", utentiLoggati);
-			Calendar now = Calendar.getInstance();
-			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Utente cancellato: " + nomegiocatore);
+			creaMessaggio("Utente cancellato: " + nomegiocatore);
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}
 		if (operazione != null && operazione.equals("azzera")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
-			Calendar now = Calendar.getInstance();
-			creaMessaggio(simpleDateFormat.format(now.getTime()) + " AZZERATO DA: " + nomegiocatore);
+			creaMessaggio("AZZERATO DA: " + nomegiocatore);
 		}
 		if (operazione != null && operazione.equals("connetti")) {
 //			messaggi = new ArrayList<>();
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			Long tokenUtente = (Long)jsonToMap.get("tokenUtente");
-			Calendar now = Calendar.getInstance();
 			Map<String, Object> m = new HashMap<>();
 			if (utentiScaduti.contains(nomegiocatore)) {
 				utentiLoggati.remove(nomegiocatore);
@@ -90,18 +98,15 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				pingUtenti.remove(nomegiocatore);
 			}
 			if (utentiLoggati != null && utentiLoggati.contains(nomegiocatore)) {
-//				m.put("RESET_UTENTE",tokenUtente);
-				creaMessaggio(simpleDateFormat.format(now.getTime()) + " Sessione RUBATA da " + nomegiocatore);
+				creaMessaggio("Sessione RUBATA da " + nomegiocatore);
 			} 
-
-			httpSession.setAttribute("giocatoreLoggato", nomegiocatore);
-//				System.out.println(httpSession.getId() + "-" + httpSession.getAttribute("giocatoreLoggato") + "-" + "connetti");
+			httpSession.setAttribute("nomeGiocatoreLoggato", nomegiocatore);
 			httpSession.setAttribute("idLoggato", idgiocatore);
 			utentiLoggati.add(nomegiocatore);
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			m.put("utenti", utentiLoggati);
-			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Connesso: " + nomegiocatore);
+			creaMessaggio("Connesso: " + nomegiocatore);
 			m.put("messaggi", messaggi);
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			invia(toJson(m));
@@ -109,8 +114,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else if (operazione != null && operazione.equals("confermaAsta")) {
 			sSemaforoAttivo="S";
 			messaggi = new ArrayList<>();
-			Calendar now = Calendar.getInstance();
-			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Asta confermata per:" + offertaVincente.get("nomeCalciatore"));
+			creaMessaggio("Asta confermata per:" + offertaVincente.get("nomeCalciatore"));
 			offertaVincente = new HashMap<>();
 			Map<String, Object> m = new HashMap<>();
 			m.put("calciatori", myController.getGiocatoriLiberi());
@@ -122,23 +126,51 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else if (operazione != null && operazione.equals("annullaAsta")) {
 			sSemaforoAttivo="S";
 			messaggi = new ArrayList<>();
-			Calendar now = Calendar.getInstance();
-			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Asta annullata per:" + offertaVincente.get("nomeCalciatore"));
+			creaMessaggio("Asta annullata per:" + offertaVincente.get("nomeCalciatore"));
 			offertaVincente = new HashMap<>();
 			Map<String, Object> m = new HashMap<>();
 			m.put("selCalciatore", "x");
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}		
+		else if (operazione != null && operazione.equals("resumeAsta")) {
+			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			Calendar now = Calendar.getInstance();
+			calInizioOfferta.setTimeInMillis(now.getTimeInMillis() - millisFromPausa);
+			Map<String, Object> m = new HashMap<>();
+			creaMessaggio("Offerta tolta dalla pausa da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + ". Riparte dopo " + millisFromPausa + " millisecondi");
+			timeOut="N";
+			m.put("timeout", timeOut);
+			m.put("contaTempo", now.getTimeInMillis() - calInizioOfferta.getTimeInMillis());
+			m.put("messaggi", messaggi);
+			invia(toJson(m));
+		}
+		else if (operazione != null && operazione.equals("pausaAsta")) {
+			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			Calendar now = Calendar.getInstance();
+			millisFromPausa=now.getTimeInMillis()-calInizioOfferta.getTimeInMillis();
+			calInizioOfferta.set(Calendar.YEAR, 2971);
+			Map<String, Object> m = new HashMap<>();
+			creaMessaggio("Offerta messa in pausa da da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + " dopo " + millisFromPausa + " millisecondi");
+			timeOut="S";
+			m.put("millisFromPausa", millisFromPausa);
+			giocatoreTimeout=nomegiocatore;
+			m.put("giocatoreTimeout", giocatoreTimeout);
+			m.put("timeout", timeOut);
+			m.put("messaggi", messaggi);
+			invia(toJson(m));
+		}
 		else if (operazione != null && operazione.equals("terminaAsta")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			calInizioOfferta.set(Calendar.YEAR, 1971);
-			Calendar now = Calendar.getInstance();
 			Map<String, Object> m = new HashMap<>();
-			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Offerta terminata in anticipo da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore"));
+			creaMessaggio("Offerta terminata in anticipo da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore"));
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
+		}
+		else if (operazione != null && operazione.equals("liberaSemaforo")) {
+			sSemaforoAttivo="S";
 		}
 		else if (operazione != null && operazione.equals("start")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
@@ -150,11 +182,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			String[] split = selCalciatore.split("@");
 			idCalciatore=split[0];
 			nomeCalciatore=split[1];
-			boolean bSemaforoAttivo = (boolean) jsonToMap.get("bSemaforoAttivo");
-			if (bSemaforoAttivo)
-				sSemaforoAttivo="S";
-			else
-				sSemaforoAttivo="N";
+			sSemaforoAttivo="N";
 			calInizioOfferta = Calendar.getInstance();
 			offertaVincente = new HashMap<>();
 			offertaVincente.put("giocatore", giocatoriRepository.findOne(Integer.parseInt(idCalciatore)));
@@ -171,7 +199,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				str = str + "(" + nomegiocatoreOperaCome + ")";
 			}
 			messaggi=new ArrayList<>();
-			creaMessaggio(simpleDateFormat.format(calInizioOfferta.getTime()) + str);
+			creaMessaggio(str);
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("disconnetti")) {
@@ -180,12 +208,10 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			utentiLoggati.remove(nomegiocatore);
 			utentiScaduti.remove(nomegiocatore);
 			pingUtenti.remove(nomegiocatore);
-//			System.out.println(httpSession.getId() + "-" + httpSession.getAttribute("giocatoreLoggato") + "-" + "disconnetti");
-			httpSession.removeAttribute("giocatoreLoggato");
+			httpSession.removeAttribute("nomeGiocatoreLoggato");
 			httpSession.removeAttribute("idLoggato");
 			Map<String, Object> m = new HashMap<>();
-			Calendar now = Calendar.getInstance();
-			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Utente disconnesso: " + nomegiocatore);
+			creaMessaggio("Utente disconnesso: " + nomegiocatore);
 			m.put("utenti", utentiLoggati);
 			invia(toJson(m));
 		}
@@ -195,8 +221,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 			m.put("durataAsta", durataAsta);
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
-			Calendar now = Calendar.getInstance();
-			creaMessaggio(simpleDateFormat.format(now.getTime()) + " Durata asta modificata da: " + giocatoreDurataAsta);
+			creaMessaggio("Durata asta modificata da: " + giocatoreDurataAsta);
 			invia(toJson(m));
 			
 		}
@@ -204,7 +229,6 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
-			String idgiocatoreOperaCome = jsonToMap.get("idgiocatoreOperaCome").toString();
 			Integer offerta = (Integer) jsonToMap.get("offerta");
 			Integer attOfferta = (Integer) offertaVincente.get("offerta");
 			Calendar now = Calendar.getInstance();
@@ -217,7 +241,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 					str = str + "(" + nomegiocatoreOperaCome + ")";
 				}
-				creaMessaggio(simpleDateFormat.format(now.getTime()) + str);
+				creaMessaggio(str);
 			} else {
 				String str = " Offerta di " + offerta + " fatta da " + nomegiocatore;
 				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
@@ -225,7 +249,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				}
 				str = str + " per " + offertaVincente.get("nomeCalciatore");
 				if (attOfferta != null && offerta<=attOfferta) {
-					creaMessaggio(simpleDateFormat.format(now.getTime()) + str + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
+					creaMessaggio(str + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"));
 				}
 				else {
 					calInizioOfferta = Calendar.getInstance();
@@ -233,17 +257,13 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 					offertaVincente.put("idgiocatore", idgiocatore);
 					offertaVincente.put("offerta", offerta);
 					m.put("offertaVincente", offertaVincente);
-					creaMessaggio(simpleDateFormat.format(now.getTime()) + str);
+					creaMessaggio(str);
 				}
 			}
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("ping")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
-			String idgiocatore="";
-			if(jsonToMap.get("idgiocatore")!=null) {
-				idgiocatore = jsonToMap.get("idgiocatore").toString();
-			}
 			utentiScaduti = new ArrayList<>();
 			Calendar now = Calendar.getInstance();
 			if (nomegiocatore != null) {
@@ -266,8 +286,9 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				}
 			}
 			if (calInizioOfferta != null) m.put("contaTempo", now.getTimeInMillis() - calInizioOfferta.getTimeInMillis());
+			m.put("timeout", timeOut);
 			m.put("utentiScaduti", utentiScaduti);
-			m.put("elencoAllenatori", myController.getAllAllenatori());
+//			m.put("elencoAllenatori", myController.getAllAllenatori());
 			m.put("utenti", utentiLoggati);
 			m.put("durataAsta", durataAsta);
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
@@ -275,6 +296,9 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("offertaVincente", offertaVincente);
 			m.put("pingUtenti", pingUtenti);
 			m.put("messaggi", messaggi);
+			m.put("giocatoreTimeout", giocatoreTimeout);
+			m.put("millisFromPausa",millisFromPausa);
+			
 			m.put("RICHIESTA", nomegiocatore);
 			invia(toJson(m));
 			aggiorna();
@@ -283,6 +307,34 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			invia(payload);
 		}
 	}
+	public void aggiornaUtenti(Map<String, String> utentiRinominati, Iterable<Allenatori> allAllenatori) throws IOException {
+
+		Iterator<String> iterator = utentiRinominati.keySet().iterator();
+		while (iterator.hasNext()) {
+			String vecchioNome = (String) iterator.next();
+			String nuovoNome=utentiRinominati.get(vecchioNome);
+			if (utentiScaduti.contains(vecchioNome)) {
+				utentiScaduti.remove(vecchioNome);
+				utentiScaduti.add(nuovoNome);
+			}
+			if (utentiLoggati.contains(vecchioNome)) {
+				utentiLoggati.remove(vecchioNome);
+				utentiLoggati.add(nuovoNome);
+			}
+			Map<String, Object> map = pingUtenti.get(vecchioNome);
+			if (map != null) {
+				pingUtenti.remove(vecchioNome);
+				pingUtenti.put(nuovoNome, map);
+			}
+		}
+		Map<String, Object> m = new HashMap<>();
+		creaMessaggio("Utenti rinominati: " + utentiRinominati);
+		m.put("messaggi", messaggi);
+		m.put("utentiRinominati", utentiRinominati);
+		m.put("elencoAllenatori", allAllenatori);
+		invia(toJson(m));
+	}
+	
 	private void invia(String payload) throws IOException {
 		for (WebSocketSession webSocketSession : sessions) {
 			if (webSocketSession.isOpen()) {
@@ -309,13 +361,10 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		invia(toJson(m));
 	}
 	
-//	private WebSocketSession wsSession;
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-//		this.wsSession = session;
 		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTPSESSIONID");
 		sessions.add(session);
-//		System.out.println(httpSession.getId() + "-" + "sessssionnss");
 		
 	}
 	private ObjectMapper mapper = new ObjectMapper();

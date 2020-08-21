@@ -1,8 +1,8 @@
-package com.example.demo.repository;
+package com.daniele.asta.repository;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.example.demo.entity.Logger;
+import com.daniele.asta.entity.Logger;
 public interface LoggerRepository extends CrudRepository<Logger, Integer> 
 {
 	

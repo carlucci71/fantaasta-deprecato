@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.daniele.asta.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +12,7 @@ public class Allenatori {
 
 	@Id
 	private Integer id;
+	private String nuovoNome;
 	private String nome;
 	private String pwd;
 	private Boolean isAdmin;
@@ -42,5 +43,11 @@ public class Allenatori {
 	@Override
 	public String toString() {
 		return "Allenatori [id=" + id + ", nome=" + nome + ", pwd=" + pwd + ", isAdmin=" + isAdmin + "]";
+	}
+	public String getNuovoNome() {
+		return nuovoNome;
+	}
+	public void setNuovoNome(String nuovoNome) {
+		this.nuovoNome = nuovoNome;
 	}
 }

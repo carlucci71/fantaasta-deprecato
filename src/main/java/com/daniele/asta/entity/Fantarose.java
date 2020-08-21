@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.daniele.asta.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

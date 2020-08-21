@@ -16,7 +16,10 @@
 <script type="text/javascript" src="./app.js"></script>
 
 <body x-ng-app="app" style="margin-left:20px">
-<div ng-show="giocatore">
+<div ng-show ="!bSemaforoAttivo">
+<label>OFFERTA IN CORSO</label>
+</div>
+<div ng-show="giocatore && bSemaforoAttivo">
 	<table >
 		  <tr>
 		  	<td>Nome</td>
@@ -25,7 +28,7 @@
 		  </tr>
 		  <tr ng-repeat="utente in elencoAllenatori" ng-show="isAdmin || utente.nome==giocatore">
 		  	<td>
-					<input  style='width: 300px;' type="text"  ng-model="utente.nome"></input>
+					<input  style='width: 300px;' type="text"  ng-model="utente.nuovoNome"></input>
 			</td>
 		  	<td>
 					<input  style='width: 300px;' type="password"  ng-model="utente.pwd"></input>

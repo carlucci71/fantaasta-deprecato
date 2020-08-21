@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.daniele.asta;
 
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
@@ -30,16 +30,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.example.demo.entity.Allenatori;
-import com.example.demo.entity.Configurazione;
-import com.example.demo.entity.Fantarose;
-import com.example.demo.entity.Giocatori;
-import com.example.demo.entity.Logger;
-import com.example.demo.repository.AllenatoriRepository;
-import com.example.demo.repository.ConfigurazioneRepository;
-import com.example.demo.repository.FantaroseRepository;
-import com.example.demo.repository.GiocatoriRepository;
-import com.example.demo.repository.LoggerRepository;
+import com.daniele.asta.entity.Allenatori;
+import com.daniele.asta.entity.Configurazione;
+import com.daniele.asta.entity.Fantarose;
+import com.daniele.asta.entity.Giocatori;
+import com.daniele.asta.entity.Logger;
+import com.daniele.asta.repository.AllenatoriRepository;
+import com.daniele.asta.repository.ConfigurazioneRepository;
+import com.daniele.asta.repository.FantaroseRepository;
+import com.daniele.asta.repository.GiocatoriRepository;
+import com.daniele.asta.repository.LoggerRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +58,7 @@ public class MyController {
 	@Autowired ConfigurazioneRepository configurazioneRepository;
 	@Autowired Criptaggio criptaggio; 
 	@Autowired EntityManager em;
+	@Autowired SocketHandler socketHandler;
 
 	@RequestMapping("/init")
 	public Map<String, Object> init() {
@@ -67,8 +68,7 @@ public class MyController {
 			m.put("DA_CONFIGURARE", "x");
 		}
 		else {
-		String giocatoreLoggato = (String) httpSession.getAttribute("giocatoreLoggato");
-		//		System.out.println(httpSession.getId() + "-" + giocatoreLoggato + "-" + "init");
+		String giocatoreLoggato = (String) httpSession.getAttribute("nomeGiocatoreLoggato");
 		String idLoggato = (String) httpSession.getAttribute("idLoggato");
 		if (giocatoreLoggato != null) {
 			m.put("giocatoreLoggato", giocatoreLoggato);
@@ -162,22 +162,39 @@ public class MyController {
 		}
 	}
 	
+	@PostMapping("aggiornaSessioneNomeUtente")
+	public void aggiornaSessioneNomeUtente(@RequestBody Map<String, String> body) {
+		httpSession.setAttribute("nomeGiocatoreLoggato", body.get("nuovoNome"));
+	}
 	@PostMapping("/aggiornaUtenti")
-	public void aggiornaUtenti(@RequestBody List<Map<String, Object>> body) throws Exception {
-//		System.out.println(body);
+	public  Map<String,String>  aggiornaUtenti(@RequestBody List<Map<String, Object>> body) throws Exception {
+		Map <String, String> m = new HashMap<>();
+		Map <String, String> utentiRinominati = new HashMap<>();
 		for (Map<String, Object> map : body) {
 			Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
-			String nome = (String) map.get("nome");
-			al.setNome(nome);
+			String nuovoNome = (String) map.get("nuovoNome");
+			String vecchioNome=al.getNome();
+			String giocatoreLoggato = (String) httpSession.getAttribute("nomeGiocatoreLoggato");
+			if (!vecchioNome.equalsIgnoreCase(nuovoNome)) {
+				utentiRinominati.put(vecchioNome, nuovoNome);
+				if(giocatoreLoggato.equalsIgnoreCase(vecchioNome)) {
+					m.put("nuovoNomeLoggato", nuovoNome);
+					m.put("vecchioNomeLoggato", vecchioNome);
+//					httpSession.setAttribute("nomeGiocatoreLoggato", nuovoNome);
+				}
+			}
+			al.setNome(nuovoNome);
 			String pwd = (String) map.get("pwd");
 			if (!pwd.equalsIgnoreCase(al.getPwd()))
-				al.setPwd(criptaggio.encrypt(pwd,nome));
+				al.setPwd(criptaggio.encrypt(pwd,nuovoNome));
 			if("true".equalsIgnoreCase(map.get("isAdmin").toString()))
 				al.setIsAdmin(true);
 			else
 				al.setIsAdmin(false);
 			allenatoriRepository.save(al);
 		}
+		socketHandler.aggiornaUtenti(utentiRinominati,getAllAllenatori());
+		return m;
 	}
 
 	@GetMapping("/cripta")
@@ -335,7 +352,11 @@ public class MyController {
 	@Cacheable(cacheNames = "allenatori")
 	@GetMapping(path="/allAllenatori")
 	public @ResponseBody Iterable<Allenatori> getAllAllenatori() {
-		return allenatoriRepository.findAll();
+		Iterable<Allenatori> findAll = allenatoriRepository.findAll();
+		for (Allenatori allenatori : findAll) {
+			allenatori.setNuovoNome(allenatori.getNome());
+		}
+		return findAll;
 	}	
 
 	@GetMapping(path="/allFantarose")

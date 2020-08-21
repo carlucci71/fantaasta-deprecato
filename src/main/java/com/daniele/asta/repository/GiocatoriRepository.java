@@ -1,4 +1,4 @@
-package com.example.demo.repository;
+package com.daniele.asta.repository;
 
 
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.example.demo.entity.Giocatori;
+import com.daniele.asta.entity.Giocatori;
 
 
 public interface GiocatoriRepository extends CrudRepository<Giocatori, Integer> {
