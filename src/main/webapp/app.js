@@ -16,6 +16,7 @@ app.run(
 			$rootScope.isAdmin=false;
 			$rootScope.calciatori=[];
 			$rootScope.numeroUtenti=8;
+			$rootScope.turno=0;
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.isLoggato= function(){
 				if (!$rootScope.giocatore) return false;
@@ -82,7 +83,34 @@ app.run(
 					});
 				return ret;
 			}
-			$rootScope.aggiornaUtenti= function() {
+			$rootScope.ordinaUtente= function(u,verso) {
+				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
+					if (verso == 'D'){
+						if(u.ordine==value.ordine){
+							value.nuovoOrdine=u.ordine+1;
+						} else  if(u.ordine+1==value.ordine){
+							value.nuovoOrdine=u.ordine;
+						} else {
+							value.nuovoOrdine=value.ordine;
+						}
+					}
+					if (verso == 'U'){
+						if(u.ordine==value.ordine){
+							value.nuovoOrdine=u.ordine-1;
+						} else  if(u.ordine-1==value.ordine){
+							value.nuovoOrdine=u.ordine;
+						} else {
+							value.nuovoOrdine=value.ordine;
+						}
+							
+					}
+				});
+				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
+					value.ordine=value.nuovoOrdine;
+				});
+				
+			}
+			$rootScope.aggiornaUtenti= function(amministratore) {
 				var checkNome=[];
 				var ok=true;
 				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
@@ -94,7 +122,7 @@ app.run(
 				if (!ok) {
 					alert("Errore!! Nomi non univoci");
 				} else {
-					$resource('./aggiornaUtenti',{}).save($rootScope.elencoAllenatori).$promise.then(function(data) {
+					$resource('./aggiornaUtenti',{}).save({'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore}).$promise.then(function(data) {
 						if (data.nuovoNomeLoggato){
 							$rootScope.nomegiocatore=data.nuovoNomeLoggato;
 							$rootScope.giocatore=data.nuovoNomeLoggato;
@@ -102,7 +130,6 @@ app.run(
 						window.location.href = './index.html';
 					});
 				}
-
 			}
 			$rootScope.doDisconnect = function() {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'disconnetti', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
@@ -179,6 +206,8 @@ app.run(
 						if ($rootScope.giocatore){
 							$rootScope.nomegiocatore=$rootScope.giocatore;
 							$rootScope.idgiocatore=data.idLoggato;
+							$rootScope.turno=data.turno;
+							$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
 							$rootScope.doConnect();
 						}
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
@@ -310,6 +339,12 @@ app.run(
 					if (msg.timeStart){
 						$rootScope.timeStart=msg.timeStart;
 					}
+					if(msg.turno){
+						$rootScope.turno=msg.turno;
+					}
+					if(msg.nomeGiocatoreTurno){
+						$rootScope.nomeGiocatoreTurno=msg.nomeGiocatoreTurno;
+					}
 					if (msg.utentiScaduti){
 						$rootScope.utentiScaduti=msg.utentiScaduti;
 					}
@@ -413,7 +448,6 @@ app.run(
 				    column: 'Ruolo',
 				    descending: false
 				};
-
 			$rootScope.selectedCls = function(column) {
 				    return column == $rootScope.sort.column && 'sort-' + $rootScope.sort.descending;
 				};

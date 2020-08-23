@@ -59,6 +59,8 @@ public class MyController {
 	@Autowired Criptaggio criptaggio; 
 	@Autowired EntityManager em;
 	@Autowired SocketHandler socketHandler;
+	private String turno="0";
+	private String nomeGiocatoreTurno="";
 
 	@RequestMapping("/init")
 	public Map<String, Object> init() {
@@ -68,13 +70,21 @@ public class MyController {
 			m.put("DA_CONFIGURARE", "x");
 		}
 		else {
-		String giocatoreLoggato = (String) httpSession.getAttribute("nomeGiocatoreLoggato");
-		String idLoggato = (String) httpSession.getAttribute("idLoggato");
-		if (giocatoreLoggato != null) {
-			m.put("giocatoreLoggato", giocatoreLoggato);
-			m.put("idLoggato", idLoggato);
-		}
-		m.put("elencoAllenatori", getAllAllenatori());
+			String giocatoreLoggato = (String) httpSession.getAttribute("nomeGiocatoreLoggato");
+			String idLoggato = (String) httpSession.getAttribute("idLoggato");
+			if (giocatoreLoggato != null) {
+				m.put("giocatoreLoggato", giocatoreLoggato);
+				m.put("idLoggato", idLoggato);
+			}
+			Iterable<Allenatori> allAllenatori = getAllAllenatori();
+			for (Allenatori allenatori : allAllenatori) {
+				if(allenatori.getOrdine()==Integer.parseInt(getTurno())) {
+					setNomeGiocatoreTurno(allenatori.getNome());
+				}
+			}
+			m.put("elencoAllenatori", allAllenatori);
+			m.put("nomeGiocatoreTurno", getNomeGiocatoreTurno());
+			m.put("turno", getTurno());
 		}
 		return m;
 	}
@@ -152,6 +162,7 @@ public class MyController {
 		for(int i=0;i<numUtenti;i++) {
 			Allenatori al = new Allenatori();
 			al.setId(i);
+			al.setOrdine(i);
 			al.setNome("GIOC"+i);
 			if (i==0)
 				al.setIsAdmin(true);
@@ -167,10 +178,13 @@ public class MyController {
 		httpSession.setAttribute("nomeGiocatoreLoggato", body.get("nuovoNome"));
 	}
 	@PostMapping("/aggiornaUtenti")
-	public  Map<String,String>  aggiornaUtenti(@RequestBody List<Map<String, Object>> body) throws Exception {
+	public  Map<String,String>  aggiornaUtenti(@RequestBody Map<String, Object> body) throws Exception {
 		Map <String, String> m = new HashMap<>();
 		Map <String, String> utentiRinominati = new HashMap<>();
-		for (Map<String, Object> map : body) {
+		int i=0;
+		Boolean admin = (Boolean) body.get("admin");
+		List<Map<String, Object>> elencoAllenatori = (List<Map<String, Object>>) body.get("elencoAllenatori");
+		for (Map<String, Object> map : elencoAllenatori) {
 			Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
 			String nuovoNome = (String) map.get("nuovoNome");
 			String vecchioNome=al.getNome();
@@ -191,6 +205,8 @@ public class MyController {
 				al.setIsAdmin(true);
 			else
 				al.setIsAdmin(false);
+			if (admin) al.setOrdine((Integer) map.get("ordine"));
+			i++;
 			allenatoriRepository.save(al);
 		}
 		socketHandler.aggiornaUtenti(utentiRinominati,getAllAllenatori());
@@ -352,7 +368,7 @@ public class MyController {
 	@Cacheable(cacheNames = "allenatori")
 	@GetMapping(path="/allAllenatori")
 	public @ResponseBody Iterable<Allenatori> getAllAllenatori() {
-		Iterable<Allenatori> findAll = allenatoriRepository.findAll();
+		Iterable<Allenatori> findAll = allenatoriRepository.getAllenatoriOrderByOrdine();
 		for (Allenatori allenatori : findAll) {
 			allenatori.setNuovoNome(allenatori.getNome());
 		}
@@ -396,6 +412,18 @@ public class MyController {
 			ret.add(m);
 		}
 		return ret;
-	}	
+	}
+	public String getNomeGiocatoreTurno() {
+		return nomeGiocatoreTurno;
+	}
+	public void setNomeGiocatoreTurno(String nomeGiocatoreTurno) {
+		this.nomeGiocatoreTurno = nomeGiocatoreTurno;
+	}
+	public String getTurno() {
+		return turno;
+	}
+	public void setTurno(String turno) {
+		this.turno = turno;
+	}
 
 }

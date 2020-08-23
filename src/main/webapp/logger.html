@@ -18,7 +18,7 @@
 <body x-ng-app="app" style="margin-left:20px">
 <input type="button" value="aggiorna" ng-click="aggiornaLogger()"></input>
 <table border>
-  <tr ng-repeat="messaggio in logger">
+  <tr ng-repeat="messaggio in logger | orderBy: 'id': 'reverse'">
     <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.id | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
     <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.messaggio}}</td>
   </tr>

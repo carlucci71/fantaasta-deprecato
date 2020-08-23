@@ -8,6 +8,7 @@
 <link href="./bootstrap.css" rel="stylesheet" type="text/css">
 <link href="./bootstrap-theme.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- 
 <script type="text/javascript" src="./angular.js"></script>
@@ -18,7 +19,6 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
     <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.6.1/angular-locale_it-it.min.js"></script>
     
 <script type="text/javascript" src="./app.js"></script>
@@ -48,7 +48,7 @@
 	<i class="fa fa-chevron-up" ng-show="sezLinkVisible"></i>
 	Link</div>
 	<div ng-show="sezLinkVisible" > <!-- LINK -->
-		<a ng-if="isLoggato() && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Modulo amministrazione</a>
+		<a ng-if="isLoggato() && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Admin</a>
 		<a href="./cronologiaOfferte.html" target="_blank">Cronologia Offerte</a>
 		<a href="./logger.html" target="_blank">Log</a>
 		<a href="./liberi.html" target="_blank">Liberi</a>
@@ -70,8 +70,9 @@
 		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Avvia</td>
 		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Scaduto</td>
 		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Ping</td>
+		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Turno</td>
 		  </tr>
-		  <tr ng-repeat="utente in elencoAllenatori">
+		  <tr ng-repeat="utente in elencoAllenatori  | orderBy:'ordine'">
 		    	<td style="padding-left:10px;padding-right:10px;text-align:center"> <!-- nome -->
 		    		{{utente.nome}}
 		    	</td>
@@ -98,6 +99,9 @@
 		    	<td style="padding-left:10px;padding-right:10px;text-align:center">  <!-- ping -->
 					<label style="font-size:10" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
 				</td>
+		    	<td style="padding-left:10px;padding-right:10px;text-align:center">  <!-- turno -->
+					<label ng-if="utente.ordine==turno">X{{nomeGiocatoreTurno}}</label>
+				</td>
 		  </tr>
 		</table>
 	</div> <!-- UTENTI -->
@@ -109,20 +113,22 @@
 	Offerte</div>
 		<div ng-show="sezOfferte"> <!-- OFFERTA -->
 			<div> <!-- SELCALCIATORE -->
-				<div ng-show="bSemaforoAttivo"> 
-					<label>Calciatore: </label>
-					<select ng-model="selCalciatore">
-			  			<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}} ({{calciatore.ruolo}}) {{calciatore.squadra}}</option>
-					</select>
-				
-					<a href=# ng-show="selCalciatore && durataAsta>0"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
-					<label>Secondi durata Asta: </label>
-					<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
-					<label ng-hide="isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
-					<label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>
+				<div ng-show="bSemaforoAttivo">
+					<div ng-show="isAdmin || nomeGiocatoreTurno==nomegiocatore"> 
+						<label>Calciatore: </label>
+						<select ng-model="selCalciatore">
+				  			<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}} ({{calciatore.ruolo}}) {{calciatore.squadra}}</option>
+						</select>
+						<a href=# ng-show="selCalciatore && durataAsta>0 && nomeGiocatoreTurno==nomegiocatore"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
+						<label>Secondi durata Asta: </label>
+						<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
+						<label ng-hide="isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
+						<label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>
+					</div>
 					<br>
-					<label class="nextOperation" ng-show="!selCalciatore">Seleziona il calciatore</label>
-					<label class="nextOperation" ng-show="selCalciatore && durataAsta>0">Avvia asta</label>
+					<label class="nextOperation" ng-show="!selCalciatore && nomeGiocatoreTurno==nomegiocatore" >Seleziona il calciatore</label>
+					<label class="nextOperation" ng-show=" selCalciatore && nomeGiocatoreTurno==nomegiocatore && durataAsta>0">Avvia asta</label>
+					<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >{{nomeGiocatoreTurno}} deve selezionare il calciatore ed avviare l'asta</label>
 				</div>
 			</div> <!-- SELCALCIATORE -->
 	
@@ -216,7 +222,7 @@
 		    <td style="padding-left:10px;padding-right:10px;text-align:left">Data</td>
 		    <td style="padding-left:10px;padding-right:10px;text-align:left">Messaggio</td>
 		  </tr>
-		  <tr ng-repeat="messaggio in messaggi">
+		  <tr ng-repeat="messaggio in messaggi | orderBy: 'data': 'reverse'">
 		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.data | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
 		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.testo}}</td>
 		  </tr>

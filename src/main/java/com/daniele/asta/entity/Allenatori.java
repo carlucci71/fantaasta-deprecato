@@ -12,6 +12,7 @@ public class Allenatori {
 
 	@Id
 	private Integer id;
+	private Integer ordine;
 	private String nuovoNome;
 	private String nome;
 	private String pwd;
@@ -40,14 +41,21 @@ public class Allenatori {
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
-	@Override
-	public String toString() {
-		return "Allenatori [id=" + id + ", nome=" + nome + ", pwd=" + pwd + ", isAdmin=" + isAdmin + "]";
-	}
 	public String getNuovoNome() {
 		return nuovoNome;
 	}
 	public void setNuovoNome(String nuovoNome) {
 		this.nuovoNome = nuovoNome;
+	}
+	public Integer getOrdine() {
+		return ordine;
+	}
+	public void setOrdine(Integer ordine) {
+		this.ordine = ordine;
+	}
+	@Override
+	public String toString() {
+		return "Allenatori [id=" + id + ", ordine=" + ordine + ", nuovoNome=" + nuovoNome + ", nome=" + nome + ", pwd="
+				+ pwd + ", isAdmin=" + isAdmin + "]";
 	}
 }
