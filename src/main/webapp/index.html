@@ -49,7 +49,7 @@
 	Link</div>
 	<div ng-show="sezLinkVisible" > <!-- LINK -->
 		<a ng-if="isLoggato() && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Admin</a>
-		<a href="./cronologiaOfferte.html" target="_blank">Cronologia Offerte</a>
+		<a href="./cronologiaOfferte.html" ng-click="aggiornaCronologiaOfferte()" target="_blank">Cronologia Offerte</a>
 		<a href="./logger.html" target="_blank">Log</a>
 		<a href="./liberi.html" target="_blank">Liberi</a>
 	</div> <!-- LINK -->
