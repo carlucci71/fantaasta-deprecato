@@ -146,12 +146,14 @@ public class MyController {
 
 	}
 	@PostMapping("/cancellaOfferta")
-	public List<Map<String, Object>>  cancellaOfferta(@RequestBody Map<String, Object> body) throws Exception {
+	public Map<String,List<Map<String, Object>>>  cancellaOfferta(@RequestBody Map<String, Object> body) throws Exception {
 		Map<String, Object> mapOfferta = (Map)body.get("offerta");
 		Integer idGiocatore=(Integer) mapOfferta.get("idGiocatore");
 		fantaroseRepository.delete(idGiocatore);
 		socketHandler.notificaCancellaOfferta(mapOfferta);
-		return elencoCronologiaOfferte();
+		Map<String,List<Map<String, Object>>> ret = new HashMap<>();
+		ret.put("ret", elencoCronologiaOfferte());
+		return ret;
 	}
 
 	@PostMapping("/azzera")

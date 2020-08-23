@@ -335,7 +335,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	
 	public void notificaCancellaOfferta(Map<String, Object> mapOfferta) throws IOException {
 		Map<String, Object> m = new HashMap<>();
-		creaMessaggio("Offerta cancellata: " + mapOfferta);
+		creaMessaggio("Offerta registrata CANCELLATA: " + mapOfferta.get("allenatore") + " per " + mapOfferta.get("giocatore") + "(" + mapOfferta.get("ruolo") 
+		+ ") " + mapOfferta.get("squadra") + " vinto a " + mapOfferta.get("costo"));
 		m.put("messaggi", messaggi);
 		invia(toJson(m));
 	}

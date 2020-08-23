@@ -168,7 +168,7 @@ app.run(
 			$rootScope.cancellaOfferta=function(offerta){
 				if (window.confirm("Cancello offerta di:" + offerta.allenatore + " per " + offerta.giocatore + "(" + offerta.ruolo + ") " + offerta.squadra + " vinto a " + offerta.costo)){
 					$resource('./cancellaOfferta',{}).save({'offerta':offerta}).$promise.then(function(data) {
-						$rootScope.cronologiaOfferte=data;
+						$rootScope.cronologiaOfferte=data.ret;
 					});
 				}
 			}
