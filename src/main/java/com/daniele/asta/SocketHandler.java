@@ -332,6 +332,13 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			invia(payload);
 		}
 	}
+	
+	public void notificaCancellaOfferta(Map<String, Object> mapOfferta) throws IOException {
+		Map<String, Object> m = new HashMap<>();
+		creaMessaggio("Offerta cancellata: " + mapOfferta);
+		m.put("messaggi", messaggi);
+		invia(toJson(m));
+	}
 	public void aggiornaUtenti(Map<String, String> utentiRinominati, Iterable<Allenatori> allAllenatori) throws IOException {
 
 		Iterator<String> iterator = utentiRinominati.keySet().iterator();

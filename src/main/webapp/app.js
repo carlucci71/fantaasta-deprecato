@@ -165,6 +165,13 @@ app.run(
 					$rootScope.logger=data;
 				});
 			}
+			$rootScope.cancellaOfferta=function(offerta){
+				if (window.confirm("Cancello offerta di:" + offerta.allenatore + " per " + offerta.giocatore + "(" + offerta.ruolo + ") " + offerta.squadra + " vinto a " + offerta.costo)){
+					$resource('./cancellaOfferta',{}).save({'offerta':offerta}).$promise.then(function(data) {
+						$rootScope.cronologiaOfferte=data;
+					});
+				}
+			}
 			$rootScope.aggiornaCronologiaOfferte=function(){
 				$resource('./elencoCronologiaOfferte',{}).query().$promise.then(function(data) {
 					$rootScope.cronologiaOfferte=data;
@@ -185,7 +192,7 @@ app.run(
 				window.location.href = './admin.html';
 			}
 			$rootScope.azzera=function(){
-				if (window.confirm("Sicuro???????????")){
+				if (window.confirm("Sicuro??????????? CANCELLERAI TUTTO IL DB")){
 					$resource('./azzera',{}).save().$promise.then(function(data) {
 						$rootScope.sendMsg(JSON.stringify({'operazione':'azzera', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 						$rootScope.inizializza(true);

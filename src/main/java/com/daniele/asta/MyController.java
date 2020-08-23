@@ -145,6 +145,15 @@ public class MyController {
 		}
 
 	}
+	@PostMapping("/cancellaOfferta")
+	public List<Map<String, Object>>  cancellaOfferta(@RequestBody Map<String, Object> body) throws Exception {
+		Map<String, Object> mapOfferta = (Map)body.get("offerta");
+		Integer idGiocatore=(Integer) mapOfferta.get("idGiocatore");
+		fantaroseRepository.delete(idGiocatore);
+		socketHandler.notificaCancellaOfferta(mapOfferta);
+		return elencoCronologiaOfferte();
+	}
+
 	@PostMapping("/azzera")
 	public void azzera() throws Exception {
 		giocatoriRepository.deleteAll();

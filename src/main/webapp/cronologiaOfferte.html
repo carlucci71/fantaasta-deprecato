@@ -26,6 +26,7 @@
     <td style="padding-left:10px;padding-right:10px;text-align:center">Costo</td>
     <td style="padding-left:10px;padding-right:10px;text-align:center">Allenatore</td>
     <td style="padding-left:10px;padding-right:10px;text-align:center">SqlTime</td>
+    <td ng-if="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">Cancella</td>
   </tr>
   <tr ng-repeat="offerta in cronologiaOfferte">
     <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.ruolo}}</td>
@@ -35,6 +36,10 @@
     <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.costo}}</td>
     <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.allenatore}}</td>
     <td style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.sqlTime}}</td>
+    <td ng-if="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">
+		<a href=#><img src='./cestino.png' ng-click="cancellaOfferta(offerta)" height="20" width="20"/></a>
+	</td>
+     
   </tr>
 </table>
 
