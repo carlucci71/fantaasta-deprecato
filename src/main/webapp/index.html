@@ -7,6 +7,8 @@
 <link href="./stile.css" rel="stylesheet" type="text/css">
 <link href="./bootstrap.css" rel="stylesheet" type="text/css">
 <link href="./bootstrap-theme.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <!-- 
 <script type="text/javascript" src="./angular.js"></script>
 <script type="text/javascript" src="./angular-resource.js"></script>
@@ -41,7 +43,10 @@
 </div>
 
 <div ng-hide="config">
-	<div class="sezione" ng-click="sezLinkVisible=!sezLinkVisible">Link</div>
+	<div class="sezione" ng-click="sezLinkVisible=!sezLinkVisible">
+	<i class="fa fa-chevron-down" ng-show="!sezLinkVisible"></i>
+	<i class="fa fa-chevron-up" ng-show="sezLinkVisible"></i>
+	Link</div>
 	<div ng-show="sezLinkVisible" > <!-- LINK -->
 		<a ng-if="isLoggato() && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Modulo amministrazione</a>
 		<a href="./cronologiaOfferte.html" target="_blank">Cronologia Offerte</a>
@@ -49,7 +54,10 @@
 		<a href="./liberi.html" target="_blank">Liberi</a>
 	</div> <!-- LINK -->
 	
-	<div class="sezione" ng-click="sezUtentiVisible=!sezUtentiVisible">Collegati</div>
+	<div class="sezione" ng-click="sezUtentiVisible=!sezUtentiVisible">
+		<i class="fa fa-chevron-down" ng-show="!sezUtentiVisible"></i>
+		<i class="fa fa-chevron-up" ng-show="sezUtentiVisible"></i>
+	Collegati</div>
 	<div ng-show="sezUtentiVisible"> <!-- UTENTI -->
 		<label class="nextOperation" ng-show="!isLoggato()">Connettiti</label>
 		<br>
@@ -95,7 +103,10 @@
 	</div> <!-- UTENTI -->
 	<br>
 	<div ng-show="isLoggato()"> <!-- ISLOGGATO -->
-		<div class="sezione" ng-click="sezOfferte=!sezOfferte">Offerte</div>
+		<div class="sezione" ng-click="sezOfferte=!sezOfferte">
+		<i class="fa fa-chevron-down" ng-show="!sezOfferte"></i>
+		<i class="fa fa-chevron-up" ng-show="sezOfferte"></i>
+	Offerte</div>
 		<div ng-show="sezOfferte"> <!-- OFFERTA -->
 			<div> <!-- SELCALCIATORE -->
 				<div ng-show="bSemaforoAttivo"> 
@@ -194,7 +205,10 @@
 	</div> <!-- ISLOGGATO -->
 
 	<br>
-	<div class="sezione" ng-click="sezLog=!sezLog">Log sessione corrente</div>
+	<div class="sezione" ng-click="sezLog=!sezLog">
+		<i class="fa fa-chevron-down" ng-show="!sezLog"></i>
+		<i class="fa fa-chevron-up" ng-show="sezLog"></i>
+	Log sessione corrente</div>
 	<div ng-show="sezLog"> <!-- LOG -->
 		<br>
 		<table border>
