@@ -4,7 +4,6 @@
 .sortorder.reverse:after {
   content: '\25bc';   // BLACK DOWN-POINTING TRIANGLE
 }
-
 .pb {
   background-color: white;
   height: 50px;
@@ -27,7 +26,6 @@
   color: #fff;
   font-weight: normal
 }
-
 .correntePerdente {
 	background-color: white;
 	color: red;
@@ -40,7 +38,6 @@
 	font-size: 36px;
 	font-weight: bold;
 }
-
 .finitoPerdente {
 	background-color: yellow;
 	color: red;
@@ -51,6 +48,18 @@
 	background-color: yellow;
 	color: black;
 	font-size: 36px;
+	font-weight: bold;
+}
+.sezione {
+	width: 98%;
+	background-color: lightgray;
+	color: black;
+	font-size: 16px;
+	font-weight: bold;
+}
+.nextOperation{
+	color: red;
+	font-size: 20px;
 	font-weight: bold;
 }
 

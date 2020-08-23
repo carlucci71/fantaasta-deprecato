@@ -1,6 +1,10 @@
 var app = angular.module('app', [ 'ngResource','ngAnimate', 'ngSanitize', 'ui.bootstrap' ]);
 app.run(
 		function($rootScope, $resource, $interval){
+			$rootScope.sezLinkVisible=true;
+			$rootScope.sezUtentiVisible=true;
+			$rootScope.sezOfferte=true;
+			$rootScope.sezLog=true;
 			$rootScope.config=false;
 			$rootScope.giocatore="";
 			$rootScope.offerta=1;
