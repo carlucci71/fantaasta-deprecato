@@ -88,67 +88,77 @@ public class MyController {
 		return m;
 	}
 	@PostMapping("/caricaFile")
-	public void caricaFile(@RequestBody Map<String,Object> body) throws Exception {
-		String content = (String) body.get("file");
-		String tipoFile = (String) body.get("tipo");
-		giocatoriRepository.deleteAll();
-		if("FS".equalsIgnoreCase(tipoFile)) {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			InputSource is = new InputSource(new StringReader(content));
-			Document parse = builder.parse(is);
-			NodeList childNodes = parse.getChildNodes().item(0).getChildNodes();
-			for (int i=0;i<childNodes.getLength();i++) {
-				if (i>0) {
-					Node tr = childNodes.item(i);
-					NodeList childNodesTr = tr.getChildNodes();
-					String id = childNodesTr.item(0).getTextContent(); 
-					String squadra = childNodesTr.item(3).getTextContent(); 
-					String nome = childNodesTr.item(2).getTextContent() + " " + childNodesTr.item(1).getTextContent(); 
-					String ruolo = childNodesTr.item(4).getTextContent(); 
-					String quotazione = childNodesTr.item(6).getTextContent(); 
-//					System.out.println(id + "-" +squadra + "-" +nome + "-" +ruolo + "-" +quotazione + "-" );
+	public Map<String, Object> caricaFile(@RequestBody Map<String,Object> body) throws Exception {
+		Map<String,Object> ret = new HashMap<>();
+		if(isOkDispositiva(body)) {
+			String content = (String) body.get("file");
+			String tipoFile = (String) body.get("tipo");
+			giocatoriRepository.deleteAll();
+			if("FS".equalsIgnoreCase(tipoFile)) {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				InputSource is = new InputSource(new StringReader(content));
+				Document parse = builder.parse(is);
+				NodeList childNodes = parse.getChildNodes().item(0).getChildNodes();
+				for (int i=0;i<childNodes.getLength();i++) {
+					if (i>0) {
+						Node tr = childNodes.item(i);
+						NodeList childNodesTr = tr.getChildNodes();
+						String id = childNodesTr.item(0).getTextContent(); 
+						String squadra = childNodesTr.item(3).getTextContent(); 
+						String nome = childNodesTr.item(2).getTextContent() + " " + childNodesTr.item(1).getTextContent(); 
+						String ruolo = childNodesTr.item(4).getTextContent(); 
+						String quotazione = childNodesTr.item(6).getTextContent(); 
+	//					System.out.println(id + "-" +squadra + "-" +nome + "-" +ruolo + "-" +quotazione + "-" );
+						Giocatori giocatori = new Giocatori();
+						giocatori.setId(Integer.parseInt(id));
+						giocatori.setNome(nome);
+						giocatori.setQuotazione(Integer.parseInt(quotazione));
+						giocatori.setRuolo(ruolo);
+						giocatori.setSquadra(squadra);
+						giocatoriRepository.save(giocatori);
+					}
+				}
+			}
+			else if("MANTRA".equalsIgnoreCase(tipoFile)) {
+				String[] split = content.split("\n");
+				for(int i=1;i<split.length;i++) {
+					String riga = split[i];
+					String[] colonne = riga.split("\t");
 					Giocatori giocatori = new Giocatori();
-					giocatori.setId(Integer.parseInt(id));
-					giocatori.setNome(nome);
-					giocatori.setQuotazione(Integer.parseInt(quotazione));
-					giocatori.setRuolo(ruolo);
-					giocatori.setSquadra(squadra);
+					giocatori.setId(Integer.parseInt(colonne[0]));
+					giocatori.setNome(colonne[2]);
+					try
+					{
+						giocatori.setQuotazione(Integer.parseInt(colonne[6].replace("\r", "")));
+					}
+					catch (Exception e)
+					{	
+						giocatori.setQuotazione(-1);
+					}
+					giocatori.setRuolo(colonne[1].replaceAll("\"", ""));
+					giocatori.setSquadra(colonne[3]);
 					giocatoriRepository.save(giocatori);
 				}
 			}
-		}
-		else if("MANTRA".equalsIgnoreCase(tipoFile)) {
-			String[] split = content.split("\n");
-			for(int i=1;i<split.length;i++) {
-				String riga = split[i];
-				String[] colonne = riga.split("\t");
-				Giocatori giocatori = new Giocatori();
-				giocatori.setId(Integer.parseInt(colonne[0]));
-				giocatori.setNome(colonne[2]);
-				try
-				{
-					giocatori.setQuotazione(Integer.parseInt(colonne[6].replace("\r", "")));
-				}
-				catch (Exception e)
-				{	
-					giocatori.setQuotazione(-1);
-				}
-				giocatori.setRuolo(colonne[1].replaceAll("\"", ""));
-				giocatori.setSquadra(colonne[3]);
-				giocatoriRepository.save(giocatori);
+			else {
+				throw new RuntimeException("Tipo file non riconoscituo:" + tipoFile);
 			}
+			ret.put("esitoDispositiva", "OK");
 		}
 		else {
-			throw new RuntimeException("Tipo file non riconoscituo:" + tipoFile);
+			ret.put("esitoDispositiva", "KO");
 		}
+		
+		return ret;
 
 	}
 	
 	private boolean isOkDispositiva(@RequestBody Map<String, Object> body) {
 		try {
 			Integer tokenDispositiva = (Integer) body.get("tokenDispositiva");
-			String idgiocatore =  body.get("idgiocatore").toString();
+			String idgiocatore =  null;
+			idgiocatore=body.get("idgiocatore").toString();
 			socketHandler.verificaTokenDispositiva(idgiocatore);
 			long timeout=0;
 			Integer tokenVerifica = socketHandler.getTokenVerifica();
@@ -183,77 +193,105 @@ public class MyController {
 	}
 
 	@PostMapping("/azzera")
-	public void azzera(@RequestBody Map<String, Object> body) throws Exception {
-		if (body.get("conferma") != null && body.get("conferma").toString().equalsIgnoreCase("S")) {
-			giocatoriRepository.deleteAll();
-			fantaroseRepository.deleteAll();
-			allenatoriRepository.deleteAll();
-			Configurazione configurazione = getConfigurazione();
-			configurazione.setNumeroGiocatori(null);
-			configurazioneRepository.save(configurazione);
+	public Map<String,Object> azzera(@RequestBody Map<String, Object> body) throws Exception {
+		Map<String,Object> ret = new HashMap<>();
+		if(isOkDispositiva(body)) {
+			ret.put("esitoDispositiva", "OK");
+			if (body.get("conferma") != null && body.get("conferma").toString().equalsIgnoreCase("S")) {
+				giocatoriRepository.deleteAll();
+				fantaroseRepository.deleteAll();
+				allenatoriRepository.deleteAll();
+				Configurazione configurazione = getConfigurazione();
+				configurazione.setNumeroGiocatori(null);
+				configurazioneRepository.save(configurazione);
+			}
 		}
+		else {
+			ret.put("esitoDispositiva", "KO");
+		}
+		return ret;
 	}
 	@PostMapping("/inizializzaUtentiInLega")
-	public void inizializzaUtentiInLega(@RequestBody Map<String, Object> body) throws Exception {
-		Integer numUtenti=(Integer) body.get("numUtenti");
+	public Map<String, Object> inizializzaUtentiInLega(@RequestBody Map<String, Object> body) throws Exception {
 		Configurazione configurazione = getConfigurazione();
-		configurazione.setNumeroGiocatori(numUtenti);
-		configurazioneRepository.save(configurazione);
-		for(int i=0;i<numUtenti;i++) {
-			Allenatori al = new Allenatori();
-			al.setId(i);
-			al.setOrdine(i);
-			if (i==0) {
-				al.setIsAdmin(true);
-				al.setNome((String) httpSession.getAttribute("nomeGiocatoreLoggato"));
+		Map<String,Object> ret = new HashMap<>();
+		if(configurazione.getNumeroGiocatori() == null) {
+			Integer numUtenti=(Integer) body.get("numUtenti");
+			configurazione.setNumeroGiocatori(numUtenti);
+			configurazioneRepository.save(configurazione);
+			for(int i=0;i<numUtenti;i++) {
+				Allenatori al = new Allenatori();
+				al.setId(i);
+				al.setOrdine(i);
+				if (i==0) {
+					al.setIsAdmin(true);
+					String giocatoreLoggato = (String) httpSession.getAttribute("nomeGiocatoreLoggato");
+					if(giocatoreLoggato==null) {
+						al.setNome("GIOC0");
+					}
+					else {
+						al.setNome(giocatoreLoggato);
+					}
+				}
+				else {
+					al.setIsAdmin(false);
+					al.setNome("GIOC"+i);
+				}
+				al.setPwd("");
+				allenatoriRepository.save(al);
 			}
-			else {
-				al.setIsAdmin(false);
-				al.setNome("GIOC"+i);
-			}
-			al.setPwd("");
-			allenatoriRepository.save(al);
+			ret.put("esitoDispositiva", "OK");
 		}
+		else {
+			ret.put("esitoDispositiva", "KO");
+		}
+		return ret;
 	}
-	
+
 	@PostMapping("aggiornaSessioneNomeUtente")
 	public void aggiornaSessioneNomeUtente(@RequestBody Map<String, Object> body) {
 		httpSession.setAttribute("nomeGiocatoreLoggato", (String)body.get("nuovoNome"));
 	}
 	@PostMapping("/aggiornaUtenti")
 	public  Map<String,String>  aggiornaUtenti(@RequestBody Map<String, Object> body) throws Exception {
-		Map <String, String> m = new HashMap<>();
-		Map <String, String> utentiRinominati = new HashMap<>();
-		int i=0;
-		Boolean admin = (Boolean) body.get("admin");
-		List<Map<String, Object>> elencoAllenatori = (List<Map<String, Object>>) body.get("elencoAllenatori");
-		for (Map<String, Object> map : elencoAllenatori) {
-			Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
-			String nuovoNome = (String) map.get("nuovoNome");
-			String vecchioNome=al.getNome();
-			String giocatoreLoggato = (String) httpSession.getAttribute("nomeGiocatoreLoggato");
-			if (!vecchioNome.equalsIgnoreCase(nuovoNome)) {
-				utentiRinominati.put(vecchioNome, nuovoNome);
-				if(giocatoreLoggato.equalsIgnoreCase(vecchioNome)) {
-					m.put("nuovoNomeLoggato", nuovoNome);
-					m.put("vecchioNomeLoggato", vecchioNome);
-//					httpSession.setAttribute("nomeGiocatoreLoggato", nuovoNome);
+		Map <String, String> ret = new HashMap<>();
+		if(isOkDispositiva(body)) {
+			Map <String, String> utentiRinominati = new HashMap<>();
+			int i=0;
+			Boolean admin = (Boolean) body.get("admin");
+			List<Map<String, Object>> elencoAllenatori = (List<Map<String, Object>>) body.get("elencoAllenatori");
+			for (Map<String, Object> map : elencoAllenatori) {
+				Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
+				String nuovoNome = (String) map.get("nuovoNome");
+				String vecchioNome=al.getNome();
+				String giocatoreLoggato = (String) httpSession.getAttribute("nomeGiocatoreLoggato");
+				if (!vecchioNome.equalsIgnoreCase(nuovoNome)) {
+					utentiRinominati.put(vecchioNome, nuovoNome);
+					if(giocatoreLoggato.equalsIgnoreCase(vecchioNome)) {
+						ret.put("nuovoNomeLoggato", nuovoNome);
+						ret.put("vecchioNomeLoggato", vecchioNome);
+						//					httpSession.setAttribute("nomeGiocatoreLoggato", nuovoNome);
+					}
 				}
+				al.setNome(nuovoNome);
+				String pwd = (String) map.get("pwd");
+				if (!pwd.equalsIgnoreCase(al.getPwd()))
+					al.setPwd(criptaggio.encrypt(pwd,nuovoNome));
+				if("true".equalsIgnoreCase(map.get("isAdmin").toString()))
+					al.setIsAdmin(true);
+				else
+					al.setIsAdmin(false);
+				if (admin) al.setOrdine((Integer) map.get("ordine"));
+				i++;
+				allenatoriRepository.save(al);
 			}
-			al.setNome(nuovoNome);
-			String pwd = (String) map.get("pwd");
-			if (!pwd.equalsIgnoreCase(al.getPwd()))
-				al.setPwd(criptaggio.encrypt(pwd,nuovoNome));
-			if("true".equalsIgnoreCase(map.get("isAdmin").toString()))
-				al.setIsAdmin(true);
-			else
-				al.setIsAdmin(false);
-			if (admin) al.setOrdine((Integer) map.get("ordine"));
-			i++;
-			allenatoriRepository.save(al);
+			socketHandler.aggiornaUtenti(utentiRinominati,getAllAllenatori());
+			ret.put("esitoDispositiva", "OK");
 		}
-		socketHandler.aggiornaUtenti(utentiRinominati,getAllAllenatori());
-		return m;
+		else {
+			ret.put("esitoDispositiva", "KO");
+		}
+		return ret;
 	}
 
 	@GetMapping("/cripta")
@@ -269,21 +307,27 @@ public class MyController {
 	}
 */	
 	@PostMapping("/confermaAsta")
-	public void confermaAsta(@RequestBody Map<String, Object> body) throws Exception {
-		//		String nomegiocatore = (String) body.get("nomegiocatore");
-		//		String nomeCalciatore = (String) body.get("nomeCalciatore");
-		String idgiocatore =  body.get("idgiocatore").toString();
-		Integer offerta = (Integer) body.get("offerta");
-		String idCalciatore = body.get("idCalciatore").toString();
-		Calendar c = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-		String stm = sdf.format(c.getTime());
-		Fantarose fantarosa = new Fantarose();
-		fantarosa.setCosto(offerta);
-		fantarosa.setIdAllenatore(Integer.parseInt(idgiocatore));
-		fantarosa.setIdGiocatore(Integer.parseInt(idCalciatore));
-		fantarosa.setSqlTime(stm);
-		fantaroseRepository.save(fantarosa);
+	public Map<String, Object> confermaAsta(@RequestBody Map<String, Object> body) throws Exception {
+		Map<String,Object> ret = new HashMap<>();
+		if(isOkDispositiva(body)) {
+			String idgiocatore =  ((Map)body.get("offerta")).get("idgiocatore").toString();
+			Integer offerta = (Integer) ((Map)body.get("offerta")).get("offerta");
+			String idCalciatore = ((Map)body.get("offerta")).get("idCalciatore").toString();
+			Calendar c = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+			String stm = sdf.format(c.getTime());
+			Fantarose fantarosa = new Fantarose();
+			fantarosa.setCosto(offerta);
+			fantarosa.setIdAllenatore(Integer.parseInt(idgiocatore));
+			fantarosa.setIdGiocatore(Integer.parseInt(idCalciatore));
+			fantarosa.setSqlTime(stm);
+			fantaroseRepository.save(fantarosa);
+			ret.put("esitoDispositiva", "OK");
+		}
+		else {
+			ret.put("esitoDispositiva", "KO");
+		}
+		return ret;
 	}
 
 

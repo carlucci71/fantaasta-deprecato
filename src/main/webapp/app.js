@@ -56,15 +56,20 @@ app.run(
 			}
 			$rootScope.caricaFile = function(tipoFile){
 				$rootScope.caricamentoInCorso=true;
-				 var f = document.getElementById('file').files[0], r = new FileReader();
-
-			    r.onloadend = function(e) {
-			      var data = e.target.result;
-					$resource('./caricaFile',{}).save({'file':data, 'tipo' : tipoFile}).$promise.then(function(ret) {
+				var f = document.getElementById('file').files[0], r = new FileReader();
+                r.onloadend = function(e) {
+			    var data = e.target.result;
+				$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
+				$resource('./caricaFile',{}).save({'file':data, 'tipo' : tipoFile,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+					if(data.esitoDispositiva == 'OK'){
 						$rootScope.caricamentoInCorso=false;
+					}
+					else {
+						alert('Errore!')
+					}
+						
 					});
 			    }
-
 			    r.readAsBinaryString(f);
 			}
 			$rootScope.sonoLoggato = function(u){
@@ -123,12 +128,18 @@ app.run(
 				if (!ok) {
 					alert("Errore!! Nomi non univoci");
 				} else {
-					$resource('./aggiornaUtenti',{}).save({'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore}).$promise.then(function(data) {
-						if (data.nuovoNomeLoggato){
-							$rootScope.nomegiocatore=data.nuovoNomeLoggato;
-							$rootScope.giocatore=data.nuovoNomeLoggato;
+					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
+					$resource('./aggiornaUtenti',{}).save({'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+						if(data.esitoDispositiva == 'OK'){
+							if (data.nuovoNomeLoggato){
+								$rootScope.nomegiocatore=data.nuovoNomeLoggato;
+								$rootScope.giocatore=data.nuovoNomeLoggato;
+							}
+							window.location.href = './index.html';
 						}
-						window.location.href = './index.html';
+						else {
+							alert('Errore!')
+						}
 					});
 				}
 			}
@@ -173,8 +184,10 @@ app.run(
 				if (window.confirm("Cancello offerta di:" + offerta.allenatore + " per " + offerta.giocatore + "(" + offerta.ruolo + ") " + offerta.squadra + " vinto a " + offerta.costo)){
 					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
 					$resource('./cancellaOfferta',{}).save({'offerta':offerta,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
-						$rootScope.cronologiaOfferte=data.ret;
-						if(data.esitoDispositiva != 'OK'){
+						if(data.esitoDispositiva == 'OK'){
+							$rootScope.cronologiaOfferte=data.ret;
+						}
+						else {
 							alert('Errore!')
 						}
 					});
@@ -187,10 +200,14 @@ app.run(
 			}
 			$rootScope.confermaNumUtenti=function(){
 				if ($rootScope.numeroUtenti>0){
-				$resource('./inizializzaUtentiInLega',{}).save({'numUtenti':$rootScope.numeroUtenti}).$promise.then(function(data) {
-//					window.location.href = './admin.html';
-					$rootScope.inizializza(false);
-				});
+					$resource('./inizializzaUtentiInLega',{}).save({'numUtenti':$rootScope.numeroUtenti}).$promise.then(function(data) {
+						if(data.esitoDispositiva == 'OK'){
+							$rootScope.inizializza(false);
+						}
+						else {
+							alert('Errore!')
+						}
+					});
 				}
 			}
 			$rootScope.ritornaIndex=function(){
@@ -201,9 +218,16 @@ app.run(
 			}
 			$rootScope.azzera=function(){
 				if (window.confirm("Sicuro??????????? CANCELLERAI TUTTO IL DB")){
-					$resource('./azzera',{}).save({'conferma':'S'}).$promise.then(function(data) {
-						$rootScope.sendMsg(JSON.stringify({'operazione':'azzera', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
-						$rootScope.inizializza(true);
+					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
+					$resource('./azzera',{}).save({'conferma':'S','idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+						if(data.esitoDispositiva == 'OK'){
+							$rootScope.sendMsg(JSON.stringify({'operazione':'azzera', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
+							$rootScope.inizializza(true);
+						}
+						else {
+							alert('Errore!')
+						}
+
 					});
 				}
 			}
@@ -398,9 +422,15 @@ app.run(
 			$rootScope.conferma = function(){
 				$rootScope.messaggi=[];
 				$rootScope.bSemaforoAttivo=true;
-				$resource('./confermaAsta',{}).save($rootScope.offertaVincente).$promise.then(function(data) {
-					$rootScope.sendMsg(JSON.stringify({'operazione':'confermaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
-					$rootScope.offertaVincente="";
+				$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
+				$resource('./confermaAsta',{}).save({'offerta':$rootScope.offertaVincente,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+					if(data.esitoDispositiva == 'OK'){
+						$rootScope.sendMsg(JSON.stringify({'operazione':'confermaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
+						$rootScope.offertaVincente="";
+					}
+					else {
+						alert('Errore!')
+					}
 				});
 			}
 			$rootScope.annulla = function(){

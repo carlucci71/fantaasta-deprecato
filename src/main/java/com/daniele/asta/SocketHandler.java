@@ -360,7 +360,6 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		try {
 			Map<String, Object> m = new HashMap<>();
 			m.put("verificaDispositiva", idgiocatore);
-//			setTokenVerifica(-1);
 			invia(toJson(m));
 		}
 		catch (Exception e)
