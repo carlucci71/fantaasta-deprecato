@@ -17,6 +17,7 @@ app.run(
 			$rootScope.calciatori=[];
 			$rootScope.numeroUtenti=8;
 			$rootScope.turno=0;
+			$rootScope.tokenDispositiva=-1;
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.isLoggato= function(){
 				if (!$rootScope.giocatore) return false;
@@ -151,6 +152,9 @@ app.run(
 					$rootScope.getMessaggio(data.data);
 				}
 			}
+			$rootScope.forzaTurno= function(turno) {
+				$rootScope.sendMsg(JSON.stringify({'operazione':'forzaTurno', 'turno':turno,'idgiocatore':$rootScope.idgiocatore}));
+			}
 			$rootScope.disconnect= function() {
 			    if (ws != null) {
 			        ws.close();
@@ -167,8 +171,12 @@ app.run(
 			}
 			$rootScope.cancellaOfferta=function(offerta){
 				if (window.confirm("Cancello offerta di:" + offerta.allenatore + " per " + offerta.giocatore + "(" + offerta.ruolo + ") " + offerta.squadra + " vinto a " + offerta.costo)){
-					$resource('./cancellaOfferta',{}).save({'offerta':offerta}).$promise.then(function(data) {
+					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
+					$resource('./cancellaOfferta',{}).save({'offerta':offerta,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
 						$rootScope.cronologiaOfferte=data.ret;
+						if(data.esitoDispositiva != 'OK'){
+							alert('Errore!')
+						}
 					});
 				}
 			}
@@ -179,7 +187,7 @@ app.run(
 			}
 			$rootScope.confermaNumUtenti=function(){
 				if ($rootScope.numeroUtenti>0){
-				$resource('./aggiornaNumUtenti',{}).save($rootScope.numeroUtenti).$promise.then(function(data) {
+				$resource('./inizializzaUtentiInLega',{}).save({'numUtenti':$rootScope.numeroUtenti}).$promise.then(function(data) {
 //					window.location.href = './admin.html';
 					$rootScope.inizializza(false);
 				});
@@ -193,7 +201,7 @@ app.run(
 			}
 			$rootScope.azzera=function(){
 				if (window.confirm("Sicuro??????????? CANCELLERAI TUTTO IL DB")){
-					$resource('./azzera',{}).save().$promise.then(function(data) {
+					$resource('./azzera',{}).save({'conferma':'S'}).$promise.then(function(data) {
 						$rootScope.sendMsg(JSON.stringify({'operazione':'azzera', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 						$rootScope.inizializza(true);
 					});
@@ -287,6 +295,14 @@ app.run(
 								
 							}
 						});
+					}
+					if (msg.verificaDispositiva){
+						if (msg.verificaDispositiva==$rootScope.idgiocatore){
+							if($rootScope.tokenDispositiva>=0){
+								$rootScope.sendMsg(JSON.stringify({'operazione':'verificaDispositiva', 'tokenDispositiva':$rootScope.tokenDispositiva, 'idgiocatore':$rootScope.idgiocatore}));
+								$rootScope.tokenDispositiva=-1;
+							}
+						}
 					}
 					if (msg.calciatori){
 						$rootScope.calciatori=msg.calciatori;
