@@ -156,19 +156,28 @@
 				</span>
 			</div> <!-- SELCALCIATORE -->
 	
-			<div style="padding-left:20px;" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
-				<input  style='width: 60px;' type="number"  ng-model="offerta"></input>
-				<input type="button" value="allinea" ng-click="allinea()"></input>
-			    <a href=#><img style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta()" height="35" width="35"/></a>
-				<input type="button" value="+1" ng-click="incrementa(1)"></input>
-				<input type="button" value="+5" ng-click="incrementa(5)"></input>
-				<input type="button" value="+10" ng-click="incrementa(10)"></input>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<span ng-show="isAdmin" style="background-color:yellow;  border: double;">
-					<label>Opera come:</label>
-					<select ng-model="selAllenatoreOperaCome"">
-			  			<option ng-repeat="allenatore in elencoAllenatori" value="{{allenatore.id}}@{{allenatore.nome}}">{{allenatore.nome}}</option>
-					</select>
+			<div style="width:550px;padding-left:20px;margin:auto;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
+				<div style="border-style:double;width:350px;text-align:center">
+					<input  style='width: 60px;' type="number"  ng-model="offerta"></input>
+					<input type="button" value="allinea" ng-click="allinea()"></input>
+				    <a href=#><img style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta()" height="35" width="35"/></a>
+					<input type="button" value="+1" ng-click="incrementa(1)"></input>
+					<input type="button" value="+5" ng-click="incrementa(5)"></input>
+					<input type="button" value="+10" ng-click="incrementa(10)"></input>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<br>
+					<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare</label>
+				</div>
+				<div ng-show="isAdmin" style="border-style:double;width:350px;text-align:center">
+					<table style="margin:auto">
+						<tr>
+							<td style="color: green;">Opera come:</td>
+						</tr>
+						<tr ng-class="{calciatoreNonSelezionato: idgiocatoreOperaCome!=allenatore.id, calciatoreSelezionato: idgiocatoreOperaCome==allenatore.id}" ng-repeat="allenatore in elencoAllenatori" ng-click="selezionaAllenatoreOperaCome(allenatore)" >
+							<td ng-show="allenatore.id!=idgiocatore">{{allenatore.nome}}</td>
+						</tr>
+					</table>
+					<label class="nextOperation" ng-show="!idgiocatoreOperaCome">Puoi selezionare altro allenatore</label>
 					<span ng-if="idgiocatoreOperaCome">
 						<input  style='width: 60px;' type="number"  ng-model="offertaOC"></input>
 						<input type="button" value="allinea" ng-click="allinea('OC')"></input>
@@ -177,10 +186,9 @@
 						<input type="button" value="+1" ng-click="incrementa(1, 'OC')"></input>
 						<input type="button" value="+5" ng-click="incrementa(5, 'OC')"></input>
 						<input type="button" value="+10" ng-click="incrementa(10, 'OC')"></input>
+						<label class="nextOperation">Puoi rilanciare per altro allenatore</label>
 					</span>
-				</span>
-				<br>
-				<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare</label>
+				</div>
 			</div> <!-- RILANCIA -->  
 	
 			<div ng-show="timeout" align=center> <!-- TIMEOUT -->

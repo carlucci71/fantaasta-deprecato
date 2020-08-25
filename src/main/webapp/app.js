@@ -184,6 +184,11 @@ app.run(
 					$rootScope.loggerMessaggi=data;
 				});
 			}
+			$rootScope.selezionaAllenatoreOperaCome=function(allenatore){
+				$rootScope.idgiocatoreOperaCome=allenatore.id;
+				$rootScope.nomegiocatoreOperaCome=allenatore.nome;
+				
+			}
 			$rootScope.cancellaOfferta=function(offerta){
 				if (window.confirm("Cancello offerta di:" + offerta.allenatore + " per " + offerta.giocatore + "(" + offerta.ruolo + ") " + offerta.squadra + " vinto a " + offerta.costo)){
 					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
@@ -269,7 +274,6 @@ app.run(
 						$rootScope.turno=data.turno;
 						$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
-//						$rootScope.selAllenatoreOperaCome=$rootScope.idgiocatore + "@" + $rootScope.nomegiocatore;
 					}
 				});
 			}
@@ -570,18 +574,6 @@ app.run(
 					$rootScope.nomegiocatore=newValue.substr(posToken+1);
 				}
 			});
-			$rootScope.$watch("selAllenatoreOperaCome", function(newValue, oldValue) {
-				if (newValue){
-					var posToken = newValue.indexOf("@");
-					$rootScope.idgiocatoreOperaCome=newValue.substr(0,posToken);
-					$rootScope.nomegiocatoreOperaCome=newValue.substr(posToken+1);
-				}
-				else {
-					$rootScope.idgiocatoreOperaCome="";
-					$rootScope.nomegiocatoreOperaCome="";
-				}
-			});
-			
 			
 	}
 )
