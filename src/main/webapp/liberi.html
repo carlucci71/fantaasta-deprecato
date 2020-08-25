@@ -13,6 +13,8 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
 <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <script type="text/javascript" src="./app.js"></script>
 
 
@@ -20,21 +22,25 @@
  <table>
     <thead>
         <tr>
- 			<th ng:class="selectedCls('ruolo')" ng:click="changeSorting('ruolo')">
+ 			<th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('ruolo')">
  				Ruolo
  		        <span class="sortorder" ng-show="sort.column === 'ruolo'" ng-class="{reverse: sort.descending}"></span>
+ 		        <span ng-hide="sort.column === 'ruolo'"><i class="fa fa-sort"></i></span>
  			</th>
-			<th ng:class="selectedCls('ruolo')" ng:click="changeSorting('nome')">
+			<th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('nome')">
 				Nome
  		        <span class="sortorder" ng-show="sort.column === 'nome'" ng-class="{reverse: sort.descending}"></span>
+ 		        <span ng-hide="sort.column === 'nome'"><i class="fa fa-sort"></i></span>
 			</th>
-            <th ng:class="selectedCls('ruolo')" ng:click="changeSorting('squadra')">
+            <th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('squadra')">
             	Squadra
  		        <span class="sortorder" ng-show="sort.column === 'squadra'" ng-class="{reverse: sort.descending}"></span>
+ 		        <span ng-hide="sort.column === 'squadra'"><i class="fa fa-sort"></i></span>
             </th>
-            <th ng:class="selectedCls('ruolo')" ng:click="changeSorting('quotazione')">
+            <th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('quotazione')">
             	Quotazione
  		        <span class="sortorder" ng-show="sort.column === 'quotazione'" ng-class="{reverse: sort.descending}"></span>
+ 		        <span ng-hide="sort.column === 'quotazione'"><i class="fa fa-sort"></i></span>
             </th>
         </tr>
         <tr>

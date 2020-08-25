@@ -198,6 +198,13 @@ app.run(
 					$rootScope.cronologiaOfferte=data;
 				});
 			}
+			$rootScope.selezionaCalciatore=function(calciatore){
+				$rootScope.selCalciatore=calciatore.id+'@'+calciatore.nome;
+				$rootScope.selCalciatoreId=calciatore.id;
+				$rootScope.selCalciatoreRuolo=calciatore.ruolo;
+				$rootScope.selCalciatoreNome=calciatore.nome;
+				$rootScope.selCalciatoreSquadra=calciatore.squadra;
+			}
 			$rootScope.confermaNumUtenti=function(){
 				if ($rootScope.numeroUtenti>0){
 					$resource('./inizializzaUtentiInLega',{}).save({'numUtenti':$rootScope.numeroUtenti}).$promise.then(function(data) {
@@ -427,6 +434,10 @@ app.run(
 					if(data.esitoDispositiva == 'OK'){
 						$rootScope.sendMsg(JSON.stringify({'operazione':'confermaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 						$rootScope.offertaVincente="";
+						$rootScope.filterRuolo="";
+						$rootScope.filterNome="";
+						$rootScope.filterSquadra="";
+						$rootScope.filterQuotazione="";
 					}
 					else {
 						alert('Errore!')
@@ -438,6 +449,10 @@ app.run(
 				$rootScope.bSemaforoAttivo=true;
 				$rootScope.sendMsg(JSON.stringify({'operazione':'annullaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				$rootScope.offertaVincente="";
+				$rootScope.filterRuolo="";
+				$rootScope.filterNome="";
+				$rootScope.filterSquadra="";
+				$rootScope.filterQuotazione="";
 			}
 			$rootScope.allinea = function(quale){
 				if(quale=='OC') {
@@ -670,7 +685,6 @@ app.filter('myTableFilter', function($rootScope){
 	          return;
 	      }
 	      else {
-	    	  console.log();
 	           return dataArray.filter(function(item){
 	              var termInRuolo=true;
 	              if($rootScope.filterRuolo) termInRuolo=item.ruolo.toLowerCase().indexOf($rootScope.filterRuolo.toLowerCase()) > -1;

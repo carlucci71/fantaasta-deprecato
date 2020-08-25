@@ -106,7 +106,7 @@ public class MyController {
 						NodeList childNodesTr = tr.getChildNodes();
 						String id = childNodesTr.item(0).getTextContent(); 
 						String squadra = childNodesTr.item(3).getTextContent(); 
-						String nome = childNodesTr.item(2).getTextContent() + " " + childNodesTr.item(1).getTextContent(); 
+						String nome = childNodesTr.item(1).getTextContent() + " " + childNodesTr.item(2).getTextContent(); 
 						String ruolo = childNodesTr.item(4).getTextContent(); 
 						String quotazione = childNodesTr.item(6).getTextContent(); 
 	//					System.out.println(id + "-" +squadra + "-" +nome + "-" +ruolo + "-" +quotazione + "-" );

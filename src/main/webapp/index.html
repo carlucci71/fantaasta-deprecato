@@ -61,42 +61,22 @@
 		<br>
 		<table border>
 		  <tr>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Nome</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Connetti</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Disconnetti</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Stato</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Avvia</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Scaduto</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Ping</td>
+		  	<td style="padding-left:10px;padding-right:10px;text-align:center"></td>
+		  	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">Avvia</td>
 		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Turno</td>
 		  </tr>
 		  <tr ng-repeat="utente in elencoAllenatori  | orderBy:'ordine'">
-		    	<td style="padding-left:10px;padding-right:10px;text-align:center"> <!-- nome -->
+		    	<td style="padding-left:10px;padding-right:10px;text-align:left"> <!-- nome -->
 		    		{{utente.nome}}
-		    	</td>
-		    	<td style="padding-left:10px;padding-right:10px;text-align:center"> <!-- connetti -->
 			    	<a ng-show="!isLoggato() && !utenteCollegato(utente)" href=#><img style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)" height="25" width="25"/></a>
-		    	</td>
-		    	<td style="padding-left:10px;padding-right:10px;text-align:center"> <!-- disconnetti -->
-				    <a ng-show="sonoLoggato(utente)" href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" height="20" width="20"/></a>
-		    	</td>
-		    	<td style="padding-left:10px;padding-right:10px;text-align:center"> <!-- stato connesso -->
-					<img  ng-show="utenteCollegato(utente)" style="margin-bottom:2px" src='./connesso.jpeg' height="20" width="20"/>
-		    	</td>
-		    	<!-- 
-		    	<td style="padding-left:10px;padding-right:10px;text-align:center">
-					<img ng-hide="utenteCollegato(utente)" style="margin-bottom:2px" src='./nonconnesso.jpeg' height="20" width="20"/>
-		    	</td>
-		    	 -->
-		    	<td style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia -->
-					<a ng-show="isAdmin && selCalciatore && durataAsta>0" href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="inizia(utente.nome, utente.id)" height="20" width="20"/></a>
-		    	</td>
-		    	<td style="padding-left:10px;padding-right:10px;text-align:center">  <!-- scaduto -->
+					<img  ng-show="utenteCollegato(utente)" style="margin-bottom:2px" src='./connesso.jpeg' height="20" width="20"/>		    	
+					<label style="width:30px;font-size:10" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
 		    		<a ng-show="utenteScaduto(utente)" href=#><img src='./cestino.png' ng-click="cancellaUtente(utente)" height="20" width="20"/></a>
-		    	</td>
-		    	<td style="padding-left:10px;padding-right:10px;text-align:center">  <!-- ping -->
-					<label style="font-size:10" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
+				    <a ng-show="sonoLoggato(utente)" href=#><img style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" height="20" width="20"/></a>
 				</td>
+		    	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia -->
+					<a ng-show="selCalciatore && durataAsta>0" href=#><img style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" height="20" width="20"/></a>
+		    	</td>
 		    	<td style="padding-left:10px;padding-right:10px;text-align:center">  <!-- turno -->
 					<label ng-if="utente.ordine==turno"><i class="fa fa-thumbs-up"></i></label>
 					<a ng-show="isAdmin && utente.ordine!=turno" href=#><img style="margin-bottom:2px" src='./vai.png' ng-click="forzaTurno(utente.ordine)" height="20" width="20"/></a>
@@ -112,24 +92,63 @@
 		<i class="fa fa-chevron-down" ng-show="!sezOfferte"></i>
 		<i class="fa fa-chevron-up" ng-show="sezOfferte"></i>
 	Offerte</div>
+	<br>
 		<div ng-show="sezOfferte"> <!-- OFFERTA -->
 			<div> <!-- SELCALCIATORE -->
-				<div ng-show="bSemaforoAttivo">
-					<div ng-show="isAdmin || nomeGiocatoreTurno==nomegiocatore"> 
-						<label>Calciatore: </label>
-						<select ng-model="selCalciatore">
-				  			<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}} ({{calciatore.ruolo}}) {{calciatore.squadra}}</option>
-						</select>
-						<a href=# ng-show="selCalciatore && durataAsta>0 && nomeGiocatoreTurno==nomegiocatore"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
-						<label>Secondi durata Asta: </label>
-						<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
-						<label ng-hide="isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
-						<label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>
-					</div>
+					<div style="border-style:double;width:750px;text-align:center;margin: auto" ng-show="bSemaforoAttivo">
+						<div ng-show="isAdmin || nomeGiocatoreTurno==nomegiocatore">
+							<!-- elenco calciatori -->	
+			 				 <div style="text-align:center">
+								 <label style="width:70px;text-align:center">Ruolo</label>
+								 <label style="width:300px;text-align:center">Nome</label>
+								 <label style="width:200px;text-align:center">Squadra</label>
+								 <label style="width:70px;text-align:center">Quot.</label>
+								 <label style="width:70px;text-align:center">Seleziona</label>
+							</div>
+			 				 <div style="text-align:center">
+								 <input style="width:70px" type=text ng-model=filterRuolo></input>
+								 <input style="width:300px" type=text ng-model=filterNome></input>
+								 <input style="width:200px" type=text ng-model=filterSquadra></input>
+								 <input style="width:70px" type=text ng-model=filterQuotazione></input>
+								 <label style="width:70px" ></label>
+							</div>
+						 </div>
+						 <div style="overflow:auto;height:100px;">
+							 <div ng-class="{calciatoreNonSelezionato: selCalciatoreId!=calciatore.id, calciatoreSelezionato: selCalciatoreId==calciatore.id}" 
+							 ng-repeat="calciatore in calciatori | orderBy:'nome' | myTableFilter" ng-click="selezionaCalciatore(calciatore)" >
+								 <label style="width:70px;text-align:center;cursor:pointer">{{calciatore.ruolo}}</label>
+								 <label style="width:300px;text-align:center;cursor:pointer">{{calciatore.nome}}</label>
+								 <label style="width:200px;text-align:center;cursor:pointer">{{calciatore.squadra}}</label>
+								 <label style="width:70px;text-align:center;cursor:pointer">{{calciatore.quotazione}}</label>
+								 <i style="width:70px;text-align:center" class="fa fa-bullseye"></i>
+							</div>
+							</div>
+							<!-- elenco calciatori -->	
+							<br>
+							<!-- 
+							<select ng-model="selCalciatore" style="height:28px">
+						  		<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}} ({{calciatore.ruolo}}) {{calciatore.squadra}}</option>
+							</select>
+							 -->
+						</div>
 					<br>
-					<label class="nextOperation" ng-show="!selCalciatore && nomeGiocatoreTurno==nomegiocatore" >Seleziona il calciatore</label>
-					<label class="nextOperation" ng-show=" selCalciatore && nomeGiocatoreTurno==nomegiocatore && durataAsta>0">Avvia asta</label>
-					<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >{{nomeGiocatoreTurno}} deve selezionare il calciatore ed avviare l'asta</label>
+					<span ng-show="calciatori.length==0">
+						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Bisogna caricare i giocatori dalla pagina di Admin</label>
+					</span>
+					<span ng-show="calciatori.length>0">
+						<label class="nextOperation" ng-show="!selCalciatore && nomeGiocatoreTurno==nomegiocatore && bSemaforoAttivo" >Seleziona il calciatore</label>
+						<span ng-show="selCalciatore && nomeGiocatoreTurno==nomegiocatore && durataAsta>0">
+							<label class="nextOperation" >Avvia asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+							<a href=# ng-show="selCalciatore && durataAsta>0 && nomeGiocatoreTurno==nomegiocatore"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
+							<label>Secondi durata Asta: </label>
+							<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
+							<label ng-hide="isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
+<!-- 							<label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>  -->
+						</span>
+						<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >{{nomeGiocatoreTurno}} deve selezionare il calciatore ed avviare l'asta</label>
+						<label class="nextOperation" ng-show="isAdmin && nomeGiocatoreTurno!=nomegiocatore && !selCalciatore" >. Puoi selezionare il calciatore al suo posto</label>
+						<label class="nextOperation" ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">. Puoi avviare l'asta al suo posto</label>
+					</span>
 				</div>
 			</div> <!-- SELCALCIATORE -->
 	
@@ -157,15 +176,17 @@
 					</span>
 				</span>
 				<br>
-				<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Rilancia</label>
+				<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare</label>
 			</div> <!-- RILANCIA -->  
 	
 			<div ng-show="timeout" align=center> <!-- TIMEOUT -->
 					<label  class="correnteVincente">Asta per {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} in timeout da {{giocatoreTimeout}} 
 					<br>Al momento vince l'offerta fatta da {{offertaVincente.nomegiocatore}} con {{offertaVincente.offerta}}
 					<br>Passati {{millisFromPausa/1000 | number:0}} secondi su {{durataAsta | number}} </label>
-					<br><a href=#><img src='./resume.jpeg' ng-click="resumeAsta()" height="50" width="50"/></a>
 					<br>
+					<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Rimuovi la pausa</label>
+					<br>
+					<a href=#><img src='./resume.jpeg' ng-click="resumeAsta()" height="50" width="50"/></a>
 			</div> <!-- TIMEOUT -->
 	
 			<div ng-show="offertaVincente.nomegiocatore && !timeout"> <!-- OFFERTAINCORSO -->
@@ -189,8 +210,10 @@
 					<label ng-show="timeStart<3 && offertaVincente.nomegiocatore!=giocatore" class="correntePerdente">
 						{{offertaVincente.nomegiocatore}} sta vincendo {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}
 					</label>
-						&nbsp;&nbsp;
+						<br>
 						<a ng-show="timeStart==3 && isAdmin" href=#>
+							<label class="nextOperation">Devi confermare o ribaltare il risultato</label>
+							<br>
 							<img src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
 							<img src='./annulla.jpeg' ng-click="annulla()" height="30" width="30"/>
 						</a> 

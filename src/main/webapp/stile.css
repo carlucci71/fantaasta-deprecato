@@ -1,8 +1,11 @@
 .sortorder:after {
-  content: '\25b2';   // BLACK UP-POINTING TRIANGLE
+  content: '\25b2';   
 }
 .sortorder.reverse:after {
-  content: '\25bc';   // BLACK DOWN-POINTING TRIANGLE
+  content: '\25bc';   
+}
+.sortorderNO {
+  content: '\25c6';   
 }
 .pb {
   background-color: white;
@@ -62,4 +65,17 @@
 	color: red;
 	font-size: 20px;
 	font-weight: bold;
+}
+.calciatoreSelezionato {
+	color: red;
+	background-color: lightgreen;
+	cursor: pointer; 
+	text-align:center;
+}
+
+.calciatoreNonSelezionato {
+	color: black;
+	background-color: white;
+	cursor: pointer; 
+	text-align:center;
 }
