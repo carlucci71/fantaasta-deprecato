@@ -106,14 +106,12 @@
 								 <label style="width:300px;text-align:center">Nome</label>
 								 <label style="width:200px;text-align:center">Squadra</label>
 								 <label style="width:70px;text-align:center">Quot.</label>
-								 <!-- <label style="width:70px;text-align:center">Seleziona</label>  -->
 							</div>
 			 				 <div style="text-align:center">
-								 <input style="width:70px" type=text ng-model=filterRuolo></input>
-								 <input style="width:300px" type=text ng-model=filterNome></input>
-								 <input style="width:200px" type=text ng-model=filterSquadra></input>
-								 <input style="width:70px" type=text ng-model=filterQuotazione></input>
-								 <!-- <label style="width:70px" ></label> -->
+								 <input style="width:70px;height:20px" type=text ng-model=filterRuolo></input>
+								 <input style="width:300px;height:20px" type=text ng-model=filterNome></input>
+								 <input style="width:200px;height:20px" type=text ng-model=filterSquadra></input>
+								 <input style="width:70px;height:20px" type=text ng-model=filterQuotazione></input>
 							</div>
 						 </div>
 						 <div style="overflow:auto;height:100px;">
@@ -123,16 +121,8 @@
 								 <label style="width:300px;text-align:center;cursor:pointer">{{calciatore.nome}}</label>
 								 <label style="width:200px;text-align:center;cursor:pointer">{{calciatore.squadra}}</label>
 								 <label style="width:70px;text-align:center;cursor:pointer">{{calciatore.quotazione}}</label>
-								 <!-- <i style="width:70px;text-align:center" class="fa fa-bullseye"></i>  -->
 							</div>
 							</div>
-							<!-- elenco calciatori -->	
-							<br>
-							<!-- 
-							<select ng-model="selCalciatore" style="height:28px">
-						  		<option ng-repeat="calciatore in calciatori" value="{{calciatore.id}}@{{calciatore.nome}}">{{calciatore.nome}} ({{calciatore.ruolo}}) {{calciatore.squadra}}</option>
-							</select>
-							 -->
 						</div>
 					<span ng-show="calciatori.length>0">
 						<label class="nextOperation" ng-show="!selCalciatore && (nomeGiocatoreTurno==nomegiocatore||!isATurni) && bSemaforoAttivo" >Seleziona il calciatore</label>
@@ -147,7 +137,10 @@
 						<span ng-show="isATurni && bSemaforoAttivo">
 							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >E' il turno di {{nomeGiocatoreTurno}}</label>
 							<label class="nextOperation" ng-show="isAdmin && nomeGiocatoreTurno!=nomegiocatore && !selCalciatore" >. Puoi selezionare il calciatore al suo posto</label>
-							<label class="nextOperation" ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">. Puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+							<span ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">
+								<label class="nextOperation">. Puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+								<a href=#><img style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" height="20" width="20"/></a>
+							</span>
 						</span>
 					</span>
 				</div>
@@ -202,7 +195,7 @@
 			</div> <!-- TIMEOUT -->
 	
 			<div ng-show="offertaVincente.nomegiocatore && !timeout"> <!-- OFFERTAINCORSO -->
-				<div ng-show="timeStart<3">
+				<div ng-show="timeStart<3" style="width:750px;text-align:center;margin:auto">
 			 		<div class="pb"> 
 			 				<track-progress-bar col-val='{{timeStart}}' cur-val='{{contaTempo}}' max-val='{{durataAsta*1000}}'></track-progress-bar>
 			 				<label>{{contaTempo /1000 |number:0}}/{{durataAsta | number}}</label>

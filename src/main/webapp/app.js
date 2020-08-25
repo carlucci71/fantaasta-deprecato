@@ -482,9 +482,11 @@ app.run(
 				$rootScope.selCalciatoreSquadra="";
 			}
 			$rootScope.annulla = function(){
-				$rootScope.messaggi=[];
-				$rootScope.bSemaforoAttivo=true;
-				$rootScope.sendMsg(JSON.stringify({'operazione':'annullaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
+				if (window.confirm("Annullo offerta di:" + $rootScope.offertaVincente.nomegiocatore + " per " + $rootScope.offertaVincente.giocatore.nome + "(" + $rootScope.offertaVincente.giocatore.ruolo + ") " + $rootScope.offertaVincente.giocatore.squadra + " vinto a " + $rootScope.offertaVincente.offerta)){
+					$rootScope.messaggi=[];
+					$rootScope.bSemaforoAttivo=true;
+					$rootScope.sendMsg(JSON.stringify({'operazione':'annullaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
+				}
 			}
 			$rootScope.allinea = function(quale){
 				if(quale=='OC') {

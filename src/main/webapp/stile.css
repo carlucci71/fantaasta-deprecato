@@ -13,8 +13,6 @@
   padding: 30px 20px 0 20px;
   text-align: center;
 }
-
-/* Styles for the track-progress-bar directive element */
 .progress-bar-bkgd {
   width: 96%;
   height: 40px;
