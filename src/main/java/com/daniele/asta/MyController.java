@@ -117,7 +117,6 @@ public class MyController {
 						String nome = childNodesTr.item(1).getTextContent() + " " + childNodesTr.item(2).getTextContent(); 
 						String ruolo = childNodesTr.item(4).getTextContent(); 
 						String quotazione = childNodesTr.item(6).getTextContent(); 
-	//					System.out.println(id + "-" +squadra + "-" +nome + "-" +ruolo + "-" +quotazione + "-" );
 						Giocatori giocatori = new Giocatori();
 						giocatori.setId(Integer.parseInt(id));
 						giocatori.setNome(nome);
@@ -152,6 +151,7 @@ public class MyController {
 			else {
 				throw new RuntimeException("Tipo file non riconoscituo:" + tipoFile);
 			}
+			socketHandler.notificaCaricaFile();
 			ret.put("esitoDispositiva", "OK");
 		}
 		else {
@@ -249,6 +249,7 @@ public class MyController {
 				}
 				al.setPwd("");
 				allenatoriRepository.save(al);
+				socketHandler.notificaInizializzaLega();
 			}
 			ret.put("esitoDispositiva", "OK");
 		}
@@ -257,10 +258,17 @@ public class MyController {
 		}
 		return ret;
 	}
-
 	@PostMapping("aggiornaSessioneNomeUtente")
 	public void aggiornaSessioneNomeUtente(@RequestBody Map<String, Object> body) {
 		httpSession.setAttribute("nomeGiocatoreLoggato", (String)body.get("nuovoNome"));
+	}
+	@PostMapping("cancellaSessioneNomeUtente")
+	public  Map<String,Object>   cancellaSessioneNomeUtente() {
+		httpSession.removeAttribute("nomeGiocatoreLoggato");
+		httpSession.removeAttribute("idLoggato");
+		Map<String,Object>  ret = new HashMap<>();
+		ret.put("esito", "OK");
+		return ret;
 	}
 	@PostMapping("/aggiornaConfigLega")
 	public  Map<String,Object>  aggiornaConfigLega(@RequestBody Map<String, Object> body) throws Exception {

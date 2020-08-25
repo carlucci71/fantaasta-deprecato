@@ -85,7 +85,8 @@
 		  </tr>
 		</table>
 		<br>
-		<label class="nextOperation" ng-show="!isLoggato()">Connettiti</label>
+		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
+		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length>0">Connettiti</label>
 	</div> <!-- UTENTI -->
 	<br>
 	<div ng-show="isLoggato()"> <!-- ISLOGGATO -->
@@ -105,14 +106,14 @@
 								 <label style="width:300px;text-align:center">Nome</label>
 								 <label style="width:200px;text-align:center">Squadra</label>
 								 <label style="width:70px;text-align:center">Quot.</label>
-								 <label style="width:70px;text-align:center">Seleziona</label>
+								 <!-- <label style="width:70px;text-align:center">Seleziona</label>  -->
 							</div>
 			 				 <div style="text-align:center">
 								 <input style="width:70px" type=text ng-model=filterRuolo></input>
 								 <input style="width:300px" type=text ng-model=filterNome></input>
 								 <input style="width:200px" type=text ng-model=filterSquadra></input>
 								 <input style="width:70px" type=text ng-model=filterQuotazione></input>
-								 <label style="width:70px" ></label>
+								 <!-- <label style="width:70px" ></label> -->
 							</div>
 						 </div>
 						 <div style="overflow:auto;height:100px;">
@@ -122,7 +123,7 @@
 								 <label style="width:300px;text-align:center;cursor:pointer">{{calciatore.nome}}</label>
 								 <label style="width:200px;text-align:center;cursor:pointer">{{calciatore.squadra}}</label>
 								 <label style="width:70px;text-align:center;cursor:pointer">{{calciatore.quotazione}}</label>
-								 <i style="width:70px;text-align:center" class="fa fa-bullseye"></i>
+								 <!-- <i style="width:70px;text-align:center" class="fa fa-bullseye"></i>  -->
 							</div>
 							</div>
 							<!-- elenco calciatori -->	
@@ -144,21 +145,14 @@
 <!-- 							<label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>  -->
 						</span>
 						<span ng-show="isATurni && bSemaforoAttivo">
-							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >{{nomeGiocatoreTurno}} deve selezionare il calciatore ed avviare l'asta</label>
+							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >E' il turno di {{nomeGiocatoreTurno}}</label>
 							<label class="nextOperation" ng-show="isAdmin && nomeGiocatoreTurno!=nomegiocatore && !selCalciatore" >. Puoi selezionare il calciatore al suo posto</label>
-							<label class="nextOperation" ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">. Puoi avviare l'asta al suo posto</label>
+							<label class="nextOperation" ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">. Puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
 						</span>
-						<!-- 
-						<span ng-show="!isATurni">
-							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >{{nomeGiocatoreTurno}} deve selezionare il calciatore ed avviare l'asta</label>
-							<label class="nextOperation" ng-show="isAdmin && nomeGiocatoreTurno!=nomegiocatore && !selCalciatore" >. Puoi selezionare il calciatore al suo posto</label>
-							<label class="nextOperation" ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">. Puoi avviare l'asta al suo posto</label>
-						</span>
-						 -->
 					</span>
 				</div>
 				<span ng-show="calciatori.length==0">
-					<label class="nextOperation">Bisogna caricare i giocatori dalla pagina di Admin</label>
+					<label class="nextOperation">Bisogna caricare i giocatori<span ng-show="isAdmin">. Collegati alla pagina di Admin </span></label>
 				</span>
 			</div> <!-- SELCALCIATORE -->
 	
@@ -221,8 +215,9 @@
 						{{offertaVincente.nomegiocatore}} sta vincendo {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}
 					</label>
 						<br>
+						<label ng-show="timeStart==3 && !isAdmin" class="nextOperation">Asta da confermare</label>
 						<a ng-show="timeStart==3 && isAdmin" href=#>
-							<label class="nextOperation">Devi confermare o ribaltare il risultato</label>
+							<label class="nextOperation">Devi confermare o annullare l'asta</label>
 							<br>
 							<img src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
 							<img src='./annulla.jpeg' ng-click="annulla()" height="30" width="30"/>

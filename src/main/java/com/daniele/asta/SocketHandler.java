@@ -87,6 +87,14 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		if (operazione != null && operazione.equals("azzera")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			creaMessaggio("AZZERATO DA: " + nomegiocatore);
+			Map<String, Object> m = new HashMap<>();
+			m.put("calciatori", myController.getGiocatoriLiberi());
+			utentiLoggati = new ArrayList<>();
+			utentiScaduti=new ArrayList<>();
+			pingUtenti = new HashMap<>();
+			m.put("utenti", utentiLoggati);
+			m.put("azzera", "x");
+			invia(toJson(m));
 		}
 		if (operazione != null && operazione.equals("connetti")) {
 //			messaggi = new ArrayList<>();
@@ -355,6 +363,11 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			invia(payload);
 		}
 	}
+	public void notificaInizializzaLega() throws IOException {
+		Map<String, Object> m = new HashMap<>();
+		m.put("elencoAllenatori", myController.getAllAllenatori());
+		invia(toJson(m));
+	}
 	
 	public void verificaTokenDispositiva(String idgiocatore) {
 		try {
@@ -410,6 +423,13 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		m.put("messaggi", messaggi);
 		m.put("utentiRinominati", utentiRinominati);
 		m.put("elencoAllenatori", allAllenatori);
+		invia(toJson(m));
+	}
+	public void notificaCaricaFile() throws IOException {
+		Map<String, Object> m = new HashMap<>();
+		creaMessaggio("Giocatori caricati");
+		m.put("calciatori", myController.getGiocatoriLiberi());
+		m.put("messaggi", messaggi);
 		invia(toJson(m));
 	}
 	
@@ -476,6 +496,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	public void setTokenVerifica(Integer tokenVerifica) {
 		this.tokenVerifica = tokenVerifica;
 	}
+
+
 }
 
 

@@ -81,7 +81,6 @@ app.run(
 					});
 				return ret;
 			}
-			
 			$rootScope.utenteCollegato = function(u){
 				var ret = false;
 				angular.forEach($rootScope.utenti, function(value,chiave) {
@@ -261,14 +260,14 @@ app.run(
 						if ($rootScope.giocatore){
 							$rootScope.nomegiocatore=$rootScope.giocatore;
 							$rootScope.idgiocatore=data.idLoggato;
-							if(data.isATurni=="S")
-								$rootScope.isATurni=true;
-							else
-								$rootScope.isATurni=false;
-							$rootScope.turno=data.turno;
-							$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
 							$rootScope.doConnect();
 						}
+						if(data.isATurni=="S")
+							$rootScope.isATurni=true;
+						else
+							$rootScope.isATurni=false;
+						$rootScope.turno=data.turno;
+						$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
 //						$rootScope.selAllenatoreOperaCome=$rootScope.idgiocatore + "@" + $rootScope.nomegiocatore;
 					}
@@ -325,6 +324,14 @@ app.run(
 						var t=msg.RICHIESTA + "-" + new Date().getTime();
 //						console.log(t);
 						$rootScope.RICHIESTA=t;
+					}
+					if (msg.azzera){
+						$resource('./cancellaSessioneNomeUtente',{}).save().$promise.then(function(data) {
+							$rootScope.nomegiocatore="";
+							$rootScope.giocatore="";
+							$rootScope.elencoAllenatori=[];
+							
+						});
 					}
 					if (msg.isATurni){
 						if (msg.isATurni=="S")
@@ -533,6 +540,7 @@ app.run(
 			$rootScope.$watch("elencoAllenatori", function(newValue, oldValue) {
 				$rootScope.calcolaIsAdmin();
 			});
+			
 			$rootScope.sort = {
 				    column: 'Ruolo',
 				    descending: false
