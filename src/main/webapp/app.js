@@ -179,9 +179,9 @@ app.run(
 			$resource('./giocatoriLiberi',{}).query().$promise.then(function(data) {
 				$rootScope.calciatori=data;
 			});
-			$rootScope.aggiornaLogger=function(){
-				$resource('./elencoLogger',{}).query().$promise.then(function(data) {
-					$rootScope.logger=data;
+			$rootScope.aggiornaLoggerMessaggi=function(){
+				$resource('./elencoLoggerMessaggi',{}).query().$promise.then(function(data) {
+					$rootScope.loggerMessaggi=data;
 				});
 			}
 			$rootScope.cancellaOfferta=function(offerta){

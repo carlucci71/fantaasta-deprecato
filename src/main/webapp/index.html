@@ -247,12 +247,9 @@
 	<div ng-show="sezLog"> <!-- LOG -->
 		<br>
 		<table border>
-		  <tr>
-		    <td style="padding-left:10px;padding-right:10px;text-align:left">Data</td>
-		    <td style="padding-left:10px;padding-right:10px;text-align:left">Messaggio</td>
-		  </tr>
 		  <tr ng-repeat="messaggio in messaggi | orderBy: 'data': 'reverse'">
 		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.data | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
+		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.categoria}}</td>
 		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.testo}}</td>
 		  </tr>
 		</table>

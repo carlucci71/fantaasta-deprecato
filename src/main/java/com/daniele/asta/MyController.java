@@ -33,7 +33,7 @@ import com.daniele.asta.entity.Allenatori;
 import com.daniele.asta.entity.Configurazione;
 import com.daniele.asta.entity.Fantarose;
 import com.daniele.asta.entity.Giocatori;
-import com.daniele.asta.entity.Logger;
+import com.daniele.asta.entity.LoggerMessaggi;
 import com.daniele.asta.repository.AllenatoriRepository;
 import com.daniele.asta.repository.ConfigurazioneRepository;
 import com.daniele.asta.repository.FantaroseRepository;
@@ -499,8 +499,8 @@ public class MyController {
 	public @ResponseBody Iterable<Giocatori> getAllGiocatori() {
 		return giocatoriRepository.findAll();
 	}	
-	@GetMapping(path="/elencoLogger")
-	public @ResponseBody Iterable<Logger> elencoLogger() {
+	@GetMapping(path="/elencoLoggerMessaggi")
+	public @ResponseBody Iterable<LoggerMessaggi> elencoLoggerMessaggi() {
 		return loggerRepository.findAll();
 	}	
 	
