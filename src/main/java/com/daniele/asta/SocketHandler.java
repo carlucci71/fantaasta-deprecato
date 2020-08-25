@@ -135,7 +135,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
-			m.put("selCalciatore", "x");
+			m.put("clearOfferta", "x");
 			m.put("messaggi", messaggi);
 			Integer iTurno=Integer.parseInt(myController.getTurno());
 			Iterable<Allenatori> allAllenatori = myController.getAllAllenatori();
@@ -166,7 +166,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			creaMessaggio("Asta annullata per:" + offertaVincente.get("nomeCalciatore"));
 			offertaVincente = new HashMap<>();
 			Map<String, Object> m = new HashMap<>();
-			m.put("selCalciatore", "x");
+			m.put("clearOfferta", "x");
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}		
@@ -376,7 +376,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		m.put("calciatori", myController.getGiocatoriLiberi());
 		invia(toJson(m));
 	}
-	public void aggiornaUtenti(Map<String, String> utentiRinominati, Iterable<Allenatori> allAllenatori) throws IOException {
+	public void aggiornaConfigLega(Map<String, String> utentiRinominati, Iterable<Allenatori> allAllenatori) throws IOException {
 
 		Iterator<String> iterator = utentiRinominati.keySet().iterator();
 		while (iterator.hasNext()) {
@@ -401,6 +401,12 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		}
 		Map<String, Object> m = new HashMap<>();
 		creaMessaggio("Utenti rinominati: " + utentiRinominati);
+		if(myController.getIsATurni()) {
+			m.put("isATurni", "S");
+		}
+		else {
+			m.put("isATurni", "N");
+		}
 		m.put("messaggi", messaggi);
 		m.put("utentiRinominati", utentiRinominati);
 		m.put("elencoAllenatori", allAllenatori);

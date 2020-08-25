@@ -60,20 +60,21 @@ public class MyController {
 	@Autowired SocketHandler socketHandler;
 	private String turno="0";
 	private String nomeGiocatoreTurno="";
+	private Boolean isATurni;
 
 	@RequestMapping("/init")
 	public Map<String, Object> init() {
-		Map<String, Object> m = new HashMap<>();
+		Map<String, Object> ret = new HashMap<>();
 		Configurazione configurazione = getConfigurazione();
 		if (configurazione.getNumeroGiocatori()==null) {
-			m.put("DA_CONFIGURARE", "x");
+			ret.put("DA_CONFIGURARE", "x");
 		}
 		else {
 			String giocatoreLoggato = (String) httpSession.getAttribute("nomeGiocatoreLoggato");
 			String idLoggato = (String) httpSession.getAttribute("idLoggato");
 			if (giocatoreLoggato != null) {
-				m.put("giocatoreLoggato", giocatoreLoggato);
-				m.put("idLoggato", idLoggato);
+				ret.put("giocatoreLoggato", giocatoreLoggato);
+				ret.put("idLoggato", idLoggato);
 			}
 			Iterable<Allenatori> allAllenatori = getAllAllenatori();
 			for (Allenatori allenatori : allAllenatori) {
@@ -81,11 +82,18 @@ public class MyController {
 					setNomeGiocatoreTurno(allenatori.getNome());
 				}
 			}
-			m.put("elencoAllenatori", allAllenatori);
-			m.put("nomeGiocatoreTurno", getNomeGiocatoreTurno());
-			m.put("turno", getTurno());
+			isATurni = configurazione.getIsATurni();
+			if(isATurni) {
+				ret.put("isATurni", "S");
+			}
+			else {
+				ret.put("isATurni", "N");
+			}
+			ret.put("elencoAllenatori", allAllenatori);
+			ret.put("nomeGiocatoreTurno", getNomeGiocatoreTurno());
+			ret.put("turno", getTurno());
 		}
-		return m;
+		return ret;
 	}
 	@PostMapping("/caricaFile")
 	public Map<String, Object> caricaFile(@RequestBody Map<String,Object> body) throws Exception {
@@ -211,13 +219,15 @@ public class MyController {
 		}
 		return ret;
 	}
-	@PostMapping("/inizializzaUtentiInLega")
-	public Map<String, Object> inizializzaUtentiInLega(@RequestBody Map<String, Object> body) throws Exception {
+	@PostMapping("/inizializzaLega")
+	public Map<String, Object> inizializzaLega(@RequestBody Map<String, Object> body) throws Exception {
 		Configurazione configurazione = getConfigurazione();
 		Map<String,Object> ret = new HashMap<>();
 		if(configurazione.getNumeroGiocatori() == null) {
 			Integer numUtenti=(Integer) body.get("numUtenti");
+			isATurni=(Boolean) body.get("isATurni");
 			configurazione.setNumeroGiocatori(numUtenti);
+			configurazione.setIsATurni(isATurni);
 			configurazioneRepository.save(configurazione);
 			for(int i=0;i<numUtenti;i++) {
 				Allenatori al = new Allenatori();
@@ -252,13 +262,14 @@ public class MyController {
 	public void aggiornaSessioneNomeUtente(@RequestBody Map<String, Object> body) {
 		httpSession.setAttribute("nomeGiocatoreLoggato", (String)body.get("nuovoNome"));
 	}
-	@PostMapping("/aggiornaUtenti")
-	public  Map<String,String>  aggiornaUtenti(@RequestBody Map<String, Object> body) throws Exception {
-		Map <String, String> ret = new HashMap<>();
+	@PostMapping("/aggiornaConfigLega")
+	public  Map<String,Object>  aggiornaConfigLega(@RequestBody Map<String, Object> body) throws Exception {
+		Map <String, Object> ret = new HashMap<>();
 		if(isOkDispositiva(body)) {
 			Map <String, String> utentiRinominati = new HashMap<>();
 			int i=0;
 			Boolean admin = (Boolean) body.get("admin");
+			isATurni = (Boolean) body.get("isATurni");
 			List<Map<String, Object>> elencoAllenatori = (List<Map<String, Object>>) body.get("elencoAllenatori");
 			for (Map<String, Object> map : elencoAllenatori) {
 				Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
@@ -285,7 +296,16 @@ public class MyController {
 				i++;
 				allenatoriRepository.save(al);
 			}
-			socketHandler.aggiornaUtenti(utentiRinominati,getAllAllenatori());
+			socketHandler.aggiornaConfigLega(utentiRinominati,getAllAllenatori());
+			Configurazione configurazione = getConfigurazione();
+			configurazione.setIsATurni(isATurni);
+			configurazioneRepository.save(configurazione);
+			if(isATurni) {
+				ret.put("isATurni", "S");
+			}
+			else {
+				ret.put("isATurni", "N");
+			}
 			ret.put("esitoDispositiva", "OK");
 		}
 		else {
@@ -511,6 +531,12 @@ public class MyController {
 	}
 	public void setTurno(String turno) {
 		this.turno = turno;
+	}
+	public Boolean getIsATurni() {
+		return isATurni;
+	}
+	public void setIsATurni(Boolean isATurni) {
+		this.isATurni = isATurni;
 	}
 
 }

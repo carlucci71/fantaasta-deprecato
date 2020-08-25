@@ -79,3 +79,17 @@
 	cursor: pointer; 
 	text-align:center;
 }
+
+.sonoIo {
+	color: red;
+	font-weight: bold;
+	text-align:left;
+	padding-left:10px;
+}
+
+.nonSonoIo {
+	color: black;
+	text-align:left;
+	padding-left:10px;
+}
+

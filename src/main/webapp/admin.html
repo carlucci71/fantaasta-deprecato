@@ -50,7 +50,11 @@
 			</td>	
 		  </tr>
 	</table>
-	<input type="button" value="aggiorna" ng-click="aggiornaUtenti(isAdmin)"></input>
+	<span ng-show="isAdmin" >
+	Gestione a turni<input  style='width: 20px;' type="checkbox"  ng-model="isATurni"></input>
+	</span>
+	<br>
+	<input type="button" value="aggiorna" ng-click="aggiornaConfigLega(isAdmin)"></input>
 	<br><br>
 	<div ng-show="isAdmin">
 		<input type="button" value="AZZERA" ng-click="azzera()"></input>
@@ -62,7 +66,7 @@
 		<label ng-if="caricamentoInCorso">CARICAMENTO IN CORSO</label>
 	</div>
 	<br>
-	<input type="button" value="chiudi" ng-click="ritornaIndex()"></input>
 </div>
+	<input type="button" value="chiudi" ng-click="ritornaIndex()"></input>
 </body>
 </html>

@@ -12,6 +12,7 @@ public class Configurazione {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
+	private Boolean isATurni;
 	public Integer getId() {
 		return id;
 	}
@@ -28,6 +29,17 @@ public class Configurazione {
 	}
 
 
+	public Boolean getIsATurni() {
+		return isATurni;
+	}
+	public void setIsATurni(Boolean isATurni) {
+		this.isATurni = isATurni;
+	}
+
 	@Column(nullable = true)
 	private Integer numeroGiocatori;
+	@Override
+	public String toString() {
+		return "Configurazione [id=" + id + ", isATurni=" + isATurni + ", numeroGiocatori=" + numeroGiocatori + "]";
+	}
 }
