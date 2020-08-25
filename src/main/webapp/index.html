@@ -143,13 +143,12 @@
 							</span>
 						</span>
 					</span>
-				</div>
+				</div> <!-- SELCALCIATORE -->
 				<span ng-show="calciatori.length==0">
 					<label class="nextOperation">Bisogna caricare i giocatori<span ng-show="isAdmin">. Collegati alla pagina di Admin </span></label>
 				</span>
-			</div> <!-- SELCALCIATORE -->
 	
-			<div style="width:98%;margin:auto;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
+			<div style="width:98%;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
 				<div style="border-style:double;text-align:center">
 					<input  style='width: 60px;' type="number"  ng-model="offerta"></input>
 					<input type="button" value="allinea" ng-click="allinea()"></input>
@@ -195,7 +194,7 @@
 			</div> <!-- TIMEOUT -->
 	
 			<div ng-show="offertaVincente.nomegiocatore && !timeout"> <!-- OFFERTAINCORSO -->
-				<div ng-show="timeStart<3" style="width:98%;text-align:center;margin:auto">
+				<div ng-show="timeStart<3" style="width:98%;text-align:center;marginX:auto">
 			 		<div class="pb"> 
 			 				<track-progress-bar style="width:100%" col-val='{{timeStart}}' cur-val='{{contaTempo}}' max-val='{{durataAsta*1000}}'></track-progress-bar>
 			 				<label>{{contaTempo /1000 |number:0}}/{{durataAsta | number}}</label>
