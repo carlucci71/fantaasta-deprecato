@@ -10,11 +10,11 @@
 .pb {
   background-color: white;
   height: 50px;
-  padding: 30px 20px 0 20px;
+  padding-top: 20px;
   text-align: center;
 }
 .progress-bar-bkgd {
-  width: 96%;
+  Xwidth: 96%;
   height: 40px;
   border: none;
   marginX: 0 2px 0 2px;

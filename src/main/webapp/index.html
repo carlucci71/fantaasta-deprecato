@@ -98,7 +98,7 @@
 		<div ng-show="sezOfferte"> <!-- OFFERTA -->
 			<div ng-show="bSemaforoAttivo && calciatori.length>0"> <!-- SELCALCIATORE -->
 					<div ng-show="isAdmin || nomeGiocatoreTurno==nomegiocatore || !isATurni" 
-					style="border-style:double;width:750px;text-align:center;margin: auto">
+					style="border-style:double;width:98%;text-align:center;margin: auto">
 						<div>
 							<!-- elenco calciatori -->	
 			 				 <div style="text-align:center">
@@ -149,8 +149,8 @@
 				</span>
 			</div> <!-- SELCALCIATORE -->
 	
-			<div style="width:550px;padding-left:20px;margin:auto;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
-				<div style="border-style:double;width:350px;text-align:center">
+			<div style="width:98%;margin:auto;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
+				<div style="border-style:double;text-align:center">
 					<input  style='width: 60px;' type="number"  ng-model="offerta"></input>
 					<input type="button" value="allinea" ng-click="allinea()"></input>
 				    <a href=#><img style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta()" height="35" width="35"/></a>
@@ -161,7 +161,7 @@
 					<br>
 					<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare</label>
 				</div>
-				<div ng-show="isAdmin" style="border-style:double;width:350px;text-align:center">
+				<div ng-show="isAdmin" style="border-style:double;text-align:center">
 					<table style="margin:auto">
 						<tr>
 							<td style="color: green;">Opera come:</td>
@@ -195,9 +195,9 @@
 			</div> <!-- TIMEOUT -->
 	
 			<div ng-show="offertaVincente.nomegiocatore && !timeout"> <!-- OFFERTAINCORSO -->
-				<div ng-show="timeStart<3" style="width:750px;text-align:center;margin:auto">
+				<div ng-show="timeStart<3" style="width:98%;text-align:center;margin:auto">
 			 		<div class="pb"> 
-			 				<track-progress-bar col-val='{{timeStart}}' cur-val='{{contaTempo}}' max-val='{{durataAsta*1000}}'></track-progress-bar>
+			 				<track-progress-bar style="width:100%" col-val='{{timeStart}}' cur-val='{{contaTempo}}' max-val='{{durataAsta*1000}}'></track-progress-bar>
 			 				<label>{{contaTempo /1000 |number:0}}/{{durataAsta | number}}</label>
 			 		</div>
 			 	</div>
@@ -247,7 +247,7 @@
 	Log sessione corrente</div>
 	<div ng-show="sezLog"> <!-- LOG -->
 		<br>
-		<table border>
+		<table style="border-style:double;width:98%;padding-right:300px" border>
 		  <tr ng-repeat="messaggio in messaggi | orderBy: 'data': 'reverse'">
 		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.data | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
 		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.categoria}}</td>
