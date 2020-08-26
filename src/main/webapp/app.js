@@ -266,6 +266,7 @@ app.run(
 							$rootScope.nomegiocatore=$rootScope.giocatore;
 							$rootScope.idgiocatore=data.idLoggato;
 							$rootScope.doConnect();
+							$rootScope.pinga();
 						}
 						if(data.isATurni=="S")
 							$rootScope.isATurni=true;
@@ -568,7 +569,7 @@ app.run(
 			
 			
 			
-			
+/*			
 			$rootScope.$watch("selAllenatore", function(newValue, oldValue) {
 				if (newValue){
 					var posToken = newValue.indexOf("@");
@@ -576,7 +577,7 @@ app.run(
 					$rootScope.nomegiocatore=newValue.substr(posToken+1);
 				}
 			});
-			
+			*/
 	}
 )
 
@@ -716,7 +717,11 @@ app.filter('myTableFilter', function($rootScope){
 	              var termInSquadra=true;
 	              if($rootScope.filterSquadra) termInSquadra = item.squadra.toLowerCase().indexOf($rootScope.filterSquadra.toLowerCase()) > -1;
 	              var termInQuotazione=true;
-	              if($rootScope.filterQuotazione) termInQuotazione = item.quotazione >= $rootScope.filterQuotazione;
+	              if($rootScope.filterQuotazione >0) termInQuotazione = item.quotazione >= $rootScope.filterQuotazione;
+	              if($rootScope.filterQuotazione <0){
+	            	  var tmp=-$rootScope.filterQuotazione;
+	            	  termInQuotazione = item.quotazione <= tmp;
+	              }
 	              return termInRuolo && termInNome && termInSquadra && termInQuotazione;
 	              
 	              

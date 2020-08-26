@@ -1,3 +1,43 @@
+div {
+  Xbackground-color: yellow;
+  font-size:12;
+  }
+table {
+  font-size:12;
+  }
+input {
+	font-size:12;
+}
+ img {
+ 	width:40px;
+ 	height:40px;
+ }
+ .imgConnetti{
+ 	width:20px;
+ 	height:20px;
+ }
+ .selCalciatore{
+ 	height:150px;
+ }
+ .inputAllinea{
+	width: 50px;'
+ }
+ .imgAllinea {
+ 	width:30px;
+ 	height:30px;
+ }
+ .btnAllinea1{
+	width: 75px;
+ }
+ .btnAllinea2{
+	width: 55px;
+ }
+ .btnAllinea3{
+	width: 55px;
+ }
+.latenza {
+	font-size: 10px;
+}
 .sortorder:after {
   content: '\25b2';   
 }
@@ -14,10 +54,8 @@
   text-align: center;
 }
 .progress-bar-bkgd {
-  Xwidth: 96%;
   height: 40px;
   border: none;
-  marginX: 0 2px 0 2px;
   background-color: black;
 }
 
@@ -82,12 +120,75 @@
 	color: red;
 	font-weight: bold;
 	text-align:left;
-	Xpadding-left:10px;
 }
 
 .nonSonoIo {
 	color: black;
 	text-align:left;
-	Xpadding-left:10px;
 }
-
+@media  (max-width: 980px) {
+	  div {
+		  font-size:50;
+	      Xbackground-color: lightblue;
+	  }
+	  table {
+		  font-size:50;
+	  }
+      input {
+		font-size:50;
+	  }
+	 img {
+	 	width:160px;
+	 	height:160px;
+	 }
+ 	 .latenza {
+    		font-size: 20px;
+	 } 
+	 .imgConnetti {
+	 	width:80px;
+	 	height:80px;
+	 }
+	 .selCalciatore{
+	 	height:350px;
+	 }
+	 .inputAllinea{
+		width: 180px;'
+	 }
+	 .imgAllinea {
+	 	width:100px;
+	 	height:100px;
+	 }
+	 .btnAllinea1{
+		width: 205px;
+		font-size:40;
+	 }
+	 .btnAllinea2{
+		width: 120px;
+		font-size:40;
+	 }
+	 .btnAllinea3{
+		width: 135px;
+		font-size:40;
+	 }
+	  .correntePerdente {
+		font-size: 56px;
+	  }
+	  .correnteVincente {
+		font-size: 56px;
+	  }
+	  .finitoPerdente{
+		font-size: 56px;
+	  }
+	  .finitoVincente{
+		font-size: 56px;
+	  }
+	  .sezione{
+		font-size: 46px;
+	  }
+	  .nextOperation{
+		font-size: 56px;
+	  }
+	  .divCalciatore{
+		  font-size:35;
+	  }
+}
