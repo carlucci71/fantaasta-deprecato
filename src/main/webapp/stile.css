@@ -67,25 +67,25 @@ input {
 }
 .correntePerdente {
 	background-color: white;
-	color: orange;
+	color: #8F5C01;
 	font-size: 36px;
 	font-weight: bold;
 }
 .correnteVincente {
 	background-color: white;
-	color: black;
+	color: green;
 	font-size: 36px;
 	font-weight: bold;
 }
 .finitoPerdente {
 	background-color: yellow;
-	color: orange;
+	color: #8F5C01;
 	font-size: 36px;
 	font-weight: bold;
 }
 .finitoVincente {
 	background-color: yellow;
-	color: black;
+	color: green;
 	font-size: 36px;
 	font-weight: bold;
 }
