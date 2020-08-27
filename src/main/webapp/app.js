@@ -457,6 +457,9 @@ app.run(
 				$rootScope.sendMsg(JSON.stringify({'operazione':'start', 'selCalciatore':$rootScope.selCalciatore, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore,'nomegiocatore':ng,'idgiocatore':ig, 'durataAsta':$rootScope.durataAsta}));
 				$rootScope.selCalciatore="";
 			}
+			$rootScope.azzeraTempo=function(){
+						$rootScope.sendMsg(JSON.stringify({'operazione':'azzeraTempo', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
+			};
 			$rootScope.conferma = function(){
 				$rootScope.messaggi=[];
 				$rootScope.bSemaforoAttivo=true;

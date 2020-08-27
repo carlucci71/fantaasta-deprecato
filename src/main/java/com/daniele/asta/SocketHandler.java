@@ -59,7 +59,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	String idCalciatore;
 	String timeOut="N";
 	String nomeCalciatore;
-	Long millisFromPausa;
+	Long millisFromPausa=0l;
 	String giocatoreTimeout;
 	String giocatoreDurataAsta="";
 	String sSemaforoAttivo;
@@ -138,6 +138,19 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("nomeGiocatoreTurno", myController.getNomeGiocatoreTurno());
 			invia(toJson(m));
 		}
+		else if (operazione != null && operazione.equals("azzeraTempo")) {
+			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			Map<String, Object> m = new HashMap<>();
+			if(timeOut.equalsIgnoreCase("S")) {
+				millisFromPausa=0l;
+			} else {
+				calInizioOfferta = Calendar.getInstance();
+			}
+			creaMessaggio("Tempo azzerato da "+ nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra(),EnumCategoria.Asta);
+			m.put("millisFromPausa", Long.toString(millisFromPausa));
+			m.put("messaggi", messaggi);
+			invia(toJson(m));
+		}
 		else if (operazione != null && operazione.equals("confermaAsta")) {
 			sSemaforoAttivo="S";
 			messaggi = new ArrayList<>();
@@ -201,7 +214,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 			creaMessaggio("Offerta messa in pausa da da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + " dopo " + millisFromPausa + " millisecondi",EnumCategoria.Asta);
 			timeOut="S";
-			m.put("millisFromPausa", millisFromPausa);
+			m.put("millisFromPausa", Long.toString(millisFromPausa));
 			giocatoreTimeout=nomegiocatore;
 			m.put("giocatoreTimeout", giocatoreTimeout);
 			m.put("timeout", timeOut);
@@ -226,6 +239,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
 			String idgiocatoreOperaCome = jsonToMap.get("idgiocatoreOperaCome").toString();
 			durataAsta = (Integer) jsonToMap.get("durataAsta");
+			if (durataAsta<1) durataAsta=1;
 			String selCalciatore = (String)jsonToMap.get("selCalciatore");
 			String[] split = selCalciatore.split("@");
 			idCalciatore=split[0];
@@ -266,6 +280,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else if (operazione != null && operazione.equals("aggiornaDurataAsta")) {
 			giocatoreDurataAsta = (String) jsonToMap.get("giocatoreDurataAsta");
 			durataAsta = (Integer) jsonToMap.get("durataAsta");
+			if (durataAsta<1) durataAsta=1;
 			Map<String, Object> m = new HashMap<>();
 			m.put("durataAsta", durataAsta);
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
@@ -356,7 +371,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("giocatoreTimeout", giocatoreTimeout);
 			m.put("turno", myController.getTurno());
 			m.put("nomeGiocatoreTurno", myController.getNomeGiocatoreTurno());
-			m.put("millisFromPausa",millisFromPausa);
+			m.put("millisFromPausa", Long.toString(millisFromPausa));
 			
 			m.put("RICHIESTA", nomegiocatore);
 			invia(toJson(m));

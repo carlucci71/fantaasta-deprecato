@@ -139,10 +139,6 @@
 						<span ng-show="selCalciatore && (nomeGiocatoreTurno==nomegiocatore || !isATurni) && durataAsta>0">
 							<label class="nextOperation" >Avvia asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
 							<a href=# ng-show="selCalciatore && durataAsta>0 && (nomeGiocatoreTurno==nomegiocatore || !isATurni)"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
-							<label>Secondi durata Asta: </label>
-							<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
-							<label ng-hide="isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
-							<!-- <label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>  -->
 						</span>
 						<span ng-show="isATurni && bSemaforoAttivo">
 							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >E' il turno di {{nomeGiocatoreTurno}}</label>
@@ -151,6 +147,12 @@
 								<label class="nextOperation">. Puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
 								<a href=#><img style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" /></a>
 							</span>
+						</span>
+						<span ng-show="selCalciatore">
+							<label>Secondi durata Asta: </label>
+							<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
+							<label ng-show="!isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
+							<!-- <label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>  -->
 						</span>
 					</span>
 				</div> <!-- SELCALCIATORE -->
@@ -195,6 +197,8 @@
 						<label class="nextOperation">Puoi rilanciare per altro allenatore</label>
 					</span>
 				</div>
+			<br>
+			<input ng-show="isAdmin" type="button" value="azzera tempo" ng-click="azzeraTempo()"></input>
 			</div> <!-- RILANCIA -->  
 	
 			<div ng-show="timeout" align=center> <!-- TIMEOUT -->
@@ -202,9 +206,10 @@
 					<br>Al momento vince l'offerta fatta da {{offertaVincente.nomegiocatore}} con {{offertaVincente.offerta}}
 					<br>Passati {{millisFromPausa/1000 | number:0}} secondi su {{durataAsta | number}} </label>
 					<br>
-					<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Rimuovi la pausa</label>
+					<label class="nextOperation">Rimuovi la pausa</label>
 					<br>
 					<a href=#><img src='./resume.jpeg' ng-click="resumeAsta()" height="50" width="50"/></a>
+					
 			</div> <!-- TIMEOUT -->
 	
 			<div ng-show="offertaVincente.nomegiocatore && !timeout"> <!-- OFFERTAINCORSO -->

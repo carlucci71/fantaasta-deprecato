@@ -67,7 +67,7 @@ input {
 }
 .correntePerdente {
 	background-color: white;
-	color: red;
+	color: orange;
 	font-size: 36px;
 	font-weight: bold;
 }
@@ -79,7 +79,7 @@ input {
 }
 .finitoPerdente {
 	background-color: yellow;
-	color: red;
+	color: orange;
 	font-size: 36px;
 	font-weight: bold;
 }
