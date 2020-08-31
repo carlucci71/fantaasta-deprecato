@@ -3,6 +3,7 @@ app.run(
 		function($rootScope, $resource, $interval){
 			$rootScope.sezLinkVisible=true;
 			$rootScope.sezUtentiVisible=true;
+			$rootScope.sezOperaComeVisible=true;
 			$rootScope.sezOfferte=true;
 			$rootScope.sezLog=true;
 			$rootScope.config=false;

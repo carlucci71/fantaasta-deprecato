@@ -22,42 +22,42 @@
  <table>
     <thead>
         <tr>
- 			<th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('ruolo')">
- 				Ruolo
+ 			<th style="cursor: pointer;width:1px" ng:class="selectedCls('ruolo')" ng:click="changeSorting('ruolo')">
+ 				
  		        <span class="sortorder" ng-show="sort.column === 'ruolo'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'ruolo'"><i class="fa fa-sort"></i></span>
  			</th>
 			<th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('nome')">
-				Nome
+				
  		        <span class="sortorder" ng-show="sort.column === 'nome'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'nome'"><i class="fa fa-sort"></i></span>
 			</th>
             <th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('squadra')">
-            	Squadra
+            	
  		        <span class="sortorder" ng-show="sort.column === 'squadra'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'squadra'"><i class="fa fa-sort"></i></span>
             </th>
             <th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('quotazione')">
-            	Quotazione
+            	
  		        <span class="sortorder" ng-show="sort.column === 'quotazione'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'quotazione'"><i class="fa fa-sort"></i></span>
             </th>
         </tr>
         <tr>
-            <th><input type=text ng-model="filterRuolo"></input></th>
-            <th><input type=text ng-model="filterNome"></input></th>
-            <th><input type=text ng-model="filterSquadra"></input></th>
-            <th><input type=number ng-model="filterQuotazione"></input></th>
+            <th><input class="divCalciatore"style="width:70px;text-align:center" type=text ng-model="filterRuolo"></input></th>
+            <th><input class="divCalciatore"style="width:400px;text-align:center" type=text ng-model="filterNome"></input></th>
+            <th><input class="divCalciatore"style="width:300px;text-align:center" type=text ng-model="filterSquadra"></input></th>
+            <th><input class="divCalciatore"style="width:100px;text-align:center" type=number ng-model="filterQuotazione"></input></th>
         </tr>
     </thead>
     <tbody>
     
     
-  <tr ng-repeat="calciatore in calciatori | orderBy: sort.column: sort.descending | myTableFilter">
-        <td>{{calciatore.ruolo}}</td>
-        <td>{{calciatore.nome}}</td>
-      	<td>{{calciatore.squadra}}</td>
-      	<td>{{calciatore.quotazione}}</td></tr>
+  <tr style="width:1px" ng-repeat="calciatore in calciatori | orderBy: sort.column: sort.descending | myTableFilter">
+        <td class="divCalciatore">{{calciatore.ruolo}}</td>
+        <td class="divCalciatore">{{calciatore.nome}}</td>
+      	<td class="divCalciatore">{{calciatore.squadra}}</td>
+      	<td class="divCalciatore">{{calciatore.quotazione}}</td></tr>
     </tbody>
 </table>
 

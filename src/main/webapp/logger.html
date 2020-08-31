@@ -16,12 +16,14 @@
 <script type="text/javascript" src="./app.js"></script>
 
 <body data-ng-init="aggiornaLoggerMessaggi()" x-ng-app="app" style="margin-left:20px">
-<input type="button" value="aggiorna" ng-click="aggiornaLoggerMessaggi()"></input>
+<div>
+	<button ng-click="aggiornaLoggerMessaggi()">aggiorna</button>
+</div>	
 <table border>
   <tr ng-repeat="messaggio in loggerMessaggi | orderBy: 'id': 'reverse'">
-    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.id | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
-    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.categoria}}</td>
-    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.messaggio}}</td>
+    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.id | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
+    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.categoria}}</td>
+    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.messaggio}}</td>
   </tr>
 </table>
 

@@ -10,17 +10,12 @@
 <link href="./bootstrap-theme.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- 
-<script type="text/javascript" src="./angular.js"></script>
-<script type="text/javascript" src="./angular-resource.js"></script>
- -->
-   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
-   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-resource.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
-    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
-    <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.6.1/angular-locale_it-it.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-resource.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
+<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+<script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.6.1/angular-locale_it-it.min.js"></script>
     
 <script type="text/javascript" src="./app.js"></script>
 <script src="./sockjs.min.js"></script>
@@ -38,9 +33,10 @@
 <div ng-show="config">
 	<label>CONFIGURAZIONE</label>
 	<br>
-	Numero utenti:<input  style='width: 60px;' type="number"  ng-model="numeroUtenti"></input>
-	Gestione a turni<input  style='width: 20px;' type="checkbox"  ng-model="isATurni"></input>
-	<input type="button" value="conferma" ng-if="numeroUtenti>1" ng-click="confermaConfigIniziale()"></input>
+	Numero utenti:<input  class="inputAllinea" type="number"  ng-model="numeroUtenti"></input>
+	<br>
+	Gestione a turni<input class="checkbox"   type="checkbox"  ng-model="isATurni"></input>
+		<button ng-if="numeroUtenti>1" ng-click="confermaConfigIniziale()">conferma</button>
 </div>
 
 <div ng-show="!config">
@@ -127,10 +123,10 @@
 						 <div class="selCalciatore" style="text-align:center;overflow-y:scroll;">
 							 <div ng-class="{calciatoreNonSelezionato: selCalciatoreId!=calciatore.id, calciatoreSelezionato: selCalciatoreId==calciatore.id}" 
 							 ng-repeat="calciatore in calciatori | orderBy:'nome' | myTableFilter" ng-click="selezionaCalciatore(calciatore)" >
-								 <label class="divCalciatore"style="width:70px;text-align:center;cursor:pointer">{{calciatore.ruolo}}</label>
-								 <label class="divCalciatore"style="width:400px;text-align:center;cursor:pointer">{{calciatore.nome}}</label>
-								 <label class="divCalciatore"style="width:200px;text-align:center;cursor:pointer">{{calciatore.squadra}}</label>
-								 <label class="divCalciatore"style="width:100px;text-align:center;cursor:pointer">{{calciatore.quotazione}}</label>
+								 <label class="divCalciatore" style="width:70px;text-align:center;cursor:pointer">{{calciatore.ruolo}}</label>
+								 <label class="divCalciatore" style="width:400px;text-align:center;cursor:pointer">{{calciatore.nome}}</label>
+								 <label class="divCalciatore" style="width:200px;text-align:center;cursor:pointer">{{calciatore.squadra}}</label>
+								 <label class="divCalciatore" style="width:100px;text-align:center;cursor:pointer">{{calciatore.quotazione}}</label>
 							</div>
 						</div>
 				    </div>
@@ -142,15 +138,15 @@
 						</span>
 						<span ng-show="isATurni && bSemaforoAttivo">
 							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >E' il turno di {{nomeGiocatoreTurno}}</label>
-							<label class="nextOperation" ng-show="isAdmin && nomeGiocatoreTurno!=nomegiocatore && !selCalciatore" >. Puoi selezionare il calciatore al suo posto</label>
+							<label class="nextOperation" ng-show="isAdmin && nomeGiocatoreTurno!=nomegiocatore && !selCalciatore" > puoi selezionare il calciatore al suo posto</label>
 							<span ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">
-								<label class="nextOperation">. Puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+								<label class="nextOperation"> puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
 								<a href=#><img style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" /></a>
 							</span>
 						</span>
 						<span ng-show="selCalciatore">
 							<label>Secondi durata Asta: </label>
-							<input ng-show="isAdmin" style='width: 60px;' type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
+							<input class="inputAllinea" ng-show="isAdmin" type="number" ng-model="durataAsta" ng-change="aggiornaDurataAsta()"></input>
 							<label ng-show="!isAdmin" style='width: 60px;' type="number">{{durataAsta}}</label>
 							<!-- <label ng-show="giocatoreDurataAsta">(Modificata da: {{giocatoreDurataAsta}})</label>  -->
 						</span>
@@ -175,27 +171,31 @@
 					<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare</label>
 				</div>
 				<div ng-show="isAdmin" style="border-style:double;text-align:center">
-					<table style="margin:auto">
-						<tr>
-							<td style="color: green;">Opera come:</td>
-						</tr>
-						<tr ng-class="{calciatoreNonSelezionato: idgiocatoreOperaCome!=allenatore.id, calciatoreSelezionato: idgiocatoreOperaCome==allenatore.id}" ng-repeat="allenatore in elencoAllenatori" ng-click="selezionaAllenatoreOperaCome(allenatore)" >
-							<td ng-show="allenatore.id!=idgiocatore">{{allenatore.nome}}</td>
-						</tr>
-					</table>
-					<label class="nextOperation" ng-show="!idgiocatoreOperaCome">Puoi selezionare altro allenatore</label>
-					<span ng-if="idgiocatoreOperaCome">
-						<input  class="inputAllinea"  type="number"  ng-model="offertaOC"></input>
-						<input class="btnAllinea1" type="button" value="allinea" ng-click="allinea('OC')"></input>
-					    <a href=#>
-					    	<img class="imgAllinea" style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC')" height="35" width="35"/>
-					    </a>
-						<input class="btnAllinea2" type="button" value="+1" ng-click="incrementa(1, 'OC')"></input>
-						<input class="btnAllinea2" type="button" value="+5" ng-click="incrementa(5, 'OC')"></input>
-						<input class="btnAllinea3" type="button" value="+10" ng-click="incrementa(10, 'OC')"></input>
-						<br>
-						<label class="nextOperation">Puoi rilanciare per altro allenatore</label>
-					</span>
+					<div style="color: green;text-align:center;cursor:pointer" ng-click="sezOperaComeVisible=!sezOperaComeVisible">
+						<i class="fa fa-chevron-down" ng-show="!sezOperaComeVisible"></i>
+						<i class="fa fa-chevron-up" ng-show="sezOperaComeVisible"></i>
+					<label style="cursor:pointer">Rilanci opera come</label></div>
+					
+					<div ng-show="sezOperaComeVisible"> <!-- OPERACOME -->
+						<table style="margin:auto">
+							<tr ng-class="{calciatoreNonSelezionato: idgiocatoreOperaCome!=allenatore.id, calciatoreSelezionato: idgiocatoreOperaCome==allenatore.id}" ng-repeat="allenatore in elencoAllenatori" ng-click="selezionaAllenatoreOperaCome(allenatore)" >
+								<td ng-show="allenatore.id!=idgiocatore">{{allenatore.nome}}</td>
+							</tr>
+						</table>
+						<label class="nextOperation" ng-show="!idgiocatoreOperaCome">Puoi selezionare altro allenatore</label>
+						<span ng-if="idgiocatoreOperaCome">
+							<input  class="inputAllinea"  type="number"  ng-model="offertaOC"></input>
+							<input class="btnAllinea1" type="button" value="allinea" ng-click="allinea('OC')"></input>
+						    <a href=#>
+						    	<img class="imgAllinea" style="margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC')" height="35" width="35"/>
+						    </a>
+							<input class="btnAllinea2" type="button" value="+1" ng-click="incrementa(1, 'OC')"></input>
+							<input class="btnAllinea2" type="button" value="+5" ng-click="incrementa(5, 'OC')"></input>
+							<input class="btnAllinea3" type="button" value="+10" ng-click="incrementa(10, 'OC')"></input>
+							<br>
+							<label class="nextOperation">Puoi rilanciare per {{nomegiocatoreOperaCome}}</label>
+						</span>
+					</div> <!-- OPERACOME -->
 				</div>
 			<br>
 			<input ng-show="isAdmin" type="button" value="azzera tempo" ng-click="azzeraTempo()"></input>

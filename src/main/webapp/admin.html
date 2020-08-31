@@ -46,20 +46,23 @@
 					<input  style='width: 300px;' type="password"  ng-model="utente.pwd"></input>
 			</td>
 			<td ng-show="isAdmin">
-						<input  style='width: 60px;' type="checkbox"  ng-show="isAdmin" ng-model="utente.isAdmin"></input>
+						<input   class="checkbox"  type="checkbox"  ng-show="isAdmin" ng-model="utente.isAdmin"></input>
 			</td>	
 		  </tr>
 	</table>
 	<span ng-show="isAdmin" >
-	Gestione a turni<input  style='width: 20px;' type="checkbox"  ng-model="isATurni"></input>
+		Gestione a turni<input  class="checkbox" type="checkbox"  ng-model="isATurni"></input>
 	</span>
 	<br>
 	<input type="button" value="aggiorna" ng-click="aggiornaConfigLega(isAdmin)"></input>
 	<br><br>
 	<div ng-show="isAdmin">
 		<input type="button" value="AZZERA" ng-click="azzera()"></input>
+			<br><label >Carica file</label>
+			<div >
+				<input type="file" id="file" name="file"/>
+			</div>
 		<br>
-		<label >Carica file</label><br><input type="file" id="file" name="file"/>
 		<button ng-click="caricaFile('FS')">Carica FS</button>
 	<!-- scarica lista svincolati, apri excel, rimuovi prime 2 righe, -esporta - cambia tipo file - testo delimitato da tabulazione  -->
 		<button ng-click="caricaFile('MANTRA')">Carica Mantra</button>
@@ -67,6 +70,8 @@
 	</div>
 	<br>
 </div>
-	<input type="button" value="chiudi" ng-click="ritornaIndex()"></input>
+<div>
+	<button ng-click="ritornaIndex()">CHIUDI</button>
+</div>	
 </body>
 </html>
