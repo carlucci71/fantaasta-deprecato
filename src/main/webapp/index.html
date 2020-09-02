@@ -95,6 +95,7 @@
 		<br>
 		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
 		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length>0">Connettiti</label>
+		<input class="inputAllinea" type="number" ng-model="timePing" ng-change="aggiornaTimePing()"></input>
 	</div> <!-- UTENTI -->
 	<br>
 	<div ng-show="isLoggato()"> <!-- ISLOGGATO -->

@@ -21,6 +21,7 @@ app.run(
 			$rootScope.tokenDispositiva=-1;
 			$rootScope.isATurni=true;
 			$rootScope.caricamentoInCorso=false;
+			$rootScope.timePing=1000;
 			$rootScope.isLoggato= function(){
 				if (!$rootScope.giocatore) return false;
 				return $rootScope.giocatore!='';
@@ -276,6 +277,7 @@ app.run(
 						$rootScope.turno=data.turno;
 						$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
+						$rootScope.aggiornaTimePing();
 					}
 				});
 			}
@@ -438,12 +440,17 @@ app.run(
 				}
 			}
 			$rootScope.pinga = function(){
+				console.log("PING:" + $rootScope.timePing);
 				if ($rootScope.giocatore)
 					$rootScope.sendMsg(JSON.stringify({'operazione':'ping', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 			}
-			var a = $interval(function() {
-				$rootScope.pinga();
-	          }, 1000);
+			$rootScope.aggiornaTimePing= function() {
+				console.log("AGGIORNO");
+				$interval.cancel(a);
+				a=$interval(function() {$rootScope.pinga();}, $rootScope.timePing);
+			}
+			var a=$interval(function() {$rootScope.pinga();}, $rootScope.timePing);
+			
 			$rootScope.start = function(){
 				$rootScope.inizia($rootScope.nomegiocatore,$rootScope.idgiocatore);
 			}
