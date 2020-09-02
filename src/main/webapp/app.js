@@ -41,7 +41,7 @@ app.run(
 				}
 			}
 			$rootScope.doConnect = function() {
-		        console.log('Connected');
+//		        console.log('Connected');
 		        if (!$rootScope.giocatore){
 		        	$rootScope.tokenUtente=new Date().getTime();
 					$rootScope.sendMsg(JSON.stringify({'operazione':'connetti', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore, 'tokenUtente':$rootScope.tokenUtente}));
@@ -176,7 +176,7 @@ app.run(
 			    if (ws != null) {
 			        ws.close();
 			    }
-			    console.log("Disconnected");
+//			    console.log("Disconnected");
 			}
 			$resource('./giocatoriLiberi',{}).query().$promise.then(function(data) {
 				$rootScope.calciatori=data;
@@ -440,12 +440,10 @@ app.run(
 				}
 			}
 			$rootScope.pinga = function(){
-				console.log("PING:" + $rootScope.timePing);
 				if ($rootScope.giocatore)
 					$rootScope.sendMsg(JSON.stringify({'operazione':'ping', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 			}
 			$rootScope.aggiornaTimePing= function() {
-				console.log("AGGIORNO");
 				$interval.cancel(a);
 				a=$interval(function() {$rootScope.pinga();}, $rootScope.timePing);
 			}

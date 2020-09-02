@@ -75,6 +75,14 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		String payload = message.getPayload();
 		Map<String, Object> jsonToMap = jsonToMap(payload);
 		String operazione = (String) jsonToMap.get("operazione");
+
+		if (operazione != null && operazione.equals("ping")) {
+//			System.out.println("Ping ricevuto" + payload);
+		} else {
+//			System.err.println("Messaggio ricevuto" + payload);
+		}
+		
+		
 		if (operazione != null && operazione.equals("cancellaUtente")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			Integer iIdgiocatore = (Integer) jsonToMap.get("idgiocatore");
