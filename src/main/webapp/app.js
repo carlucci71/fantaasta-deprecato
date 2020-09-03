@@ -122,10 +122,11 @@ app.run(
 				var checkNome=[];
 				var ok=true;
 				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
-					if(checkNome.indexOf(value.nuovoNome) !== -1) {
+					var nuovoNome=value.nuovoNome.toUpperCase();
+					if(checkNome.indexOf(nuovoNome) !== -1) {
 						ok=false;
 					}					
-					checkNome.push(value.nuovoNome);
+					checkNome.push(nuovoNome);
 				});
 				if (!ok) {
 					alert("Errore!! Nomi non univoci");
@@ -277,7 +278,7 @@ app.run(
 						$rootScope.turno=data.turno;
 						$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
-						$rootScope.aggiornaTimePing();
+						$rootScope.aggiornaTimePing($rootScope.timePing);
 					}
 				});
 			}
@@ -334,12 +335,14 @@ app.run(
 						$rootScope.RICHIESTA=t;
 					}
 					if (msg.azzera){
-						$resource('./cancellaSessioneNomeUtente',{}).save().$promise.then(function(data) {
-							$rootScope.nomegiocatore="";
-							$rootScope.giocatore="";
-							$rootScope.elencoAllenatori=[];
-							
+						if(msg.azzera=='X' || msg.azzera==$rootScope.idgiocatore){
+							$resource('./cancellaSessioneNomeUtente',{}).save().$promise.then(function(data) {
+								$rootScope.idgiocatore="";
+								$rootScope.nomegiocatore="";
+								$rootScope.giocatore="";
+								if(msg.azzera=='X') $rootScope.elencoAllenatori=[];
 						});
+					}
 					}
 					if (msg.isATurni){
 						if (msg.isATurni=="S")
@@ -443,9 +446,9 @@ app.run(
 				if ($rootScope.giocatore)
 					$rootScope.sendMsg(JSON.stringify({'operazione':'ping', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 			}
-			$rootScope.aggiornaTimePing= function() {
+			$rootScope.aggiornaTimePing= function(timePing) {
 				$interval.cancel(a);
-				a=$interval(function() {$rootScope.pinga();}, $rootScope.timePing);
+				a=$interval(function() {$rootScope.pinga();}, timePing);
 			}
 			var a=$interval(function() {$rootScope.pinga();}, $rootScope.timePing);
 			
@@ -490,6 +493,11 @@ app.run(
 				$rootScope.selCalciatoreRuolo="";
 				$rootScope.selCalciatoreNome="";
 				$rootScope.selCalciatoreSquadra="";
+				$rootScope.selCalciatoreSquadra="";
+				$rootScope.offertaOC=1;
+				$rootScope.offerta=1;
+				$rootScope.idgiocatoreOperaCome=-1;
+				$rootScope.nomegiocatoreOperaCome="";
 			}
 			$rootScope.annulla = function(){
 				if (window.confirm("Annullo offerta di:" + $rootScope.offertaVincente.nomegiocatore + " per " + $rootScope.offertaVincente.giocatore.nome + "(" + $rootScope.offertaVincente.giocatore.ruolo + ") " + $rootScope.offertaVincente.giocatore.squadra + " vinto a " + $rootScope.offertaVincente.offerta)){

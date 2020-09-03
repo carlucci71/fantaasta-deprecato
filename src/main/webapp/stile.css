@@ -26,6 +26,15 @@ input {
  .inputAllinea{
 	width: 50px;'
  }
+ .tblUtenti{
+	padding-left:10px;
+	padding-right:10px;
+	text-align:center;
+	width:200px;
+ }
+ .inputLarge{
+	width: 70px;'
+ }
  .imgAllinea {
  	width:30px;
  	height:30px;
@@ -158,6 +167,15 @@ input {
 	 }
 	 .selCalciatore{
 	 	height:350px;
+	 }
+	 .tblUtenti{
+		padding-left:10px;
+		padding-right:10px;
+		text-align:center;
+		width:600px;
+	 }
+	 .inputLarge{
+		width: 180px;'
 	 }
 	 .inputAllinea{
 		width: 180px;'

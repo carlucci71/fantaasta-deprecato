@@ -27,7 +27,9 @@
 	     <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
 	 -->
  </div>
-
+ 	<div class="sezione" style="text-align:left;margin:auto;width:100%" ng-if="isLoggato()">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Buona fortuna {{giocatore}}
+	</div>
 <div ng-show="config">
 	<label>CONFIGURAZIONE</label>
 	<br>
@@ -58,7 +60,7 @@
 		<br>
 		<table border>
 		  <tr>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center"></td>
+		  	<td class="tblUtenti" ></td>
 		  	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">Avvia</td>
 		  	<td ng-show="isATurni" style="padding-left:10px;padding-right:10px;text-align:center">Turno</td>
 		  </tr>
@@ -69,13 +71,13 @@
 			    		<img class="imgConnetti" style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)" height="25" width="25"/>
 			    	</a>
 					<img  class="imgConnetti" ng-show="utenteCollegato(utente)" style="margin-bottom:2px" src='./connesso.jpeg' />		    	
-					<label class="latenza" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
-		    		<a ng-show="utenteScaduto(utente)" href=#>
+		    		<a ng-show="!sonoLoggato(utente) && ((isAdmin && utenteCollegato(utente)) || utenteScaduto(utente))" href=#>
 		    			<img class="imgConnetti" src='./cestino.png' ng-click="cancellaUtente(utente)" />
 		    		</a>
 				    <a ng-show="sonoLoggato(utente)" href=#>
 				    	<img class="imgConnetti" style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" />
 				    </a>
+					<label class="latenza" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
 				</td>
 		    	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia -->
 					<a ng-show="selCalciatore && durataAsta>0" href=#>
@@ -93,7 +95,9 @@
 		<br>
 		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
 		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length>0">Connettiti</label>
-		<input class="inputAllinea" type="number" ng-model="timePing" ng-change="aggiornaTimePing()"></input>
+		<duv ng-if="isLoggato()">		
+			<label>Frequenza refresh (ms)</label>&nbsp;<input class="inputLarge" type="number" ng-model="timePing" ng-change="aggiornaTimePing(timePing)"></input>
+		</duv>
 	</div> <!-- UTENTI -->
 	<br>
 	<div ng-show="isLoggato()"> <!-- ISLOGGATO -->

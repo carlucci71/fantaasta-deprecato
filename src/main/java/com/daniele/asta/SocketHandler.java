@@ -92,6 +92,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 			m.put("utenti", utentiLoggati);
 			creaMessaggio("Utente cancellato: " + nomegiocatore,EnumCategoria.Alert);
+			m.put("azzera", String.valueOf(iIdgiocatore));
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}
