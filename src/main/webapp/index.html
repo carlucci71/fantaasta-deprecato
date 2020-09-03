@@ -95,9 +95,9 @@
 		<br>
 		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
 		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length>0">Connettiti</label>
-		<duv ng-if="isLoggato()">		
+		<div ng-if="isLoggato()">		
 			<label>Frequenza refresh (ms)</label>&nbsp;<input class="inputLarge" type="number" ng-model="timePing" ng-change="aggiornaTimePing(timePing)"></input>
-		</duv>
+		</div>
 	</div> <!-- UTENTI -->
 	<br>
 	<div ng-show="isLoggato()"> <!-- ISLOGGATO -->
