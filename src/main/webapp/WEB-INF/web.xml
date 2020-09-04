@@ -3,5 +3,10 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>Archetype Created Web Application</display-name>
+  <display-name>FantaAsta</display-name>
+  <!-- 
+   <session-config>
+        <session-timeout>10</session-timeout>
+    </session-config>
+   -->
 </web-app>

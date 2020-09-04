@@ -27,8 +27,8 @@
 	     <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
 	 -->
  </div>
- 	<div class="sezione" style="text-align:left;margin:auto;width:100%" ng-if="isLoggato()">
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Buona fortuna {{giocatore}}
+ 	<div style="text-align:right;padding-right:10px;width: 98%;font-size: 16px;font-weight: bold;" ng-if="isLoggato()">
+		Buona fortuna {{giocatore}}
 	</div>
 <div ng-show="config">
 	<label>CONFIGURAZIONE</label>
@@ -55,7 +55,7 @@
 	<div class="sezione" ng-click="sezUtentiVisible=!sezUtentiVisible">
 		<i class="fa fa-chevron-down" ng-show="!sezUtentiVisible"></i>
 		<i class="fa fa-chevron-up" ng-show="sezUtentiVisible"></i>
-	Collegati</div>
+	Allenatori</div>
 	<div ng-show="sezUtentiVisible"> <!-- UTENTI -->
 		<br>
 		<table border>
@@ -99,16 +99,15 @@
 			<label>Frequenza refresh (ms)</label>&nbsp;<input class="inputLarge" type="number" ng-model="timePing" ng-change="aggiornaTimePing(timePing)"></input>
 		</div>
 	</div> <!-- UTENTI -->
-	<br>
-	<div ng-show="isLoggato()"> <!-- ISLOGGATO -->
+	<div ng-show="isLoggato()"> 
 		<div class="sezione" ng-click="sezOfferte=!sezOfferte">
 		<i class="fa fa-chevron-down" ng-show="!sezOfferte"></i>
 		<i class="fa fa-chevron-up" ng-show="sezOfferte"></i>
 	Offerte</div>
-	<br>
 		<div ng-show="sezOfferte"> <!-- OFFERTA -->
-			<div ng-show="bSemaforoAttivo && calciatori.length>0"> <!-- SELCALCIATORE -->
-					<div ng-show="isAdmin || nomeGiocatoreTurno==nomegiocatore || !isATurni"  style="border-style:double;width:98%;text-align:center;margin: auto">
+			<br>
+			<div ng-show="bSemaforoAttivo && calciatori.length>0" style="padding-left:0px;padding-right:20px;"> <!-- SELCALCIATORE -->
+					<div ng-show="isAdmin || nomeGiocatoreTurno==nomegiocatore || !isATurni"  style="padding-top:10px;border-style:double;width:98%;text-align:center;margin: auto">
 						<div>
 			 				 <div ng-show=false style="text-align:center;overflow-y:scroll;padding-bottom:0px">
 								 <label class="divCalciatore" style="width:70px;text-align:center">Ruolo</label>
@@ -116,7 +115,7 @@
 								 <label class="divCalciatore"style="width:200px;text-align:center">Squadra</label>
 								 <label class="divCalciatore"style="width:100px;text-align:center">Quot.</label>
 							</div>
-			 				 <div style="text-align:center;overflow-y:scroll;padding-bottom:10px;padding-top:0px">
+			 				 <div style="text-align:center;overflow-y:scroll;padding-bottom:0px;padding-top:0px">
 								 <input class="divCalciatore"style="width:70px;Xheight:20px;text-align:center" type=text ng-model=filterRuolo></input>
 								 <input class="divCalciatore"style="width:400px;Xheight:20px;text-align:center" type=text ng-model=filterNome></input>
 								 <input class="divCalciatore"style="width:200px;Xheight:20px;text-align:center" type=text ng-model=filterSquadra></input>
@@ -260,8 +259,6 @@
 			</div> <!-- BUG BLOCCO -->
 		</div> <!-- OFFERTA -->
 	</div> <!-- ISLOGGATO -->
-
-	<br>
 	<div class="sezione" ng-click="sezLog=!sezLog">
 		<i class="fa fa-chevron-down" ng-show="!sezLog"></i>
 		<i class="fa fa-chevron-up" ng-show="sezLog"></i>
