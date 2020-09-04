@@ -29,6 +29,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import com.daniele.asta.dto.GiocatoriPerRuolo;
+import com.daniele.asta.dto.GiocatoriPerSquadra;
+import com.daniele.asta.dto.SpesoPerRuolo;
 import com.daniele.asta.entity.Allenatori;
 import com.daniele.asta.entity.Configurazione;
 import com.daniele.asta.entity.Fantarose;
@@ -358,6 +361,12 @@ public class MyController {
 		return ret;
 	}
 
+	/*
+	@RequestMapping("/x")
+	public Iterable<Fantarose> x() {
+		return fantaroseRepository.x();
+	}
+	*/
 
 	@RequestMapping("/spesoAllenatori")
 	public List<Map<String, Object>>  spesoAllenatori() {
@@ -380,7 +389,21 @@ public class MyController {
 		}
 	}
 
+	@RequestMapping("/contaGiocatoriPerRuolo")
+	public List<GiocatoriPerRuolo>  contaGiocatoriPerRuolo() {
+		return fantaroseRepository.contaGiocatoriPerRuolo();
+	}
 
+	@RequestMapping("/giocatoriPerSquadra")
+	public Iterable<GiocatoriPerSquadra>  giocatoriPerSquadra() {
+		return fantaroseRepository.giocatoriPerSquadra();
+	}
+
+	@RequestMapping("/spesoPerAllenatore")
+	public Iterable<SpesoPerRuolo>  spesoPerAllenatore() {
+		return fantaroseRepository.spesoPerAllenatore();
+	}
+	
 	@RequestMapping("/elencoCronologiaOfferte")
 	public List<Map<String, Object>>  elencoCronologiaOfferte() {
 		try {

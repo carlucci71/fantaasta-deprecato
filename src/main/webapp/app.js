@@ -187,6 +187,17 @@ app.run(
 					$rootScope.loggerMessaggi=data;
 				});
 			}
+			$rootScope.aggiornaRiepilogo=function(){
+				$resource('./contaGiocatoriPerRuolo',{}).query().$promise.then(function(data) {
+					$rootScope.giocatoriPerRuolo=data;
+				});
+				$resource('./spesoPerAllenatore',{}).query().$promise.then(function(data) {
+					$rootScope.spesoPerAllenatore=data;
+				});
+				$resource('./giocatoriPerSquadra',{}).query().$promise.then(function(data) {
+					$rootScope.giocatoriPerSquadra=data;
+				});
+			}
 			$rootScope.selezionaAllenatoreOperaCome=function(allenatore){
 				$rootScope.idgiocatoreOperaCome=allenatore.id;
 				$rootScope.nomegiocatoreOperaCome=allenatore.nome;
