@@ -188,13 +188,15 @@ app.run(
 				});
 			}
 			$rootScope.aggiornaRiepilogo=function(){
+				/*
 				$resource('./contaGiocatoriPerRuolo',{}).query().$promise.then(function(data) {
 					$rootScope.giocatoriPerRuolo=data;
 				});
-				$resource('./spesoPerAllenatore',{}).query().$promise.then(function(data) {
-					$rootScope.spesoPerAllenatore=data;
+				*/
+				$resource('./spesoPerRuolo',{}).query().$promise.then(function(data) {
+					$rootScope.spesoPerRuolo=data;
 				});
-				$resource('./giocatoriPerSquadra',{}).query().$promise.then(function(data) {
+				$resource('./giocatoriPerSquadra',{}).get().$promise.then(function(data) {
 					$rootScope.giocatoriPerSquadra=data;
 				});
 			}

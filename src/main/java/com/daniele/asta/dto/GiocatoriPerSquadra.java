@@ -7,16 +7,14 @@ public class GiocatoriPerSquadra {
 	private String ruolo;
 	private String giocatore;
 	private int costo;
-	private String sqlTime;
 	
-	public GiocatoriPerSquadra(String allenatore, String squadra, String ruolo, String giocatore, int costo, String sqlTime) {
+	public GiocatoriPerSquadra(String allenatore, String squadra, String ruolo, String giocatore, int costo) {
 		super();
 		this.allenatore = allenatore;
 		this.squadra = squadra;
 		this.ruolo = ruolo;
 		this.giocatore = giocatore;
 		this.costo = costo;
-		this.sqlTime = sqlTime;
 	}
 	public String getAllenatore() {
 		return allenatore;
@@ -48,16 +46,10 @@ public class GiocatoriPerSquadra {
 	public void setCosto(int costo) {
 		this.costo = costo;
 	}
-	public String getSqlTime() {
-		return sqlTime;
-	}
-	public void setSqlTime(String sqlTime) {
-		this.sqlTime = sqlTime;
-	}
 	@Override
 	public String toString() {
 		return "GiocatoriPerSquadra [allenatore=" + allenatore + ", squadra=" + squadra + ", ruolo=" + ruolo
-				+ ", giocatore=" + giocatore + ", costo=" + costo + ", sqlTime=" + sqlTime + "]";
+				+ ", giocatore=" + giocatore + ", costo=" + costo  + "]";
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -395,13 +396,47 @@ public class MyController {
 	}
 
 	@RequestMapping("/giocatoriPerSquadra")
-	public Iterable<GiocatoriPerSquadra>  giocatoriPerSquadra() {
-		return fantaroseRepository.giocatoriPerSquadra();
-	}
+	public Map giocatoriPerSquadra() {
 
-	@RequestMapping("/spesoPerAllenatore")
-	public Iterable<SpesoPerRuolo>  spesoPerAllenatore() {
-		return fantaroseRepository.spesoPerAllenatore();
+		Map<String, Map<String, Long>> mapSpesoPerRuolo = new TreeMap<>();
+		Iterable<SpesoPerRuolo> spesoPerRuolo = fantaroseRepository.spesoPerRuolo();
+		for (SpesoPerRuolo speso : spesoPerRuolo) {
+			Map<String, Long> tmp=new TreeMap<>();
+			tmp.put("speso", speso.getCosto());
+			tmp.put("conta", speso.getConta());
+			mapSpesoPerRuolo.put(speso.getNome(), tmp);
+		}
+		
+		
+		Iterable<GiocatoriPerSquadra> giocatoriPerSquadra = fantaroseRepository.giocatoriPerSquadra();
+		Map<String, Map<String, Object>> ret = new TreeMap<>();
+		for (GiocatoriPerSquadra giocatorePerSquadra : giocatoriPerSquadra) {
+			String allenatore = giocatorePerSquadra.getAllenatore();
+			Map<String, Long> spese = mapSpesoPerRuolo.get(allenatore);
+			Map<String, List<String>> mapRuoli =null;
+			if(ret.get(allenatore) != null)
+				mapRuoli =(Map<String, List<String>>) ret.get(allenatore).get("ruoli");
+			if(mapRuoli==null) {
+				mapRuoli=new TreeMap<>();
+			}
+			List<String> list = (List<String>) mapRuoli.get(giocatorePerSquadra.getRuolo());
+			if (list==null) {
+				list=new ArrayList<>();
+			}
+			list.add(giocatorePerSquadra.getGiocatore() + " " + giocatorePerSquadra.getSquadra() + " " + giocatorePerSquadra.getCosto());
+			mapRuoli.put(giocatorePerSquadra.getRuolo(), list);
+			
+			Map<String, Object> t = new TreeMap<>();
+			t.put("ruoli", mapRuoli);
+			t.put("spese", spese);
+			ret.put(allenatore, t);
+//			System.out.println(giocatorePerSquadra);
+		}
+		return ret;
+	}
+	@RequestMapping("/spesoPerRuolo")
+	public Iterable<SpesoPerRuolo>  spesoPerRuolo() {
+		return fantaroseRepository.spesoPerRuolo();
 	}
 	
 	@RequestMapping("/elencoCronologiaOfferte")
