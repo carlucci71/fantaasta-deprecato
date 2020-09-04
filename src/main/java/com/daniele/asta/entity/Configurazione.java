@@ -13,6 +13,8 @@ public class Configurazione {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
 	private Boolean isATurni;
+	private Integer budget;
+	private Integer numeroAcquisti;
 	public Integer getId() {
 		return id;
 	}
@@ -38,8 +40,21 @@ public class Configurazione {
 
 	@Column(nullable = true)
 	private Integer numeroGiocatori;
+	public Integer getBudget() {
+		return budget;
+	}
+	public void setBudget(Integer budget) {
+		this.budget = budget;
+	}
+	public Integer getNumeroAcquisti() {
+		return numeroAcquisti;
+	}
+	public void setNumeroAcquisti(Integer numeroAcquisti) {
+		this.numeroAcquisti = numeroAcquisti;
+	}
 	@Override
 	public String toString() {
-		return "Configurazione [id=" + id + ", isATurni=" + isATurni + ", numeroGiocatori=" + numeroGiocatori + "]";
+		return "Configurazione [id=" + id + ", isATurni=" + isATurni + ", budget=" + budget + ", numeroAcquisti="
+				+ numeroAcquisti + ", numeroGiocatori=" + numeroGiocatori + "]";
 	}
 }

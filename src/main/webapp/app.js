@@ -22,6 +22,8 @@ app.run(
 			$rootScope.isATurni=true;
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.timePing=1000;
+			$rootScope.budget=500;
+			$rootScope.numAcquisti=23;
 			$rootScope.forzaLogout= function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				$rootScope.giocatore='';
@@ -136,7 +138,7 @@ app.run(
 					alert("Errore!! Nomi non univoci");
 				} else {
 					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
-					$resource('./aggiornaConfigLega',{}).save({'isATurni':$rootScope.isATurni,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+					$resource('./aggiornaConfigLega',{}).save({'numAcquisti':$rootScope.numAcquisti,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							if (data.nuovoNomeLoggato){
 								$rootScope.nomegiocatore=data.nuovoNomeLoggato;
@@ -236,7 +238,7 @@ app.run(
 			}
 			$rootScope.confermaConfigIniziale=function(){
 				if ($rootScope.numeroUtenti>0){
-					$resource('./inizializzaLega',{}).save({'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni}).$promise.then(function(data) {
+					$resource('./inizializzaLega',{}).save({'numAcquisti':$rootScope.numAcquisti,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							$rootScope.inizializza(false);
 							if(data.isATurni=="S")
@@ -293,6 +295,8 @@ app.run(
 						else
 							$rootScope.isATurni=false;
 						$rootScope.turno=data.turno;
+						$rootScope.budget=data.budget;
+						$rootScope.numAcquisti=data.numAcquisti;
 						$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
 						$rootScope.aggiornaTimePing($rootScope.timePing);

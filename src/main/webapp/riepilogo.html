@@ -22,7 +22,7 @@
 <br>
 <br>
 <div  ng-repeat="(allenatore, value)  in giocatoriPerSquadra"><label>{{allenatore}} </label>
-	Speso: {{value.spese.speso}} Presi:{{value.spese.conta}}
+	Speso: {{value.spese.speso}} Presi:{{value.spese.conta}} Max rilancio:{{value.spese.maxRilancio}}
 	<div  ng-repeat="(ruolo, listaGiocatoriPresi)  in value.ruoli"><label>{{ruolo.substring(1)}}</label> {{listaGiocatoriPresi}}
 
 	</div>

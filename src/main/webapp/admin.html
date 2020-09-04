@@ -52,7 +52,10 @@
 	</table>
 	<span ng-show="isAdmin" >
 		Gestione a turni<input  class="checkbox" type="checkbox"  ng-model="isATurni"></input>
+		Budget:<input  class="inputAllinea" type="number"  ng-model="budget"></input>
+		Numero acquisti:<input  class="inputAllinea" type="number"  ng-model="numAcquisti"></input>
 	</span>
+	<br>
 	<br>
 	<input type="button" value="aggiorna" ng-click="aggiornaConfigLega(isAdmin)"></input>
 	<br><br>

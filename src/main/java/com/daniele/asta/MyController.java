@@ -62,6 +62,8 @@ public class MyController {
 	@Autowired Criptaggio criptaggio; 
 	@Autowired EntityManager em;
 	@Autowired SocketHandler socketHandler;
+	private Integer numAcquisti;
+	private Integer budget;
 	private String turno="0";
 	private String nomeGiocatoreTurno="";
 	private Boolean isATurni;
@@ -86,6 +88,8 @@ public class MyController {
 					setNomeGiocatoreTurno(allenatori.getNome());
 				}
 			}
+			setNumAcquisti(configurazione.getNumeroAcquisti());
+			setBudget(configurazione.getBudget());
 			isATurni = configurazione.getIsATurni();
 			if(isATurni) {
 				ret.put("isATurni", "S");
@@ -93,6 +97,8 @@ public class MyController {
 			else {
 				ret.put("isATurni", "N");
 			}
+			ret.put("numAcquisti", numAcquisti);
+			ret.put("budget", budget);
 			ret.put("elencoAllenatori", allAllenatori);
 			ret.put("nomeGiocatoreTurno", getNomeGiocatoreTurno());
 			ret.put("turno", getTurno());
@@ -229,8 +235,12 @@ public class MyController {
 		Map<String,Object> ret = new HashMap<>();
 		if(configurazione.getNumeroGiocatori() == null) {
 			Integer numUtenti=(Integer) body.get("numUtenti");
+			setBudget((Integer) body.get("budget"));
+			setNumAcquisti((Integer) body.get("numAcquisti"));
 			isATurni=(Boolean) body.get("isATurni");
 			configurazione.setNumeroGiocatori(numUtenti);
+			configurazione.setBudget(getBudget());
+			configurazione.setNumeroAcquisti(getNumAcquisti());
 			configurazione.setIsATurni(isATurni);
 			configurazioneRepository.save(configurazione);
 			for(int i=0;i<numUtenti;i++) {
@@ -280,6 +290,8 @@ public class MyController {
 		if(isOkDispositiva(body)) {
 			Map <String, String> utentiRinominati = new HashMap<>();
 			int i=0;
+			setNumAcquisti((Integer) body.get("numAcquisti"));
+			setBudget((Integer) body.get("budget"));
 			Boolean admin = (Boolean) body.get("admin");
 			isATurni = (Boolean) body.get("isATurni");
 			List<Map<String, Object>> elencoAllenatori = (List<Map<String, Object>>) body.get("elencoAllenatori");
@@ -311,6 +323,8 @@ public class MyController {
 			socketHandler.aggiornaConfigLega(utentiRinominati,getAllAllenatori());
 			Configurazione configurazione = getConfigurazione();
 			configurazione.setIsATurni(isATurni);
+			configurazione.setBudget(getBudget());
+			configurazione.setNumeroAcquisti(getNumAcquisti());
 			configurazioneRepository.save(configurazione);
 			if(isATurni) {
 				ret.put("isATurni", "S");
@@ -412,6 +426,7 @@ public class MyController {
 			Map<String, Long> tmp=new TreeMap<>();
 			tmp.put("speso", speso.getCosto());
 			tmp.put("conta", speso.getConta());
+			tmp.put("maxRilancio", budget-speso.getCosto()-(numAcquisti-speso.getConta()));
 			mapSpesoPerRuolo.put(speso.getNome(), tmp);
 		}
 		Iterable<GiocatoriPerSquadra> giocatoriPerSquadra = fantaroseRepository.giocatoriPerSquadra();
@@ -609,6 +624,18 @@ public class MyController {
 	}
 	public void setIsATurni(Boolean isATurni) {
 		this.isATurni = isATurni;
+	}
+	public Integer getBudget() {
+		return budget;
+	}
+	public void setBudget(Integer budget) {
+		this.budget = budget;
+	}
+	public Integer getNumAcquisti() {
+		return numAcquisti;
+	}
+	public void setNumAcquisti(Integer numAcquisti) {
+		this.numAcquisti = numAcquisti;
 	}
 
 }
