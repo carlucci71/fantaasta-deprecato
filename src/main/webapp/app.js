@@ -22,6 +22,10 @@ app.run(
 			$rootScope.isATurni=true;
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.timePing=1000;
+			$rootScope.forzaLogout= function(){
+				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
+				$rootScope.giocatore='';
+			};
 			$rootScope.isLoggato= function(){
 				if (!$rootScope.giocatore) return false;
 				return $rootScope.giocatore!='';
@@ -192,10 +196,10 @@ app.run(
 				$resource('./contaGiocatoriPerRuolo',{}).query().$promise.then(function(data) {
 					$rootScope.giocatoriPerRuolo=data;
 				});
-				*/
 				$resource('./spesoPerRuolo',{}).query().$promise.then(function(data) {
 					$rootScope.spesoPerRuolo=data;
 				});
+				*/
 				$resource('./giocatoriPerSquadra',{}).get().$promise.then(function(data) {
 					$rootScope.giocatoriPerSquadra=data;
 				});
@@ -363,6 +367,9 @@ app.run(
 						else
 							$rootScope.isATurni=false;
 					}
+					if (msg.loggerMessaggi){
+						$rootScope.loggerMessaggi=msg.loggerMessaggi;
+					}
 					if (msg.elencoAllenatori){
 						$rootScope.elencoAllenatori=msg.elencoAllenatori;
 					}
@@ -448,6 +455,9 @@ app.run(
 					}
 					if(msg.nomeGiocatoreTurno){
 						$rootScope.nomeGiocatoreTurno=msg.nomeGiocatoreTurno;
+					}
+					if(msg.giocatoriPerSquadra){
+						$rootScope.giocatoriPerSquadra=msg.giocatoriPerSquadra;
 					}
 					if (msg.utentiScaduti){
 						$rootScope.utentiScaduti=msg.utentiScaduti;

@@ -395,9 +395,17 @@ public class MyController {
 		return fantaroseRepository.contaGiocatoriPerRuolo();
 	}
 
+	
+	private static final Map<String, String> ruoliOrdine = new HashMap<>();
+    static {
+    	ruoliOrdine.put("P", "1P");
+    	ruoliOrdine.put("D", "2D");
+    	ruoliOrdine.put("C", "3C");
+    	ruoliOrdine.put("A", "4A");
+    }	
+	
 	@RequestMapping("/giocatoriPerSquadra")
 	public Map giocatoriPerSquadra() {
-
 		Map<String, Map<String, Long>> mapSpesoPerRuolo = new TreeMap<>();
 		Iterable<SpesoPerRuolo> spesoPerRuolo = fantaroseRepository.spesoPerRuolo();
 		for (SpesoPerRuolo speso : spesoPerRuolo) {
@@ -406,8 +414,6 @@ public class MyController {
 			tmp.put("conta", speso.getConta());
 			mapSpesoPerRuolo.put(speso.getNome(), tmp);
 		}
-		
-		
 		Iterable<GiocatoriPerSquadra> giocatoriPerSquadra = fantaroseRepository.giocatoriPerSquadra();
 		Map<String, Map<String, Object>> ret = new TreeMap<>();
 		for (GiocatoriPerSquadra giocatorePerSquadra : giocatoriPerSquadra) {
@@ -419,21 +425,21 @@ public class MyController {
 			if(mapRuoli==null) {
 				mapRuoli=new TreeMap<>();
 			}
-			List<String> list = (List<String>) mapRuoli.get(giocatorePerSquadra.getRuolo());
+			String ruolo = ruoliOrdine.get(giocatorePerSquadra.getRuolo());
+			List<String> list = (List<String>) mapRuoli.get(ruolo);
 			if (list==null) {
 				list=new ArrayList<>();
 			}
 			list.add(giocatorePerSquadra.getGiocatore() + " " + giocatorePerSquadra.getSquadra() + " " + giocatorePerSquadra.getCosto());
-			mapRuoli.put(giocatorePerSquadra.getRuolo(), list);
-			
+			mapRuoli.put(ruolo, list);
 			Map<String, Object> t = new TreeMap<>();
 			t.put("ruoli", mapRuoli);
 			t.put("spese", spese);
 			ret.put(allenatore, t);
-//			System.out.println(giocatorePerSquadra);
 		}
 		return ret;
 	}
+
 	@RequestMapping("/spesoPerRuolo")
 	public Iterable<SpesoPerRuolo>  spesoPerRuolo() {
 		return fantaroseRepository.spesoPerRuolo();

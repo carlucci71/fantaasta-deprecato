@@ -20,56 +20,14 @@
 	<button ng-click="aggiornaRiepilogo()">aggiorna</button>
 </div>	
 <br>
-<!-- 
-<table border>
-  <tr>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left">Allenatore</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left">Ruolo</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left"></td>
-  </tr>
-  <tr ng-repeat="giocatorePerRuolo in giocatoriPerRuolo">
-    <td class="divCalciatore" style="padding-left:10px;text-align:left">{{giocatorePerRuolo.nome}}</td>
-    <td class="divCalciatore" style="text-align:center">{{giocatorePerRuolo.ruolo}}</td>
-    <td class="divCalciatore" style="text-align:center">{{giocatorePerRuolo.conta}}</td>
-  </tr>
-</table>
-<br>
- {{spesoPerRuolo}}
- -->
- <!-- 
-<table border>
-  <tr>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left">Allenatore</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left">Speso</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left">Presi</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:left">Max rilancio</td>
-  </tr>
-  <tr ng-repeat="speso in spesoPerRuolo">
-    <td class="divCalciatore" style="padding-left:10px;text-align:left">{{speso.nome}}</td>
-    <td class="divCalciatore" style="text-align:center">{{speso.costo}}</td>
-    <td class="divCalciatore" style="text-align:center">{{speso.conta}}</td>
-    <td>TBD</td>
-  </tr>
-</table>
- -->
 <br>
 <div  ng-repeat="(allenatore, value)  in giocatoriPerSquadra"><label>{{allenatore}} </label>
 	Speso: {{value.spese.speso}} Presi:{{value.spese.conta}}
-	<div  ng-repeat="(ruolo, listaGiocatoriPresi)  in value.ruoli"><label>{{ruolo}}</label> {{listaGiocatoriPresi}}
+	<div  ng-repeat="(ruolo, listaGiocatoriPresi)  in value.ruoli"><label>{{ruolo.substring(1)}}</label> {{listaGiocatoriPresi}}
 
 	</div>
+	<br>
 </div>
-
-<!-- 
-<br>
-<div  ng-repeat="(allenatore, value)  in giocatoriPerSquadra"><label>{{allenatore}} Speso: 1 Presi: 2</label>
-	<div  ng-repeat="(ruolo, listaGiocatoriPresi)  in value"><label>{{ruolo}} ({{listaGiocatoriPresi.length}}):</label>
-		{{listaGiocatoriPresi}}
-	</div>
-</div>
-
- -->
-
 
 </body>
 </html>

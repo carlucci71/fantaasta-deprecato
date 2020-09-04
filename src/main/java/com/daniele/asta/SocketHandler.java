@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
@@ -190,6 +191,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			}
 			myController.setTurno(Integer.toString(iTurno));
 			m.put("turno", myController.getTurno());
+			m.put("giocatoriPerSquadra", myController.giocatoriPerSquadra());
 			m.put("nomeGiocatoreTurno", myController.getNomeGiocatoreTurno());
 			invia(toJson(m));
 		}		
@@ -269,6 +271,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 				str = str + "(" + nomegiocatoreOperaCome + ")";
 			}
+			m.put("loggerMessaggi", myController.elencoLoggerMessaggi());
 			messaggi=new ArrayList<>();
 			creaMessaggio(str,EnumCategoria.Asta);
 			invia(toJson(m));
@@ -413,6 +416,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		creaMessaggio("Offerta registrata CANCELLATA: " + mapOfferta.get("allenatore") + " per " + mapOfferta.get("giocatore") + "(" + mapOfferta.get("ruolo") 
 		+ ") " + mapOfferta.get("squadra") + " vinto a " + mapOfferta.get("costo"),EnumCategoria.Alert);
 		m.put("messaggi", messaggi);
+		m.put("giocatoriPerSquadra", myController.giocatoriPerSquadra());
 		m.put("calciatori", myController.getGiocatoriLiberi());
 		invia(toJson(m));
 	}

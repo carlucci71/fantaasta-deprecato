@@ -27,8 +27,11 @@
 	     <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
 	 -->
  </div>
- 	<div style="text-align:right;padding-right:10px;width: 98%;font-size: 16px;font-weight: bold;" ng-if="isLoggato()">
+ 	<div class="utenteLoggato" ng-if="isLoggato()">
 		Buona fortuna {{giocatore}}
+		<a href=# ng-click="forzaLogout()">
+			<img class="imgForzaLogout" style="margin-bottom:2px" alt='connetti' src='./cestino.png'/>
+		</a> 
 	</div>
 <div ng-show="config">
 	<label>CONFIGURAZIONE</label>
@@ -117,10 +120,10 @@
 								 <label class="divCalciatore"style="width:100px;text-align:center">Quot.</label>
 							</div>
 			 				 <div style="text-align:center;overflow-y:scroll;padding-bottom:0px;padding-top:0px">
-								 <input class="divCalciatore"style="width:70px;Xheight:20px;text-align:center" type=text ng-model=filterRuolo></input>
-								 <input class="divCalciatore"style="width:400px;Xheight:20px;text-align:center" type=text ng-model=filterNome></input>
-								 <input class="divCalciatore"style="width:200px;Xheight:20px;text-align:center" type=text ng-model=filterSquadra></input>
-								 <input class="divCalciatore"style="width:100px;Xheight:20px;text-align:center" type=text ng-model=filterQuotazione></input>
+								 <input class="divInputCalciatore" style="width:70px;text-align:center" type=text ng-model=filterRuolo></input>
+								 <input class="divInputCalciatore" style="width:400px;text-align:center" type=text ng-model=filterNome></input>
+								 <input class="divInputCalciatore" style="width:200px;text-align:center" type=text ng-model=filterSquadra></input>
+								 <input class="divInputCalciatore" style="width:100px;text-align:center" type=text ng-model=filterQuotazione></input>
 							</div>
 						 </div>
 						 <div class="selCalciatore" style="text-align:center;overflow-y:scroll;">
@@ -266,11 +269,11 @@
 	Log sessione corrente</div>
 	<div ng-show="sezLog"> <!-- LOG -->
 		<br>
-		<table style="border-style:double;width:98%;padding-right:300px" border>
+		<table class="tblLog" style="border-style:double;width:98%;" border>
 		  <tr ng-repeat="messaggio in messaggi | orderBy: 'data': 'reverse'">
-		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.data | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
-		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.categoria}}</td>
-		    <td style="padding-left:10px;padding-right:10px;text-align:left">{{messaggio.testo}}</td>
+		    <td style="widt=10%;padding-left:10px;padding-right:10px;text-align:left">{{messaggio.data | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
+		    <td style="widt=10%;padding-left:10px;padding-right:10px;text-align:left">{{messaggio.categoria}}</td>
+		    <td style="widt=80%;padding-left:10px;padding-right:10px;text-align:left">{{messaggio.testo}}</td>
 		  </tr>
 		</table>
 	</div> <!-- LOG -->
