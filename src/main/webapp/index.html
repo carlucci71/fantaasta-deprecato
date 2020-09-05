@@ -26,11 +26,11 @@
 	<!-- 
 	     <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
 	 -->
- </div>
+ </div>{{utenti}}
  	<div class="utenteLoggato" ng-if="isLoggato()">
 		Buona fortuna {{giocatore}}
 		<a href=# ng-click="forzaLogout()">
-			<img class="imgForzaLogout" style="margin-bottom:2px" alt='connetti' src='./cestino.png'/>
+			<img class="imgForzaLogout" style="margin-bottom:2px" title="disconntetti" src='./cestino.png'/>
 		</a> 
 	</div>
 	<span ng-show=false style="background-color:red;width: 10%;border-style: dotted;border-22px;border-color:yellow;position:absolute;">xxx</span>
@@ -81,26 +81,26 @@
 		    	<td> <!-- nome -->
 		    		<label ng-class="{nonSonoIo: !sonoLoggato(utente), sonoIo: sonoLoggato(utente)}">{{utente.nome}}</label>
 			    	<a ng-show="!isLoggato() && !utenteCollegato(utente)" href=#>
-			    		<img class="imgConnetti" style="margin-bottom:2px" alt='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)" height="25" width="25"/>
+			    		<img class="imgConnetti" style="margin-bottom:2px" title='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)" height="25" width="25"/>
 			    	</a>
-					<img  class="imgConnetti" ng-show="utenteCollegato(utente)" style="margin-bottom:2px" src='./connesso.jpeg' />		    	
+					<img title="connesso" class="imgConnetti" ng-show="utenteCollegato(utente)" style="margin-bottom:2px" src='./connesso.jpeg' />		    	
 		    		<a ng-show="!sonoLoggato(utente) && ((isAdmin && utenteCollegato(utente)) || utenteScaduto(utente))" href=#>
-		    			<img class="imgConnetti" src='./cestino.png' ng-click="cancellaUtente(utente)" />
+		    			<img title="cancella utente" class="imgConnetti" src='./cestino.png' ng-click="cancellaUtente(utente)" />
 		    		</a>
 				    <a ng-show="sonoLoggato(utente)" href=#>
-				    	<img class="imgConnetti" style="margin-bottom:2px" src='./disconnect-icon.png' alt='disconnetti' ng-click="doDisconnect()" />
+				    	<img class="imgConnetti" style="margin-bottom:2px" src='./disconnect-icon.png' title='disconnetti' ng-click="doDisconnect()" />
 				    </a>
 					<label class="latenza" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
 				</td>
 		    	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia -->
 					<a ng-show="selCalciatore && durataAsta>0" href=#>
-						<img class="imgConnetti" style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
+						<img title="avvia asta" class="imgConnetti" style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
 					</a>
 		    	</td>
 		    	<td ng-show="isATurni" style="padding-left:10px;padding-right:10px;text-align:center">  <!-- turno -->
 					<label ng-if="utente.ordine==turno"><i class="fa fa-thumbs-up"></i></label>
 					<a ng-show="isAdmin && utente.ordine!=turno" href=#>
-						<img class="imgConnetti" style="margin-bottom:2px" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
+						<img title="forza turno" class="imgConnetti" style="margin-bottom:2px" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
 					</a>
 				</td>
 		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- speso -->
@@ -158,14 +158,14 @@
 						<label class="nextOperation" ng-show="!selCalciatore && (nomeGiocatoreTurno==nomegiocatore||!isATurni) && bSemaforoAttivo" >Seleziona il calciatore</label>
 						<span ng-show="selCalciatore && (nomeGiocatoreTurno==nomegiocatore || !isATurni) && durataAsta>0">
 							<label class="nextOperation" >Avvia asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-							<a href=# ng-show="selCalciatore && durataAsta>0 && (nomeGiocatoreTurno==nomegiocatore || !isATurni)"><img src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
+							<a href=# ng-show="selCalciatore && durataAsta>0 && (nomeGiocatoreTurno==nomegiocatore || !isATurni)"><img title="avvia asta" src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
 						</span>
 						<span ng-show="isATurni && bSemaforoAttivo">
 							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >E' il turno di {{nomeGiocatoreTurno}}</label>
 							<label class="nextOperation" ng-show="isAdmin && nomeGiocatoreTurno!=nomegiocatore && !selCalciatore" > puoi selezionare il calciatore al suo posto</label>
 							<span ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">
 								<label class="nextOperation"> puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-								<a href=#><img style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" /></a>
+								<a href=#><img title="avvia asta" style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" /></a>
 							</span>
 						</span>
 						<span ng-show="selCalciatore">
@@ -192,7 +192,7 @@
 							&nbsp;
 						</span>
 						<span class="spanImgPunta">
-							<img   ng-show="offerta<=getFromMapSpesoPerRuolo('MAXRILANCIO',giocatore)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('IO',offerta)" height="35" width="35"/>
+							<img  title="offri" ng-show="offerta<=getFromMapSpesoPerRuolo('MAXRILANCIO',giocatore)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('IO',offerta)" height="35" width="35"/>
 							&nbsp;
 						</span>
 						<span class="spanBtnIncrementa">
@@ -236,7 +236,7 @@
 									&nbsp;
 								</span>
 								<span class="spanImgPunta">
-							    	<img   ng-show="offertaOC<=getFromMapSpesoPerRuolo('MAXRILANCIO',nomegiocatoreOperaCome)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC',offertaOC)" height="35" width="35"/>
+							    	<img   title="offri" ng-show="offertaOC<=getFromMapSpesoPerRuolo('MAXRILANCIO',nomegiocatoreOperaCome)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC',offertaOC)" height="35" width="35"/>
 									&nbsp;
 								</span>
 								<span class="spanBtnIncrementa">
@@ -269,7 +269,7 @@
 					<br>
 					<label class="nextOperation">Rimuovi la pausa</label>
 					<br>
-					<a href=#><img src='./resume.jpeg' ng-click="resumeAsta()" height="50" width="50"/></a>
+					<a href=#><img title="riprendi" src='./resume.jpeg' ng-click="resumeAsta()" height="50" width="50"/></a>
 					
 			</div> <!-- TIMEOUT -->
 			<div ng-show="offertaVincente.nomegiocatore && !timeout"> <!-- OFFERTAINCORSO -->
@@ -291,8 +291,8 @@
 						<a ng-show="timeStart==3 && isAdmin" href=#>
 							<label class="nextOperation">Devi confermare o annullare l'asta</label>
 							<br>
-							<img src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
-							<img src='./annulla.jpeg' ng-click="annulla()" height="30" width="30"/>
+							<img title="conferma" src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
+							<img title="annulla" src='./annulla.jpeg' ng-click="annulla()" height="30" width="30"/>
 						</a> 
 				</div>
 				<div ng-show="timeStart<3" style="width:98%;text-align:center;marginX:auto">
@@ -303,16 +303,16 @@
 			 	</div>
 				<br><br>
 				<div  ng-show="isAdmin && timeStart<3" align=center>
-					<a href=#><img src='./stop.jpg' ng-click="terminaAsta()" height="50" width="50"/></a>
+					<a href=#><img title="termina asta" src='./stop.jpg' ng-click="terminaAsta()" height="50" width="50"/></a>
 				</div>
 				<div  ng-show="timeStart<3" align=center>
-					<a href=#><img src='./pausa.jpeg' ng-click="pausaAsta()" height="50" width="50"/></a>
+					<a href=#><img title="timeout" src='./pausa.jpeg' ng-click="pausaAsta()" height="50" width="50"/></a>
 				</div>
 			</div> <!-- OFFERTAINCORSO -->
 		
 			<div ng-show="false"> <!-- BUG BLOCCO -->
 				<div  ng-hide="bSemaforoAttivo || !isAdmin" align=center>
-					<a href=#><img src='./verde.png' ng-click="liberaSemaforo()" height="50" width="50"/></a>
+					<a href=#><img title="sblocca semaforo" src='./verde.png' ng-click="liberaSemaforo()" height="50" width="50"/></a>
 				</div>
 			</div> <!-- BUG BLOCCO -->
 		</div> <!-- OFFERTA -->

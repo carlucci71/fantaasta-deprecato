@@ -80,8 +80,13 @@ public class MyController {
 			String giocatoreLoggato = (String) httpSession.getAttribute("nomeGiocatoreLoggato");
 			String idLoggato = (String) httpSession.getAttribute("idLoggato");
 			if (giocatoreLoggato != null) {
-				ret.put("giocatoreLoggato", giocatoreLoggato);
-				ret.put("idLoggato", idLoggato);
+				if(socketHandler.getUtentiLoggati().contains(giocatoreLoggato)) {
+					ret.put("giocatoreLoggato", giocatoreLoggato);
+					ret.put("idLoggato", idLoggato);
+				} else {
+					httpSession.removeAttribute("nomeGiocatoreLoggato");
+					httpSession.removeAttribute("idLoggato");
+				}
 			}
 			Iterable<Allenatori> allAllenatori = getAllAllenatori();
 			for (Allenatori allenatori : allAllenatori) {

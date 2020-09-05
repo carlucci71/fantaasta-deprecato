@@ -51,7 +51,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	}
 	
 	List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-	List<String> utentiLoggati = new ArrayList<>();
+	private List<String> utentiLoggati = new ArrayList<>();
 	List<String> utentiScaduti=new ArrayList<>();
 	Map<String, Map<String, Object>> pingUtenti = new HashMap<>();
 	Map<String, Object> offertaVincente = new HashMap<>();
@@ -88,11 +88,11 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		if (operazione != null && operazione.equals("cancellaUtente")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			Integer iIdgiocatore = (Integer) jsonToMap.get("idgiocatore");
-			utentiLoggati.remove(nomegiocatore);
+			getUtentiLoggati().remove(nomegiocatore);
 			utentiScaduti.remove(nomegiocatore);
 			pingUtenti.remove(nomegiocatore);
 			Map<String, Object> m = new HashMap<>();
-			m.put("utenti", utentiLoggati);
+			m.put("utenti", getUtentiLoggati());
 			creaMessaggio("Utente cancellato: " + nomegiocatore,EnumCategoria.Alert);
 			m.put("azzera", String.valueOf(iIdgiocatore));
 			m.put("messaggi", messaggi);
@@ -103,10 +103,10 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			creaMessaggio("AZZERATO DA: " + nomegiocatore,EnumCategoria.Alert);
 			Map<String, Object> m = new HashMap<>();
 			m.put("calciatori", myController.getGiocatoriLiberi());
-			utentiLoggati = new ArrayList<>();
+			setUtentiLoggati(new ArrayList<>());
 			utentiScaduti=new ArrayList<>();
 			pingUtenti = new HashMap<>();
-			m.put("utenti", utentiLoggati);
+			m.put("utenti", getUtentiLoggati());
 			m.put("azzera", "x");
 			invia(toJson(m));
 		}
@@ -117,19 +117,19 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Long tokenUtente = (Long)jsonToMap.get("tokenUtente");
 			Map<String, Object> m = new HashMap<>();
 			if (utentiScaduti.contains(nomegiocatore)) {
-				utentiLoggati.remove(nomegiocatore);
+				getUtentiLoggati().remove(nomegiocatore);
 				utentiScaduti.remove(nomegiocatore);
 				pingUtenti.remove(nomegiocatore);
 			}
-			if (utentiLoggati != null && utentiLoggati.contains(nomegiocatore)) {
+			if (getUtentiLoggati() != null && getUtentiLoggati().contains(nomegiocatore)) {
 				creaMessaggio("Sessione RUBATA da " + nomegiocatore,EnumCategoria.Alert);
 			} 
 			httpSession.setAttribute("nomeGiocatoreLoggato", nomegiocatore);
 			httpSession.setAttribute("idLoggato", idgiocatore);
-			utentiLoggati.add(nomegiocatore);
+			getUtentiLoggati().add(nomegiocatore);
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
-			m.put("utenti", utentiLoggati);
+			m.put("utenti", getUtentiLoggati());
 			creaMessaggio("Connesso: " + nomegiocatore,EnumCategoria.Connessione);
 			m.put("messaggi", messaggi);
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
@@ -281,14 +281,14 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else if (operazione != null && operazione.equals("disconnetti")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
-			utentiLoggati.remove(nomegiocatore);
+			getUtentiLoggati().remove(nomegiocatore);
 			utentiScaduti.remove(nomegiocatore);
 			pingUtenti.remove(nomegiocatore);
 			httpSession.removeAttribute("nomeGiocatoreLoggato");
 			httpSession.removeAttribute("idLoggato");
 			Map<String, Object> m = new HashMap<>();
 			creaMessaggio("Utente disconnesso: " + nomegiocatore,EnumCategoria.Connessione);
-			m.put("utenti", utentiLoggati);
+			m.put("utenti", getUtentiLoggati());
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("aggiornaDurataAsta")) {
@@ -372,7 +372,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				pingUtenti.put(nomegiocatore, mp);
 			}
 			Map<String, Object> m = new HashMap<>();
-			for (String utente : utentiLoggati) {
+			for (String utente : getUtentiLoggati()) {
 				Map<String, Object> map = pingUtenti.get(utente);
 				if (map!= null)
 				{
@@ -388,7 +388,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("timeout", timeOut);
 			m.put("utentiScaduti", utentiScaduti);
 //			m.put("elencoAllenatori", myController.getAllAllenatori());
-			m.put("utenti", utentiLoggati);
+			m.put("utenti", getUtentiLoggati());
 			m.put("durataAsta", durataAsta);
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
 			m.put("sSemaforoAttivo", sSemaforoAttivo);
@@ -446,9 +446,9 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				utentiScaduti.remove(vecchioNome);
 				utentiScaduti.add(nuovoNome);
 			}
-			if (utentiLoggati.contains(vecchioNome)) {
-				utentiLoggati.remove(vecchioNome);
-				utentiLoggati.add(nuovoNome);
+			if (getUtentiLoggati().contains(vecchioNome)) {
+				getUtentiLoggati().remove(vecchioNome);
+				getUtentiLoggati().add(nuovoNome);
 			}
 			Map<String, Object> map = pingUtenti.get(vecchioNome);
 			if (map != null) {
@@ -545,6 +545,12 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 
 	public void setTokenVerifica(Integer tokenVerifica) {
 		this.tokenVerifica = tokenVerifica;
+	}
+	public List<String> getUtentiLoggati() {
+		return utentiLoggati;
+	}
+	public void setUtentiLoggati(List<String> utentiLoggati) {
+		this.utentiLoggati = utentiLoggati;
 	}
 
 
