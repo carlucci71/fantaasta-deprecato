@@ -35,7 +35,7 @@ input {
  .selCalciatore{
  	height:150px;
  }
- .inputAllinea{
+ .inputDato{
 	width: 50px;'
  }
  .utenteLoggato{
@@ -54,17 +54,30 @@ input {
  .inputLarge{
 	width: 70px;'
  }
- .imgAllinea {
+ .imgPunta {
  	width:30px;
  	height:30px;
  }
- .btnAllinea1{
+ .btnAllinea{
 	width: 75px;
  }
- .btnAllinea2{
-	width: 55px;
+ .spanBtnAllinea{
+	width: 85px;
+	display: inline-block;
  }
- .btnAllinea3{
+ .spanInputDato{
+	width: 60px;
+	display: inline-block;
+ }
+ .spanImgPunta{
+	width: 40px;
+	display: inline-block;
+ }
+ .spanBtnIncrementa{
+	width: 65px;
+	display: inline-block;
+ }
+ .btnIncrementa{
 	width: 55px;
  }
 .latenza {
@@ -212,7 +225,7 @@ input {
 	 .inputLarge{
 		width: 180px;'
 	 }
-	 .inputAllinea{
+	 .inputDato{
 		width: 180px;'
 	 }
 	 .utenteLoggato{
@@ -222,21 +235,33 @@ input {
 		 font-size: 30px;
 		 font-weight: bold;
 	 }
-	 .imgAllinea {
+	 .imgPunta {
 	 	width:100px;
 	 	height:100px;
 	 }
-	 .btnAllinea1{
+	 .btnAllinea{
 		width: 205px;
 		font-size:40;
 	 }
-	 .btnAllinea2{
-		width: 120px;
-		font-size:40;
+	 .spanBtnAllinea{
+		width: 215px;
+		display: inline-block;
 	 }
-	 .btnAllinea3{
-		width: 135px;
-		font-size:40;
+	 .spanInputDato{
+		width: 190px;
+		display: inline-block;
+	 }
+	 .spanImgPunta{
+		width: 110px;
+		display: inline-block;
+	 }
+	 .spanBtnIncrementa{
+		width: 115px;
+		display: inline-block;
+	 }
+	 .btnIncrementa{
+		width: 105px;
+		font-size:35;
 	 }
 	 .btnModale{
 		width: 235px;

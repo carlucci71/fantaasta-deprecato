@@ -57,4 +57,5 @@ public class Configurazione {
 		return "Configurazione [id=" + id + ", isATurni=" + isATurni + ", budget=" + budget + ", numeroAcquisti="
 				+ numeroAcquisti + ", numeroGiocatori=" + numeroGiocatori + "]";
 	}
+
 }

@@ -21,6 +21,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.daniele.asta.entity.Allenatori;
+import com.daniele.asta.entity.Configurazione;
 import com.daniele.asta.entity.EnumCategoria;
 import com.daniele.asta.entity.Giocatori;
 import com.daniele.asta.entity.LoggerMessaggi;
@@ -192,6 +193,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			myController.setTurno(Integer.toString(iTurno));
 			m.put("turno", myController.getTurno());
 			m.put("giocatoriPerSquadra", myController.giocatoriPerSquadra());
+			m.put("mapSpesoPerRuolo",myController.getMapSpesoPerRuolo());
 			m.put("nomeGiocatoreTurno", myController.getNomeGiocatoreTurno());
 			invia(toJson(m));
 		}		
@@ -305,19 +307,32 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
 			Integer offerta = (Integer) jsonToMap.get("offerta");
+			Integer maxRilancio = (Integer) jsonToMap.get("maxRilancio");
 			Integer attOfferta = (Integer) offertaVincente.get("offerta");
 			Calendar now = Calendar.getInstance();
 			Calendar scadenzaAsta = Calendar.getInstance();
 			scadenzaAsta.setTimeInMillis(calInizioOfferta.getTimeInMillis());
 			scadenzaAsta.add(Calendar.SECOND, durataAsta);
 			Map<String, Object> m = new HashMap<>();
-			if (now.after(scadenzaAsta)) {
-				String str = "Rilancio di " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra() + " arrivato dopo : " + (now.getTimeInMillis()-scadenzaAsta.getTimeInMillis()) + "millisecondi da scadenza asta";
+//			Long maxRilancio = myController.getMapSpesoPerRuolo().get(nomegiocatore).get("maxRilancio");
+			if(offerta>maxRilancio) {
+				String str = "Rilancio da " + offerta + " di " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra() +
+						" abbassato a " + maxRilancio + " perchè oltre il massimo rilancio.";
 				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 					str = str + "(" + nomegiocatoreOperaCome + ")";
 				}
 				creaMessaggio(str,EnumCategoria.Asta);
-			} else {
+				offerta=maxRilancio;
+			}
+			if (now.after(scadenzaAsta)) {
+				String str = "Rilancio di " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra() +
+						" arrivato dopo : " + (now.getTimeInMillis()-scadenzaAsta.getTimeInMillis()) + "millisecondi da scadenza asta";
+				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
+					str = str + "(" + nomegiocatoreOperaCome + ")";
+				}
+				creaMessaggio(str,EnumCategoria.Asta);
+			} 
+			else {
 				String str = "Rilancio di " + offerta + " fatto da " + nomegiocatore;
 				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 					str = str + "(" + nomegiocatoreOperaCome + ")";
@@ -417,10 +432,11 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		+ ") " + mapOfferta.get("squadra") + " vinto a " + mapOfferta.get("costo"),EnumCategoria.Alert);
 		m.put("messaggi", messaggi);
 		m.put("giocatoriPerSquadra", myController.giocatoriPerSquadra());
+		m.put("mapSpesoPerRuolo",myController.getMapSpesoPerRuolo());
 		m.put("calciatori", myController.getGiocatoriLiberi());
 		invia(toJson(m));
 	}
-	public void aggiornaConfigLega(Map<String, String> utentiRinominati, Iterable<Allenatori> allAllenatori) throws IOException {
+	public void aggiornaConfigLega(Map<String, String> utentiRinominati, Iterable<Allenatori> allAllenatori, Configurazione configurazione) throws IOException {
 
 		Iterator<String> iterator = utentiRinominati.keySet().iterator();
 		while (iterator.hasNext()) {
@@ -444,7 +460,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			}
 		}
 		Map<String, Object> m = new HashMap<>();
-		creaMessaggio("Utenti rinominati: " + utentiRinominati,EnumCategoria.Alert);
+		creaMessaggio("Aggiornata configurazione: " + configurazione ,EnumCategoria.Alert);
+		if (!utentiRinominati.isEmpty()) creaMessaggio("Utenti rinominati: " + utentiRinominati,EnumCategoria.Alert);
 		if(myController.getIsATurni()) {
 			m.put("isATurni", "S");
 		}

@@ -24,6 +24,8 @@ app.run(
 			$rootScope.timePing=1000;
 			$rootScope.budget=500;
 			$rootScope.numAcquisti=23;
+			$rootScope.idgiocatoreOperaCome=-1;
+			$rootScope.nomegiocatoreOperaCome="";
 			$rootScope.forzaLogout= function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				$rootScope.giocatore='';
@@ -202,14 +204,33 @@ app.run(
 					$rootScope.spesoPerRuolo=data;
 				});
 				*/
-				$resource('./giocatoriPerSquadra',{}).get().$promise.then(function(data) {
-					$rootScope.giocatoriPerSquadra=data;
-				});
+//				$resource('./giocatoriPerSquadra',{}).get().$promise.then(function(data) {
+//					$rootScope.giocatoriPerSquadra=data;
+//				});
 			}
 			$rootScope.selezionaAllenatoreOperaCome=function(allenatore){
 				$rootScope.idgiocatoreOperaCome=allenatore.id;
 				$rootScope.nomegiocatoreOperaCome=allenatore.nome;
 				
+			}
+			$rootScope.getFromMapSpesoPerRuolo=function(tipo, nome){
+				if (tipo=='SPESO'){
+					if(!$rootScope.mapSpesoPerRuolo[nome]) return 0;
+					return $rootScope.mapSpesoPerRuolo[nome].speso;
+				}
+				if (tipo=='CONTA'){
+					if(!$rootScope.mapSpesoPerRuolo[nome]) return 0;
+					return $rootScope.mapSpesoPerRuolo[nome].conta;
+				}
+				if (tipo=='MAXRILANCIO'){
+					if(!$rootScope.mapSpesoPerRuolo || !$rootScope.mapSpesoPerRuolo[nome]){
+						return $rootScope.budget-$rootScope.numAcquisti+1;
+					}else{
+//						console.log("1-" + $rootScope.mapSpesoPerRuolo[nome] + "2-" + nome + "3-" + $rootScope.mapSpesoPerRuolo);
+						return $rootScope.mapSpesoPerRuolo[nome].maxRilancio;
+						
+					}
+				}
 			}
 			$rootScope.cancellaOfferta=function(offerta){
 				if (window.confirm("Cancello offerta di:" + offerta.allenatore + " per " + offerta.giocatore + "(" + offerta.ruolo + ") " + offerta.squadra + " vinto a " + offerta.costo)){
@@ -298,6 +319,8 @@ app.run(
 						$rootScope.budget=data.budget;
 						$rootScope.numAcquisti=data.numAcquisti;
 						$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
+						$rootScope.giocatoriPerSquadra=data.giocatoriPerSquadra;
+						$rootScope.mapSpesoPerRuolo=data.mapSpesoPerRuolo;
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
 						$rootScope.aggiornaTimePing($rootScope.timePing);
 					}
@@ -460,6 +483,9 @@ app.run(
 					if(msg.nomeGiocatoreTurno){
 						$rootScope.nomeGiocatoreTurno=msg.nomeGiocatoreTurno;
 					}
+					if(msg.mapSpesoPerRuolo){
+						$rootScope.mapSpesoPerRuolo=msg.mapSpesoPerRuolo;
+					}
 					if(msg.giocatoriPerSquadra){
 						$rootScope.giocatoriPerSquadra=msg.giocatoriPerSquadra;
 					}
@@ -533,43 +559,24 @@ app.run(
 					$rootScope.sendMsg(JSON.stringify({'operazione':'annullaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				}
 			}
-			$rootScope.allinea = function(quale){
-				if(quale=='OC') {
-					$rootScope.offertaOC=$rootScope.offertaVincente.offerta;
-				}
-				else {
-					$rootScope.offerta=$rootScope.offertaVincente.offerta;
-				}
-			}
-			$rootScope.inviaOfferta = function(quale){
+			$rootScope.inviaOfferta = function(quale, off){
 				var ng;
 				var ig;
-				var off;
 				if(quale=='OC') {
 					ng = $rootScope.nomegiocatoreOperaCome;
 					ig = $rootScope.idgiocatoreOperaCome;
-					off = $rootScope.offertaOC;
 				}
 				else {
 					ng = $rootScope.nomegiocatore;
 					ig = $rootScope.idgiocatore;
-					off = $rootScope.offerta;
 				}
-				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':off}));
+				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'maxRilancio':$rootScope.getFromMapSpesoPerRuolo('MAXRILANCIO',ng),'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':off}));
 			}
 			$rootScope.aggiornaDurataAsta = function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'aggiornaDurataAsta', 'giocatoreDurataAsta':$rootScope.nomegiocatore, 'durataAsta':$rootScope.durataAsta}));
 			}
 			$rootScope.cancellaUtente = function(u) {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':u.nome, 'idgiocatore':u.id}));
-			}
-			$rootScope.incrementa = function(inc, quale) {
-				if(quale=='OC') {
-					$rootScope.offertaOC=$rootScope.offertaOC+inc;
-				} else {
-					$rootScope.offerta=$rootScope.offerta+inc;
-				}
-				$rootScope.inviaOfferta(quale);
 			}
 			$rootScope.terminaAsta= function() {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'terminaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));

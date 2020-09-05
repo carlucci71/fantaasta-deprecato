@@ -15,12 +15,7 @@
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="./app.js"></script>
 
-<body data-ng-init="aggiornaRiepilogo()" x-ng-app="app" style="margin-left:20px">
-<div>
-	<button ng-click="aggiornaRiepilogo()">aggiorna</button>
-</div>	
-<br>
-<br>
+<body  x-ng-app="app" style="margin-left:20px">
 <div  ng-repeat="(allenatore, value)  in giocatoriPerSquadra"><label>{{allenatore}} </label>
 	Speso: {{value.spese.speso}} Presi:{{value.spese.conta}} Max rilancio:{{value.spese.maxRilancio}}
 	<div  ng-repeat="(ruolo, listaGiocatoriPresi)  in value.ruoli"><label>{{ruolo.substring(1)}}</label> {{listaGiocatoriPresi}}

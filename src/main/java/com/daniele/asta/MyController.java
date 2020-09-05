@@ -62,6 +62,7 @@ public class MyController {
 	@Autowired Criptaggio criptaggio; 
 	@Autowired EntityManager em;
 	@Autowired SocketHandler socketHandler;
+	private Map<String, Map<String, Long>> mapSpesoPerRuolo = new TreeMap<>();
 	private Integer numAcquisti;
 	private Integer budget;
 	private String turno="0";
@@ -101,6 +102,8 @@ public class MyController {
 			ret.put("budget", budget);
 			ret.put("elencoAllenatori", allAllenatori);
 			ret.put("nomeGiocatoreTurno", getNomeGiocatoreTurno());
+			ret.put("giocatoriPerSquadra",giocatoriPerSquadra());
+			ret.put("mapSpesoPerRuolo",mapSpesoPerRuolo);
 			ret.put("turno", getTurno());
 		}
 		return ret;
@@ -320,7 +323,6 @@ public class MyController {
 				i++;
 				allenatoriRepository.save(al);
 			}
-			socketHandler.aggiornaConfigLega(utentiRinominati,getAllAllenatori());
 			Configurazione configurazione = getConfigurazione();
 			configurazione.setIsATurni(isATurni);
 			configurazione.setBudget(getBudget());
@@ -333,6 +335,7 @@ public class MyController {
 				ret.put("isATurni", "N");
 			}
 			ret.put("esitoDispositiva", "OK");
+			socketHandler.aggiornaConfigLega(utentiRinominati,getAllAllenatori(),configurazione);
 		}
 		else {
 			ret.put("esitoDispositiva", "KO");
@@ -417,23 +420,23 @@ public class MyController {
     	ruoliOrdine.put("C", "3C");
     	ruoliOrdine.put("A", "4A");
     }	
-	
+    
 	@RequestMapping("/giocatoriPerSquadra")
-	public Map giocatoriPerSquadra() {
-		Map<String, Map<String, Long>> mapSpesoPerRuolo = new TreeMap<>();
+	public Map<String, Map<String, Object>> giocatoriPerSquadra() {
+		setMapSpesoPerRuolo(new TreeMap<>());
 		Iterable<SpesoPerRuolo> spesoPerRuolo = fantaroseRepository.spesoPerRuolo();
 		for (SpesoPerRuolo speso : spesoPerRuolo) {
 			Map<String, Long> tmp=new TreeMap<>();
 			tmp.put("speso", speso.getCosto());
 			tmp.put("conta", speso.getConta());
-			tmp.put("maxRilancio", budget-speso.getCosto()-(numAcquisti-speso.getConta()));
-			mapSpesoPerRuolo.put(speso.getNome(), tmp);
+			tmp.put("maxRilancio", budget-speso.getCosto()-(numAcquisti-speso.getConta())+1);
+			getMapSpesoPerRuolo().put(speso.getNome(), tmp);
 		}
 		Iterable<GiocatoriPerSquadra> giocatoriPerSquadra = fantaroseRepository.giocatoriPerSquadra();
 		Map<String, Map<String, Object>> ret = new TreeMap<>();
 		for (GiocatoriPerSquadra giocatorePerSquadra : giocatoriPerSquadra) {
 			String allenatore = giocatorePerSquadra.getAllenatore();
-			Map<String, Long> spese = mapSpesoPerRuolo.get(allenatore);
+			Map<String, Long> spese = getMapSpesoPerRuolo().get(allenatore);
 			Map<String, List<String>> mapRuoli =null;
 			if(ret.get(allenatore) != null)
 				mapRuoli =(Map<String, List<String>>) ret.get(allenatore).get("ruoli");
@@ -636,6 +639,12 @@ public class MyController {
 	}
 	public void setNumAcquisti(Integer numAcquisti) {
 		this.numAcquisti = numAcquisti;
+	}
+	public Map<String, Map<String, Long>> getMapSpesoPerRuolo() {
+		return mapSpesoPerRuolo;
+	}
+	public void setMapSpesoPerRuolo(Map<String, Map<String, Long>> mapSpesoPerRuolo) {
+		this.mapSpesoPerRuolo = mapSpesoPerRuolo;
 	}
 
 }
