@@ -22,7 +22,7 @@ public interface FantaroseRepository extends CrudRepository<Fantarose, Integer> 
 	@Query("SELECT new com.daniele.asta.dto.GiocatoriPerRuolo(COUNT(g.ruolo) as conta,g.ruolo,a.nome) from Fantarose f,Allenatori a,Giocatori g where g.id=f.idGiocatore and a.id = f.idAllenatore group by a.nome,g.ruolo order by a.nome,g.ruolo desc")
 	List<GiocatoriPerRuolo> contaGiocatoriPerRuolo();
 	
-	@Query("SELECT  new com.daniele.asta.dto.GiocatoriPerSquadra(a.nome as allenatore,g.squadra,g.ruolo,g.nome as giocatore,f.costo) from Fantarose f,Giocatori g,Allenatori a where g.id = idGiocatore and a.id = idAllenatore order by allenatore,ruolo desc,giocatore")
+	@Query("SELECT  new com.daniele.asta.dto.GiocatoriPerSquadra(a.nome as allenatore,g.squadra,g.ruolo,g.nome as giocatore,f.costo) from Fantarose f,Giocatori g,Allenatori a where g.id = idGiocatore and a.id = idAllenatore order by a.ordine,ruolo desc,giocatore")
 	Iterable<GiocatoriPerSquadra> giocatoriPerSquadra();
 
 }

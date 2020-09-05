@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -62,7 +63,7 @@ public class MyController {
 	@Autowired Criptaggio criptaggio; 
 	@Autowired EntityManager em;
 	@Autowired SocketHandler socketHandler;
-	private Map<String, Map<String, Long>> mapSpesoPerRuolo = new TreeMap<>();
+	private Map<String, Map<String, Long>> mapSpesoPerRuolo = new HashMap();
 	private Integer numAcquisti;
 	private Integer budget;
 	private String turno="0";
@@ -428,17 +429,17 @@ public class MyController {
     
 	@RequestMapping("/giocatoriPerSquadra")
 	public Map<String, Map<String, Object>> giocatoriPerSquadra() {
-		setMapSpesoPerRuolo(new TreeMap<>());
+		setMapSpesoPerRuolo(new HashMap());
 		Iterable<SpesoPerRuolo> spesoPerRuolo = fantaroseRepository.spesoPerRuolo();
 		for (SpesoPerRuolo speso : spesoPerRuolo) {
-			Map<String, Long> tmp=new TreeMap<>();
+			Map<String, Long> tmp=new HashMap();
 			tmp.put("speso", speso.getCosto());
 			tmp.put("conta", speso.getConta());
 			tmp.put("maxRilancio", budget-speso.getCosto()-(numAcquisti-speso.getConta())+1);
 			getMapSpesoPerRuolo().put(speso.getNome(), tmp);
 		}
 		Iterable<GiocatoriPerSquadra> giocatoriPerSquadra = fantaroseRepository.giocatoriPerSquadra();
-		Map<String, Map<String, Object>> ret = new TreeMap<>();
+		Map<String, Map<String, Object>> ret = new LinkedHashMap<>();
 		for (GiocatoriPerSquadra giocatorePerSquadra : giocatoriPerSquadra) {
 			String allenatore = giocatorePerSquadra.getAllenatore();
 			Map<String, Long> spese = getMapSpesoPerRuolo().get(allenatore);
@@ -446,7 +447,7 @@ public class MyController {
 			if(ret.get(allenatore) != null)
 				mapRuoli =(Map<String, List<String>>) ret.get(allenatore).get("ruoli");
 			if(mapRuoli==null) {
-				mapRuoli=new TreeMap<>();
+				mapRuoli=new TreeMap();
 			}
 			String ruolo = ruoliOrdine.get(giocatorePerSquadra.getRuolo());
 			List<String> list = (List<String>) mapRuoli.get(ruolo);
@@ -455,7 +456,7 @@ public class MyController {
 			}
 			list.add(giocatorePerSquadra.getGiocatore() + " " + giocatorePerSquadra.getSquadra() + " " + giocatorePerSquadra.getCosto());
 			mapRuoli.put(ruolo, list);
-			Map<String, Object> t = new TreeMap<>();
+			Map<String, Object> t = new HashMap<>();
 			t.put("ruoli", mapRuoli);
 			t.put("spese", spese);
 			ret.put(allenatore, t);
