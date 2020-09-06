@@ -21,17 +21,15 @@
 
 <script>
 </script>
-<body x-ng-app="app" style="margin-left:20px">{{selCalciatoreMacroRuolo}}
+<body x-ng-app="app" style="margin-left:20px">
  <div ng-controller="ModalDemoCtrl as pc" class="modal-demo">
 	<!-- 
 	     <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
 	 -->
  </div>
- 	<div class="utenteLoggato" ng-if="isLoggato()">
+ 	<div class="utenteLoggato" ng-show="isLoggato()">
 		Buona fortuna {{giocatore}}
-		<a href=# ng-click="forzaLogout()">
-			<img class="imgForzaLogout" style="margin-bottom:2px" title="disconntetti" src='./cestino.png'/>
-		</a> 
+		<img ng-click="forzaLogout()" class="imgForzaLogout" style="margin-bottom:2px;cursor:pointer" title="disconntetti" src='./cestino.png'/>
 	</div>
 	<span ng-show=false style="background-color:red;width: 10%;border-style: dotted;border-22px;border-color:yellow;position:absolute;">xxx</span>
 	
@@ -56,7 +54,7 @@
 	<br>
 	Mantra<input class="checkbox"   type="checkbox"  ng-model="isMantra"></input>
 	<br>
-		<button ng-if="numeroUtenti>1" ng-click="confermaConfigIniziale()">conferma</button>
+		<button ng-show="numeroUtenti>1" ng-click="confermaConfigIniziale()">conferma</button>
 </div>
 
 <div ng-show="!config">
@@ -66,7 +64,7 @@
 		Link
 	</div>
 	<div ng-show="sezLinkVisible" > <!-- LINK -->
-		<a ng-if="isLoggato() && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Admin</a>
+		<a ng-show="isLoggato() && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Admin</a>
 		<a href="./cronologiaOfferte.html" ng-click="aggiornaCronologiaOfferte()" target="_blank">Offerte</a>
 		<a href="./logger.html" target="_blank">Log</a>
 		<a href="./liberi.html" target="_blank">Liberi</a>
@@ -94,28 +92,18 @@
 		  <tr ng-repeat="utente in elencoAllenatori  | orderBy:'ordine'">
 		    	<td> <!-- nome -->
 		    		<label ng-class="{nonSonoIo: !sonoLoggato(utente), sonoIo: sonoLoggato(utente)}">{{utente.nome}}</label>
-			    	<a ng-show="!isLoggato() && !utenteCollegato(utente)" href=#>
-			    		<img class="imgConnetti" style="margin-bottom:2px" title='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)" height="25" width="25"/>
-			    	</a>
+			    	<img ng-show="!isLoggato() && !utenteCollegato(utente)" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" title='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)"/>
 					<img title="connesso" class="imgConnetti" ng-show="utenteCollegato(utente)" style="margin-bottom:2px" src='./connesso.jpeg' />		    	
-		    		<a ng-show="!sonoLoggato(utente) && ((isAdmin && utenteCollegato(utente)) || utenteScaduto(utente))" href=#>
-		    			<img title="cancella utente" class="imgConnetti" src='./cestino.png' ng-click="cancellaUtente(utente)" />
-		    		</a>
-				    <a ng-show="sonoLoggato(utente)" href=#>
-				    	<img class="imgConnetti" style="margin-bottom:2px" src='./disconnect-icon.png' title='disconnetti' ng-click="doDisconnect()" />
-				    </a>
+		    		<img ng-show="!sonoLoggato(utente) && ((isAdmin && utenteCollegato(utente)) || utenteScaduto(utente))" title="cancella utente" style="cursor:pointer"class="imgConnetti" src='./cestino.png' ng-click="cancellaUtente(utente)" />
+				    <img ng-show="sonoLoggato(utente)" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./disconnect-icon.png' title='disconnetti' ng-click="doDisconnect()" />
 					<label class="latenza" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
 				</td>
 		    	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia -->
-					<a ng-show="selCalciatore && durataAsta>0" href=#>
-						<img title="avvia asta" ng-show="verificaAvviaAsta(utente.nome)" class="imgConnetti" style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
-					</a>
+					<img ng-show="selCalciatore && durataAsta>0" title="avvia asta" ng-show="verificaAvviaAsta(utente.nome)" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
 		    	</td>
 		    	<td ng-show="isATurni" style="padding-left:10px;padding-right:10px;text-align:center">  <!-- turno -->
-					<label ng-if="utente.ordine==turno"><i class="fa fa-thumbs-up"></i></label>
-					<a ng-show="isAdmin && utente.ordine!=turno" href=#>
-						<img title="forza turno" class="imgConnetti" style="margin-bottom:2px" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
-					</a>
+					<label ng-show="utente.ordine==turno"><i class="fa fa-thumbs-up"></i></label>
+					<img title="forza turno" ng-show="isAdmin && utente.ordine!=turno" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
 				</td>
 		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTA',utente.nome)>=numAcquisti}" style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presi -->
 		    		{{getFromMapSpesoTotale('CONTA',utente.nome)}} ({{getFromMapSpesoTotale('SPESO',utente.nome)}})
@@ -140,7 +128,7 @@
 		<br>
 		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
 		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length>0">Connettiti</label>
-		<div ng-if="isLoggato()">		
+		<div ng-show="isLoggato()">		
 			<label>Frequenza refresh (ms)</label>&nbsp;<input class="inputLarge" type="number" ng-model="timePing" ng-change="aggiornaTimePing(timePing)"></input>
 		</div>
 	</div> <!-- UTENTI -->
@@ -185,9 +173,7 @@
 						<span ng-show="selCalciatore && (nomeGiocatoreTurno==nomegiocatore || !isATurni) && durataAsta>0">
 							<label ng-show="verificaAvviaAsta(nomegiocatore)" class="nextOperation" >Avvia asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
 							<label ng-show="!verificaAvviaAsta(nomegiocatore,10)" class="nextOperation" >Non puoi avviare asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-							<a href=# ng-show="selCalciatore && durataAsta>0 && (nomeGiocatoreTurno==nomegiocatore || !isATurni)">
-								<img ng-show="verificaAvviaAsta(nomegiocatore)" title="avvia asta" src='./startGiocatore.png' ng-click="inizia(nomegiocatore,idgiocatore)" height="30" width="30"/>
-							</a> 
+							<img style="cursor:pointer" ng-show="selCalciatore && durataAsta>0 && (nomeGiocatoreTurno==nomegiocatore || !isATurni) && verificaAvviaAsta(nomegiocatore)" title="avvia asta" src='./startGiocatore.png' ng-click="inizia(nomegiocatore,idgiocatore)"/>
 						</span>
 						<span ng-show="isATurni && bSemaforoAttivo">
 							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >E' il turno di {{nomeGiocatoreTurno}}</label>
@@ -195,9 +181,7 @@
 							<span ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">
 								<label ng-show="verificaAvviaAsta(nomeGiocatoreTurno)" class="nextOperation"> puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
 								<label ng-show="!verificaAvviaAsta(nomeGiocatoreTurno)" class="nextOperation">non puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-								<a href=#>
-									<img ng-show="verificaAvviaAsta(nomeGiocatoreTurno)" title="avvia asta" style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" />
-								</a>
+								<img ng-show="verificaAvviaAsta(nomeGiocatoreTurno)" title="avvia asta" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" />
 							</span>
 						</span>
 						<span ng-show="selCalciatore">
@@ -215,8 +199,13 @@
 			<div style="width:98%;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
 				<div style="border-style:double;text-align:center">
 					<span ng-show=" verificaAvviaAsta(giocatore,10) && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',giocatore) ">
-						<span class="spanBtnAllinea">
-						<input class="btnAllinea" type="button" value="allinea" ng-click="offerta=offertaVincente.offerta"></input>
+						<span class="spanAutoAllinea">
+							<i ng-click="autoAllinea=!autoAllinea" ng-show="autoAllinea" class="autoAllinea fa fa-check-square"></i>
+							<i ng-click="autoAllinea=!autoAllinea" ng-show="!autoAllinea" class="autoAllinea fa fa-square"></i>
+							Auto
+						</span>
+						<span class="spanImgPunta">
+							<img   title="allinea" ng-click="offerta=offertaVincente.offerta" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./allinea.jpeg'/>
 							&nbsp;
 						</span>
 						<span class="spanInputDato">
@@ -224,7 +213,7 @@
 							&nbsp;
 						</span>
 						<span class="spanImgPunta">
-							<img  title="offri" ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('IO',offerta)" height="35" width="35"/>
+							<img  title="offri" ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('IO',offerta)"/>
 							&nbsp;
 						</span>
 						<span class="spanBtnIncrementa">
@@ -258,10 +247,15 @@
 							</tr>
 						</table>
 						<label class="nextOperation" ng-show="idgiocatoreOperaCome<0">Puoi selezionare altro allenatore</label>
-						<span ng-if="idgiocatoreOperaCome>=0">
+						<span ng-show="idgiocatoreOperaCome>=0">
 							<span ng-show=" verificaAvviaAsta(nomegiocatoreOperaCome) && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome) ">
-								<span class="spanBtnAllinea">
-									<input class="btnAllinea" type="button" value="allinea" ng-click="offertaOC=offertaVincente.offerta"></input>
+								<span class="spanAutoAllinea">
+									<i ng-click="autoAllineaOC=!autoAllineaOC" ng-show="autoAllineaOC" class="fa fa-check-square autoAllinea"></i>
+									<i ng-click="autoAllineaOC=!autoAllineaOC" ng-show="!autoAllineaOC" class="fa fa-square autoAllinea"></i>
+									Auto
+								</span>
+								<span class="spanImgPunta">
+							    	<img   title="allinea" ng-click="offertaOC=offertaVincente.offerta" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./allinea.jpeg'/>
 									&nbsp;
 								</span>
 								<span class="spanInputDato">
@@ -269,7 +263,7 @@
 									&nbsp;
 								</span>
 								<span class="spanImgPunta">
-							    	<img   title="offri" ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC',offertaOC)" height="35" width="35"/>
+							    	<img   title="offri" ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC',offertaOC)"/>
 									&nbsp;
 								</span>
 								<span class="spanBtnIncrementa">
@@ -292,7 +286,6 @@
 						</span>
 					</div> <!-- OPERACOME -->
 				</div>
-			<br>
 			<input ng-show="isAdmin" type="button" value="azzera tempo" ng-click="azzeraTempo()"></input>
 			</div> <!-- RILANCIA -->  
 	
@@ -303,7 +296,7 @@
 					<br>
 					<label class="nextOperation">Rimuovi la pausa</label>
 					<br>
-					<a href=#><img title="riprendi" src='./resume.jpeg' ng-click="resumeAsta()" height="50" width="50"/></a>
+					<img title="riprendi" src='./resume.jpeg' style="cursor:pointer"ng-click="resumeAsta()" height="50" width="50"/>
 					
 			</div> <!-- TIMEOUT -->
 			<div ng-show="offertaVincente.nomegiocatore && !timeout"> <!-- OFFERTAINCORSO -->
@@ -322,14 +315,14 @@
 					</label>
 						<br>
 						<label ng-show="timeStart==3 && !isAdmin" class="nextOperation">Asta da confermare</label>
-						<a ng-show="timeStart==3 && isAdmin" href=#>
+						<span ng-show="timeStart==3 && isAdmin">
 							<label class="nextOperation">Devi confermare o annullare l'asta</label>
 							<br>
-							<img title="conferma" src='./conferma.jpeg' ng-click="conferma()" height="30" width="30"/>
-							<img title="annulla" src='./annulla.jpeg' ng-click="annulla()" height="30" width="30"/>
-						</a> 
+							<img style="cursor:pointer" title="conferma" src='./conferma.jpeg' ng-click="conferma()"/>
+							<img style="cursor:pointer" title="annulla" src='./annulla.jpeg' ng-click="annulla()"/>
+						</span> 
 				</div>
-				<div ng-show="timeStart<3" style="width:98%;text-align:center;marginX:auto">
+				<div ng-show="timeStart<3" style="padding-top:0px;width:98%;text-align:center;marginX:auto">
 			 		<div class="pb"> 
 			 				<track-progress-bar style="width:100%" col-val='{{timeStart}}' cur-val='{{contaTempo}}' max-val='{{durataAsta*1000}}'></track-progress-bar>
 			 				<label>{{contaTempo /1000 |number:0}}/{{durataAsta | number}}</label>
@@ -337,16 +330,16 @@
 			 	</div>
 				<br><br>
 				<div  ng-show="isAdmin && timeStart<3" align=center>
-					<a href=#><img title="termina asta" src='./stop.jpg' ng-click="terminaAsta()" height="50" width="50"/></a>
+					<img style="cursor:pointer" title="termina asta" src='./stop.jpg' ng-click="terminaAsta()" />
 				</div>
 				<div  ng-show="timeStart<3" align=center>
-					<a href=#><img title="timeout" src='./pausa.jpeg' ng-click="pausaAsta()" height="50" width="50"/></a>
+					<img style="cursor:pointer" title="timeout" src='./pausa.jpeg' ng-click="pausaAsta()"/>
 				</div>
 			</div> <!-- OFFERTAINCORSO -->
 		
 			<div ng-show="false"> <!-- BUG BLOCCO -->
 				<div  ng-hide="bSemaforoAttivo || !isAdmin" align=center>
-					<a href=#><img title="sblocca semaforo" src='./verde.png' ng-click="liberaSemaforo()" height="50" width="50"/></a>
+					<img cursor:pointer title="sblocca semaforo" src='./verde.png' ng-click="liberaSemaforo()"/>
 				</div>
 			</div> <!-- BUG BLOCCO -->
 		</div> <!-- OFFERTA -->

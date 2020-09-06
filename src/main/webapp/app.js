@@ -20,6 +20,8 @@ app.run(
 			$rootScope.turno=0;
 			$rootScope.tokenDispositiva=-1;
 			$rootScope.isATurni=true;
+			$rootScope.autoAllinea=false;
+			$rootScope.autoAllineaOC=false;
 			$rootScope.isMantra=true;
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.timePing=1000;
@@ -505,6 +507,12 @@ app.run(
 					}
 					if (msg.offertaVincente){
 						$rootScope.offertaVincente=msg.offertaVincente;
+						if($rootScope.autoAllineaOC) {
+							$rootScope.offertaOC=$rootScope.offertaVincente.offerta;
+						}
+						if($rootScope.autoAllinea) {
+							$rootScope.offerta=$rootScope.offertaVincente.offerta;
+						}
 					}
 					if (msg.durataAsta){
 						$rootScope.durataAsta=msg.durataAsta;

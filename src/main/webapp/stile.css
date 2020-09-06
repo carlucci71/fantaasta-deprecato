@@ -61,11 +61,11 @@ input {
  	width:30px;
  	height:30px;
  }
- .btnAllinea{
-	width: 75px;
+ .autoAllinea{
+ 	font-size: 226px;
  }
- .spanBtnAllinea{
-	width: 85px;
+ .spanAutoAllinea{
+	width: 25px;
 	display: inline-block;
  }
  .spanInputDato{
@@ -73,7 +73,7 @@ input {
 	display: inline-block;
  }
  .spanImgPunta{
-	width: 40px;
+	width: 50px;
 	display: inline-block;
  }
  .spanBtnIncrementa{
@@ -116,25 +116,25 @@ input {
 .correntePerdente {
 	background-color: white;
 	color: #8F5C01;
-	font-size: 36px;
+	font-size: 26px;
 	font-weight: bold;
 }
 .correnteVincente {
 	background-color: white;
 	color: green;
-	font-size: 36px;
+	font-size: 26px;
 	font-weight: bold;
 }
 .finitoPerdente {
 	background-color: yellow;
 	color: #8F5C01;
-	font-size: 36px;
+	font-size: 26px;
 	font-weight: bold;
 }
 .finitoVincente {
 	background-color: yellow;
 	color: green;
-	font-size: 36px;
+	font-size: 26px;
 	font-weight: bold;
 }
 .sezione {
@@ -201,8 +201,8 @@ input {
     		font-size: 30px;
 	 } 
 	 .checkbox{
-	 	width: 100px;
-	 	height: 100px; 	
+	 	width: 50px;
+	 	height: 50px; 	
 	 }
 	 .imgConnetti {
 	 	width:80px;
@@ -229,7 +229,7 @@ input {
 		width: 180px;'
 	 }
 	 .inputDato{
-		width: 180px;'
+		width: 150px;'
 	 }
 	 .utenteLoggato{
 		 text-align:right;
@@ -239,23 +239,22 @@ input {
 		 font-weight: bold;
 	 }
 	 .imgPunta {
-	 	width:100px;
-	 	height:100px;
+	 	width:90px;
+	 	height:90px;
 	 }
-	 .btnAllinea{
-		width: 205px;
-		font-size:40;
+	 .autoAllinea{
+	 	font-size: 90px;
 	 }
-	 .spanBtnAllinea{
-		width: 215px;
+	 .spanAutoAllinea{
+		width: 100px;
 		display: inline-block;
 	 }
 	 .spanInputDato{
-		width: 190px;
+		width: 130px;
 		display: inline-block;
 	 }
 	 .spanImgPunta{
-		width: 110px;
+		width: 100px;
 		display: inline-block;
 	 }
 	 .spanBtnIncrementa{
@@ -271,22 +270,22 @@ input {
 		font-size:100;
 	 }
 	  .correntePerdente {
-		font-size: 56px;
+		font-size: 46px;
 	  }
 	  .correnteVincente {
-		font-size: 56px;
+		font-size: 46px;
 	  }
 	  .finitoPerdente{
-		font-size: 56px;
+		font-size: 46px;
 	  }
 	  .finitoVincente{
-		font-size: 56px;
+		font-size: 46px;
 	  }
 	  .sezione{
 		font-size: 46px;
 	  }
 	  .nextOperation{
-		font-size: 56px;
+		font-size: 36px;
 	  }
 	  .divCalciatore{
 		  font-size:35;

@@ -72,10 +72,10 @@
 			<div >
 				<input type="file" id="file" name="file"/>
 			</div>
-			<button ng-if="!isMantra" ng-click="caricaFile('FS')">Carica FS</button>
+			<button ng-show="!isMantra" ng-click="caricaFile('FS')">Carica FS</button>
 			<!-- scarica lista svincolati, apri excel, rimuovi prime 2 righe, -esporta - cambia tipo file - testo delimitato da tabulazione  -->
-			<button ng-if="isMantra"  ng-click="caricaFile('MANTRA')">Carica Mantra</button>
-			<label ng-if="caricamentoInCorso">CARICAMENTO IN CORSO</label>
+			<button ng-show="isMantra"  ng-click="caricaFile('MANTRA')">Carica Mantra</button>
+			<label ng-show="caricamentoInCorso">CARICAMENTO IN CORSO</label>
 		</div>
 	</div>
 	<br>
