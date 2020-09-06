@@ -200,39 +200,58 @@ app.run(
 					$rootScope.loggerMessaggi=data;
 				});
 			}
-			$rootScope.aggiornaRiepilogo=function(){
-				/*
-				$resource('./contaGiocatoriPerRuolo',{}).query().$promise.then(function(data) {
-					$rootScope.giocatoriPerRuolo=data;
-				});
-				$resource('./spesoPerRuolo',{}).query().$promise.then(function(data) {
-					$rootScope.spesoPerRuolo=data;
-				});
-				*/
-//				$resource('./giocatoriPerSquadra',{}).get().$promise.then(function(data) {
-//					$rootScope.giocatoriPerSquadra=data;
-//				});
-			}
 			$rootScope.selezionaAllenatoreOperaCome=function(allenatore){
 				$rootScope.idgiocatoreOperaCome=allenatore.id;
 				$rootScope.nomegiocatoreOperaCome=allenatore.nome;
 				
 			}
-			$rootScope.getFromMapSpesoPerRuolo=function(tipo, nome){
+			$rootScope.getFromMapSpesoTotale=function(tipo, nome){
 				if (tipo=='SPESO'){
-					if(!$rootScope.mapSpesoPerRuolo[nome]) return 0;
-					return $rootScope.mapSpesoPerRuolo[nome].speso;
+					if(!$rootScope.mapSpesoTotale[nome]) return 0;
+					return $rootScope.mapSpesoTotale[nome].speso;
 				}
 				if (tipo=='CONTA'){
-					if(!$rootScope.mapSpesoPerRuolo[nome]) return 0;
-					return $rootScope.mapSpesoPerRuolo[nome].conta;
+					if(!$rootScope.mapSpesoTotale[nome]) return 0;
+					return $rootScope.mapSpesoTotale[nome].conta;
+				}
+				if (tipo=='CONTAP'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].contaP) return 0;
+					return $rootScope.mapSpesoTotale[nome].contaP;
+				}
+				if (tipo=='CONTAD'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].contaD) return 0;
+					return $rootScope.mapSpesoTotale[nome].contaD;
+				}
+				if (tipo=='CONTAC'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].contaC) return 0;
+					return $rootScope.mapSpesoTotale[nome].contaC;
+				}
+				if (tipo=='CONTAA'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].contaA) return 0;
+					return $rootScope.mapSpesoTotale[nome].contaA;
+				}
+				if (tipo=='SPESOP'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].spesoP) return 0;
+					return $rootScope.mapSpesoTotale[nome].spesoP;
+				}
+				if (tipo=='SPESOD'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].spesoD) return 0;
+					return $rootScope.mapSpesoTotale[nome].spesoD;
+				}
+				if (tipo=='SPESOC'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].spesoC) return 0;
+					return $rootScope.mapSpesoTotale[nome].spesoC;
+				}
+				if (tipo=='SPESOA'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].spesoA) return 0;
+					return $rootScope.mapSpesoTotale[nome].spesoA;
 				}
 				if (tipo=='MAXRILANCIO'){
-					if(!$rootScope.mapSpesoPerRuolo || !$rootScope.mapSpesoPerRuolo[nome]){
+					if(!$rootScope.mapSpesoTotale || !$rootScope.mapSpesoTotale[nome]){
 						return $rootScope.budget-$rootScope.numAcquisti+1;
 					}else{
-//						console.log("1-" + $rootScope.mapSpesoPerRuolo[nome] + "2-" + nome + "3-" + $rootScope.mapSpesoPerRuolo);
-						return $rootScope.mapSpesoPerRuolo[nome].maxRilancio;
+//						console.log("1-" + $rootScope.mapSpesoTotale[nome] + "2-" + nome + "3-" + $rootScope.mapSpesoTotale);
+						return $rootScope.mapSpesoTotale[nome].maxRilancio;
 						
 					}
 				}
@@ -333,7 +352,7 @@ app.run(
 						$rootScope.numAcquisti=data.numAcquisti;
 						$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
 						$rootScope.giocatoriPerSquadra=data.giocatoriPerSquadra;
-						$rootScope.mapSpesoPerRuolo=data.mapSpesoPerRuolo;
+						$rootScope.mapSpesoTotale=data.mapSpesoTotale;
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
 						$rootScope.aggiornaTimePing($rootScope.timePing);
 					}
@@ -502,8 +521,8 @@ app.run(
 					if(msg.nomeGiocatoreTurno){
 						$rootScope.nomeGiocatoreTurno=msg.nomeGiocatoreTurno;
 					}
-					if(msg.mapSpesoPerRuolo){
-						$rootScope.mapSpesoPerRuolo=msg.mapSpesoPerRuolo;
+					if(msg.mapSpesoTotale){
+						$rootScope.mapSpesoTotale=msg.mapSpesoTotale;
 					}
 					if(msg.giocatoriPerSquadra){
 						$rootScope.giocatoriPerSquadra=msg.giocatoriPerSquadra;
@@ -590,7 +609,7 @@ app.run(
 					ng = $rootScope.nomegiocatore;
 					ig = $rootScope.idgiocatore;
 				}
-				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'maxRilancio':$rootScope.getFromMapSpesoPerRuolo('MAXRILANCIO',ng),'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':off}));
+				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'maxRilancio':$rootScope.getFromMapSpesoTotale('MAXRILANCIO',ng),'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':off}));
 			}
 			$rootScope.aggiornaDurataAsta = function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'aggiornaDurataAsta', 'giocatoreDurataAsta':$rootScope.nomegiocatore, 'durataAsta':$rootScope.durataAsta}));

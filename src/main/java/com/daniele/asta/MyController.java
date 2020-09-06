@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -35,9 +34,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.daniele.asta.dto.GiocatoriPerRuolo;
 import com.daniele.asta.dto.GiocatoriPerSquadra;
-import com.daniele.asta.dto.SpesoPerRuolo;
+import com.daniele.asta.dto.SpesoTotale;
 import com.daniele.asta.entity.Allenatori;
 import com.daniele.asta.entity.Configurazione;
 import com.daniele.asta.entity.Fantarose;
@@ -67,9 +65,9 @@ public class MyController {
 	@Autowired Criptaggio criptaggio; 
 	@Autowired EntityManager em;
 	@Autowired SocketHandler socketHandler;
-	private Map<String, Map<String, Long>> mapSpesoPerRuolo = new HashMap();
-	private Integer numAcquisti;
-	private Integer budget;
+	private Map<String, Map<String, Long>> mapSpesoTotale = new HashMap();
+	private Integer numAcquisti=0;
+	private Integer budget=0;
 	private String turno="0";
 	private String nomeGiocatoreTurno="";
 	private Boolean isATurni;
@@ -121,7 +119,7 @@ public class MyController {
 			ret.put("elencoAllenatori", allAllenatori);
 			ret.put("nomeGiocatoreTurno", getNomeGiocatoreTurno());
 			ret.put("giocatoriPerSquadra",giocatoriPerSquadra());
-			ret.put("mapSpesoPerRuolo",mapSpesoPerRuolo);
+			ret.put("mapSpesoTotale",mapSpesoTotale);
 			ret.put("turno", getTurno());
 		}
 		return ret;
@@ -493,42 +491,40 @@ public class MyController {
 			throw new RuntimeException(e);
 		}
 	}
-
-	@RequestMapping("/contaGiocatoriPerRuolo")
-	public List<GiocatoriPerRuolo>  contaGiocatoriPerRuolo() {
-		return fantaroseRepository.contaGiocatoriPerRuolo();
-	}
-
-	
     
 	@RequestMapping("/giocatoriPerSquadra")
 	public Map<String, Map<String, Object>> giocatoriPerSquadra() {
-		setMapSpesoPerRuolo(new HashMap());
-		Iterable<SpesoPerRuolo> spesoPerRuolo = fantaroseRepository.spesoPerRuolo();
-		for (SpesoPerRuolo speso : spesoPerRuolo) {
-			Map<String, Long> tmp=new HashMap();
-			tmp.put("speso", speso.getCosto());
-			tmp.put("conta", speso.getConta());
-			tmp.put("maxRilancio", budget-speso.getCosto()-(numAcquisti-speso.getConta())+1);
-			getMapSpesoPerRuolo().put(speso.getNome(), tmp);
+		setMapSpesoTotale(new HashMap());
+		Iterable<SpesoTotale> spesoTotale = fantaroseRepository.spesoTotale();
+		for (SpesoTotale speso : spesoTotale) {
+			Map<String, Long> tmp = getMapSpesoTotale().get(speso.getNome());
+			if (tmp==null) tmp=new HashMap();
+			tmp.put("speso", tmp.get("speso")==null?speso.getCosto():tmp.get("speso") + speso.getCosto());
+			tmp.put("conta", tmp.get("conta")==null?speso.getConta():tmp.get("conta") + speso.getConta());
+			tmp.put("maxRilancio", budget-tmp.get("speso")-(numAcquisti-tmp.get("conta"))+1);
+			tmp.put("speso"+speso.getMacroRuolo(),speso.getCosto());
+			tmp.put("conta"+speso.getMacroRuolo(),speso.getConta());
+			getMapSpesoTotale().put(speso.getNome(), tmp);
 		}
 		Iterable<GiocatoriPerSquadra> giocatoriPerSquadra = fantaroseRepository.giocatoriPerSquadra();
 		Map<String, Map<String, Object>> ret = new LinkedHashMap<>();
 		for (GiocatoriPerSquadra giocatorePerSquadra : giocatoriPerSquadra) {
 			String allenatore = giocatorePerSquadra.getAllenatore();
-			Map<String, Long> spese = getMapSpesoPerRuolo().get(allenatore);
+			Map<String, Long> spese = getMapSpesoTotale().get(allenatore);
 			Map<String, List<String>> mapRuoli =null;
 			if(ret.get(allenatore) != null)
 				mapRuoli =(Map<String, List<String>>) ret.get(allenatore).get("ruoli");
 			if(mapRuoli==null) {
 				mapRuoli=new LinkedHashMap<>();
 			}
-			String ruolo = giocatorePerSquadra.getRuolo();
+			String ruolo = giocatorePerSquadra.getMacroRuolo();
 			List<String> list = (List<String>) mapRuoli.get(ruolo);
 			if (list==null) {
 				list=new ArrayList<>();
 			}
-			list.add(giocatorePerSquadra.getGiocatore() + " " + giocatorePerSquadra.getSquadra() + " " + giocatorePerSquadra.getCosto());
+			String mr="";
+			if(isMantra) mr=" -" + giocatorePerSquadra.getRuolo() + "- ";
+			list.add(giocatorePerSquadra.getGiocatore() + " " + giocatorePerSquadra.getSquadra() + mr + " (" + giocatorePerSquadra.getCosto() + ")");
 			mapRuoli.put(ruolo, list);
 			Map<String, Object> t = new HashMap<>();
 			t.put("ruoli", mapRuoli);
@@ -538,9 +534,9 @@ public class MyController {
 		return ret;
 	}
 
-	@RequestMapping("/spesoPerRuolo")
-	public Iterable<SpesoPerRuolo>  spesoPerRuolo() {
-		return fantaroseRepository.spesoPerRuolo();
+	@RequestMapping("/spesoTotale")
+	public Iterable<SpesoTotale>  spesoTotale() {
+		return fantaroseRepository.spesoTotale();
 	}
 	
 	@RequestMapping("/elencoCronologiaOfferte")
@@ -723,11 +719,11 @@ public class MyController {
 	public void setNumAcquisti(Integer numAcquisti) {
 		this.numAcquisti = numAcquisti;
 	}
-	public Map<String, Map<String, Long>> getMapSpesoPerRuolo() {
-		return mapSpesoPerRuolo;
+	public Map<String, Map<String, Long>> getMapSpesoTotale() {
+		return mapSpesoTotale;
 	}
-	public void setMapSpesoPerRuolo(Map<String, Map<String, Long>> mapSpesoPerRuolo) {
-		this.mapSpesoPerRuolo = mapSpesoPerRuolo;
+	public void setMapSpesoTotale(Map<String, Map<String, Long>> mapSpesoTotale) {
+		this.mapSpesoTotale = mapSpesoTotale;
 	}
 
 

@@ -193,7 +193,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			myController.setTurno(Integer.toString(iTurno));
 			m.put("turno", myController.getTurno());
 			m.put("giocatoriPerSquadra", myController.giocatoriPerSquadra());
-			m.put("mapSpesoPerRuolo",myController.getMapSpesoPerRuolo());
+			m.put("mapSpesoTotale",myController.getMapSpesoTotale());
 			m.put("nomeGiocatoreTurno", myController.getNomeGiocatoreTurno());
 			invia(toJson(m));
 		}		
@@ -314,7 +314,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			scadenzaAsta.setTimeInMillis(calInizioOfferta.getTimeInMillis());
 			scadenzaAsta.add(Calendar.SECOND, durataAsta);
 			Map<String, Object> m = new HashMap<>();
-//			Long maxRilancio = myController.getMapSpesoPerRuolo().get(nomegiocatore).get("maxRilancio");
+//			Long maxRilancio = myController.getMapSpesoTotale().get(nomegiocatore).get("maxRilancio");
 			if(offerta>maxRilancio) {
 				String str = "Rilancio da " + offerta + " di " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra() +
 						" abbassato a " + maxRilancio + " perchè oltre il massimo rilancio.";
@@ -432,7 +432,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		+ ") " + mapOfferta.get("squadra") + " vinto a " + mapOfferta.get("costo"),EnumCategoria.Alert);
 		m.put("messaggi", messaggi);
 		m.put("giocatoriPerSquadra", myController.giocatoriPerSquadra());
-		m.put("mapSpesoPerRuolo",myController.getMapSpesoPerRuolo());
+		m.put("mapSpesoTotale",myController.getMapSpesoTotale());
 		m.put("calciatori", myController.getGiocatoriLiberi());
 		invia(toJson(m));
 	}

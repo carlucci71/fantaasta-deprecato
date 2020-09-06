@@ -76,8 +76,11 @@
 		  	<td class="tblUtenti" ></td>
 		  	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">Avvia</td>
 		  	<td ng-show="isATurni" style="padding-left:10px;padding-right:10px;text-align:center">Turno</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Speso</td>
 		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Presi</td>
+		  	<td style="padding-left:10px;padding-right:10px;text-align:center">P</td>
+		  	<td style="padding-left:10px;padding-right:10px;text-align:center">D</td>
+		  	<td style="padding-left:10px;padding-right:10px;text-align:center">C</td>
+		  	<td style="padding-left:10px;padding-right:10px;text-align:center">A</td>
 		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Max rilancio</td>
 		  </tr>
 		  <tr ng-repeat="utente in elencoAllenatori  | orderBy:'ordine'">
@@ -106,14 +109,23 @@
 						<img title="forza turno" class="imgConnetti" style="margin-bottom:2px" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
 					</a>
 				</td>
-		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- speso -->
-		    		{{getFromMapSpesoPerRuolo('SPESO',utente.nome)}}
-		    	</td>
 		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presi -->
-		    		{{getFromMapSpesoPerRuolo('CONTA',utente.nome)}}
+		    		{{getFromMapSpesoTotale('CONTA',utente.nome)}}({{getFromMapSpesoTotale('SPESO',utente.nome)}})
+		    	</td>
+		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiP -->
+		    		{{getFromMapSpesoTotale('CONTAP',utente.nome)}}({{getFromMapSpesoTotale('SPESOP',utente.nome)}})
+		    	</td>
+		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiD -->
+		    		{{getFromMapSpesoTotale('CONTAD',utente.nome)}}({{getFromMapSpesoTotale('SPESOD',utente.nome)}})
+		    	</td>
+		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiC -->
+		    		{{getFromMapSpesoTotale('CONTAC',utente.nome)}}({{getFromMapSpesoTotale('SPESOC',utente.nome)}})
+		    	</td>
+		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiA -->
+		    		{{getFromMapSpesoTotale('CONTAA',utente.nome)}}({{getFromMapSpesoTotale('SPESOA',utente.nome)}})
 		    	</td>
 		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- max rilancio -->
-		    		{{getFromMapSpesoPerRuolo('MAXRILANCIO',utente.nome)}}
+		    		{{getFromMapSpesoTotale('MAXRILANCIO',utente.nome)}}
 		    	</td>
 		  </tr>
 		</table>
@@ -188,7 +200,7 @@
 	
 			<div style="width:98%;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
 				<div style="border-style:double;text-align:center">
-					<span ng-show="offertaVincente.offerta<getFromMapSpesoPerRuolo('MAXRILANCIO',giocatore) ">
+					<span ng-show="offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',giocatore) ">
 						<span class="spanBtnAllinea">
 						<input class="btnAllinea" type="button" value="allinea" ng-click="offerta=offertaVincente.offerta"></input>
 							&nbsp;
@@ -198,25 +210,25 @@
 							&nbsp;
 						</span>
 						<span class="spanImgPunta">
-							<img  title="offri" ng-show="offerta<=getFromMapSpesoPerRuolo('MAXRILANCIO',giocatore)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('IO',offerta)" height="35" width="35"/>
+							<img  title="offri" ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('IO',offerta)" height="35" width="35"/>
 							&nbsp;
 						</span>
 						<span class="spanBtnIncrementa">
-							<input ng-show="offerta<=getFromMapSpesoPerRuolo('MAXRILANCIO',giocatore)-1" class="btnIncrementa" type="button" value="{{offerta+1}}" ng-click="offerta=offerta+1;inviaOfferta('IO',offerta)"></input>
+							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)-1" class="btnIncrementa" type="button" value="{{offerta+1}}" ng-click="offerta=offerta+1;inviaOfferta('IO',offerta)"></input>
 							&nbsp;
 						</span>
 						<span class="spanBtnIncrementa">
-							<input ng-show="offerta<=getFromMapSpesoPerRuolo('MAXRILANCIO',giocatore)-5" class="btnIncrementa" type="button" value="{{offerta++5}}" ng-click="offerta=offerta+5;inviaOfferta('IO',offerta)"></input>
+							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)-5" class="btnIncrementa" type="button" value="{{offerta++5}}" ng-click="offerta=offerta+5;inviaOfferta('IO',offerta)"></input>
 							&nbsp;
 						</span>
 						<span class="spanBtnIncrementa">
-							<input ng-show="offerta<=getFromMapSpesoPerRuolo('MAXRILANCIO',giocatore)-10" class="btnIncrementa" type="button" value="{{offerta++10}}" ng-click="offerta=offerta+10;inviaOfferta('IO',offerta)"></input>
+							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)-10" class="btnIncrementa" type="button" value="{{offerta++10}}" ng-click="offerta=offerta+10;inviaOfferta('IO',offerta)"></input>
 							&nbsp;
 						</span>
 						<br>
-						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare (max {{getFromMapSpesoPerRuolo('MAXRILANCIO',giocatore)}})</label>
+						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',giocatore)}})</label>
 					</span>
-					<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoPerRuolo('MAXRILANCIO',giocatore)">Non hai crediti sufficienti per rilanciare</label>
+					<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',giocatore)">Non hai crediti sufficienti per rilanciare</label>
 				</div>
 				<div ng-show="isAdmin" style="border-style:double;text-align:center">
 					<div style="color: green;text-align:center;cursor:pointer" ng-click="sezOperaComeVisible=!sezOperaComeVisible">
@@ -232,7 +244,7 @@
 						</table>
 						<label class="nextOperation" ng-show="idgiocatoreOperaCome<0">Puoi selezionare altro allenatore</label>
 						<span ng-if="idgiocatoreOperaCome>=0">
-							<span ng-show="offertaVincente.offerta<getFromMapSpesoPerRuolo('MAXRILANCIO',nomegiocatoreOperaCome) ">
+							<span ng-show="offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome) ">
 								<span class="spanBtnAllinea">
 									<input class="btnAllinea" type="button" value="allinea" ng-click="offertaOC=offertaVincente.offerta"></input>
 									&nbsp;
@@ -242,25 +254,25 @@
 									&nbsp;
 								</span>
 								<span class="spanImgPunta">
-							    	<img   title="offri" ng-show="offertaOC<=getFromMapSpesoPerRuolo('MAXRILANCIO',nomegiocatoreOperaCome)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC',offertaOC)" height="35" width="35"/>
+							    	<img   title="offri" ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC',offertaOC)" height="35" width="35"/>
 									&nbsp;
 								</span>
 								<span class="spanBtnIncrementa">
-									<input ng-show="offertaOC<=getFromMapSpesoPerRuolo('MAXRILANCIO',nomegiocatoreOperaCome)-1" class="btnIncrementa" type="button" value="{{offertaOC+1}}" ng-click="offertaOC=offertaOC+1;inviaOfferta('OC',offertaOC)"></input>
+									<input ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)-1" class="btnIncrementa" type="button" value="{{offertaOC+1}}" ng-click="offertaOC=offertaOC+1;inviaOfferta('OC',offertaOC)"></input>
 									&nbsp;
 								</span>
 								<span class="spanBtnIncrementa">
-									<input ng-show="offertaOC<=getFromMapSpesoPerRuolo('MAXRILANCIO',nomegiocatoreOperaCome)-5" class="btnIncrementa" type="button" value="{{offertaOC+5}}" ng-click="offertaOC=offertaOC+5;inviaOfferta('OC',offertaOC)"></input>
+									<input ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)-5" class="btnIncrementa" type="button" value="{{offertaOC+5}}" ng-click="offertaOC=offertaOC+5;inviaOfferta('OC',offertaOC)"></input>
 									&nbsp;
 								</span>
 								<span class="spanBtnIncrementa">
-									<input ng-show="offertaOC<=getFromMapSpesoPerRuolo('MAXRILANCIO',nomegiocatoreOperaCome)-10" class="btnIncrementa" type="button" value="{{offertaOC+10}}" ng-click="offertaOC=offertaOC+10;inviaOfferta('OC',offertaOC)"></input>
+									<input ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)-10" class="btnIncrementa" type="button" value="{{offertaOC+10}}" ng-click="offertaOC=offertaOC+10;inviaOfferta('OC',offertaOC)"></input>
 									&nbsp;
 								</span>
 								<br>
-								<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=nomegiocatoreOperaCome">Puoi rilanciare per {{nomegiocatoreOperaCome}} (max {{getFromMapSpesoPerRuolo('MAXRILANCIO',nomegiocatoreOperaCome)}})</label>
+								<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=nomegiocatoreOperaCome">Puoi rilanciare per {{nomegiocatoreOperaCome}} (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)}})</label>
 							</span>
-							<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoPerRuolo('MAXRILANCIO',nomegiocatoreOperaCome)">{{nomegiocatoreOperaCome}} non ha crediti sufficienti per rilanciare</label>
+							<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)">{{nomegiocatoreOperaCome}} non ha crediti sufficienti per rilanciare</label>
 						</span>
 					</div> <!-- OPERACOME -->
 				</div>
