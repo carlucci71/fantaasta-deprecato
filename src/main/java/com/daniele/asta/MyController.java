@@ -1,10 +1,13 @@
 package com.daniele.asta;
 
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +16,7 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -74,7 +78,7 @@ public class MyController {
 	public Map<String, Object> init() {
 		Map<String, Object> ret = new HashMap<>();
 		Configurazione configurazione = getConfigurazione();
-		if (configurazione.getNumeroGiocatori()==null) {
+		if (configurazione==null || configurazione.getNumeroGiocatori()==null) {
 			ret.put("DA_CONFIGURARE", "x");
 		}
 		else {
@@ -114,6 +118,38 @@ public class MyController {
 		}
 		return ret;
 	}
+	
+	
+	/*
+	 curl -X POST "http://localhost:8080/restore" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"PATH\": \"C:\\1\\restoreAs.txt\"}"
+	 */
+	@PostMapping("/restore")
+	@Transactional 
+	public Map<String, Object> restore(@RequestBody Map<String,Object> body) throws Exception {
+		Map<String,Object> ret = new HashMap<>();
+		String string = (String) body.get("PATH");
+		List<String> readAllLines = Files.readAllLines(Paths.get(string));
+		for (String sql : readAllLines) {
+			if (sql.toUpperCase().startsWith("SELECT")) continue;
+			if (sql.toUpperCase().startsWith("CREATE")) {
+				String tableName=sql.toUpperCase().replace("CREATE TABLE ", "");
+				tableName=tableName.substring(0,tableName.indexOf(" "));
+				Query qy = em.createNativeQuery("DROP TABLE " + tableName);
+				qy.executeUpdate();
+			}
+//			System.out.println(sql);
+			Query qy = em.createNativeQuery(sql);
+			try {
+				qy.executeUpdate();
+			}
+			catch (Exception e) {
+				System.out.println("Errore:" + sql + e.getMessage());
+			}
+		}
+		ret.put("out", readAllLines);
+		return ret;
+	}
+	
 	@PostMapping("/caricaFile")
 	public Map<String, Object> caricaFile(@RequestBody Map<String,Object> body) throws Exception {
 		Map<String,Object> ret = new HashMap<>();
@@ -242,11 +278,13 @@ public class MyController {
 	public Map<String, Object> inizializzaLega(@RequestBody Map<String, Object> body) throws Exception {
 		Configurazione configurazione = getConfigurazione();
 		Map<String,Object> ret = new HashMap<>();
-		if(configurazione.getNumeroGiocatori() == null) {
+		if(configurazione == null || configurazione.getNumeroGiocatori() == null) {
 			Integer numUtenti=(Integer) body.get("numUtenti");
 			setBudget((Integer) body.get("budget"));
 			setNumAcquisti((Integer) body.get("numAcquisti"));
 			isATurni=(Boolean) body.get("isATurni");
+			if (configurazione==null) configurazione=new Configurazione();
+			configurazione.setId(0);
 			configurazione.setNumeroGiocatori(numUtenti);
 			configurazione.setBudget(getBudget());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
@@ -594,7 +632,9 @@ public class MyController {
 	
 	@GetMapping(path="/configurazione")
 	public @ResponseBody Configurazione getConfigurazione() {
-		return configurazioneRepository.findOne(1);
+		Iterator<Configurazione> iterator = configurazioneRepository.findAll().iterator();
+		if (!iterator.hasNext()) return null;
+		return iterator.next();
 	}	
 	
 	@GetMapping(path="/giocatoriLiberi")

@@ -1,9 +1,9 @@
-#drop table IF EXISTS fantarose;
-#drop table IF EXISTS allenatori ;
-#drop table IF EXISTS giocatori;
-#drop table IF EXISTS configurazione;
-#drop table IF EXISTS logger;
-create table IF NOT EXISTS  logger (
+drop table IF EXISTS fantarose;
+drop table IF EXISTS allenatori ;
+drop table IF EXISTS giocatori;
+drop table IF EXISTS configurazione;
+drop table IF EXISTS loggerMessaggi;
+create table IF NOT EXISTS  loggerMessaggi (
     id LONG not null
 );
 create table IF NOT EXISTS  fantarose (
@@ -18,4 +18,4 @@ create table IF NOT EXISTS  giocatori (
 create table IF NOT EXISTS  configurazione (
     id INT not null
 );
-INSERT INTO configurazione (id)   SELECT 1 FROM DUAL WHERE NOT EXISTS   (SELECT id FROM configurazione WHERE id=1);
+#INSERT INTO configurazione (id)   SELECT 1 FROM DUAL WHERE NOT EXISTS   (SELECT id FROM configurazione WHERE id=1);
