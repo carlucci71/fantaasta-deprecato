@@ -20,6 +20,7 @@ app.run(
 			$rootScope.turno=0;
 			$rootScope.tokenDispositiva=-1;
 			$rootScope.isATurni=true;
+			$rootScope.isMantra=true;
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.timePing=1000;
 			$rootScope.budget=500;
@@ -140,7 +141,7 @@ app.run(
 					alert("Errore!! Nomi non univoci");
 				} else {
 					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
-					$resource('./aggiornaConfigLega',{}).save({'numAcquisti':$rootScope.numAcquisti,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+					$resource('./aggiornaConfigLega',{}).save({'numAcquisti':$rootScope.numAcquisti,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							if (data.nuovoNomeLoggato){
 								$rootScope.nomegiocatore=data.nuovoNomeLoggato;
@@ -150,6 +151,10 @@ app.run(
 								$rootScope.isATurni=true;
 							else
 								$rootScope.isATurni=false;
+							if(data.isMantra=="S")
+								$rootScope.isMantra=true;
+							else
+								$rootScope.isMantra=false;
 							window.location.href = './index.html';
 						}
 						else {
@@ -259,13 +264,17 @@ app.run(
 			}
 			$rootScope.confermaConfigIniziale=function(){
 				if ($rootScope.numeroUtenti>0){
-					$resource('./inizializzaLega',{}).save({'numAcquisti':$rootScope.numAcquisti,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni}).$promise.then(function(data) {
+					$resource('./inizializzaLega',{}).save({'numAcquisti':$rootScope.numAcquisti,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							$rootScope.inizializza(false);
 							if(data.isATurni=="S")
 								$rootScope.isATurni=true;
 							else
 								$rootScope.isATurni=false;
+							if(data.isMantra=="S")
+								$rootScope.isMantra=true;
+							else
+								$rootScope.isMantra=false;
 						}
 						else {
 							alert('Errore!')
@@ -315,6 +324,10 @@ app.run(
 							$rootScope.isATurni=true;
 						else
 							$rootScope.isATurni=false;
+						if(data.isMantra=="S")
+							$rootScope.isMantra=true;
+						else
+							$rootScope.isMantra=false;
 						$rootScope.turno=data.turno;
 						$rootScope.budget=data.budget;
 						$rootScope.numAcquisti=data.numAcquisti;
@@ -393,6 +406,12 @@ app.run(
 							$rootScope.isATurni=true;
 						else
 							$rootScope.isATurni=false;
+					}
+					if (msg.isMantra){
+						if (msg.isMantra=="S")
+							$rootScope.isMantra=true;
+						else
+							$rootScope.isMantra=false;
 					}
 					if (msg.loggerMessaggi){
 						$rootScope.loggerMessaggi=msg.loggerMessaggi;
@@ -538,6 +557,7 @@ app.run(
 			$rootScope.clearOfferta=function(){
 				$rootScope.offertaVincente="";
 				$rootScope.filterRuolo="";
+//				$rootScope.filterMacroRuolo="";
 				$rootScope.filterNome="";
 				$rootScope.filterSquadra="";
 				$rootScope.filterQuotazione="";
@@ -761,6 +781,8 @@ app.filter('myTableFilter', function($rootScope){
 	      }
 	      else {
 	           return dataArray.filter(function(item){
+	              var termInMacroRuolo=true;
+	              if($rootScope.filterMacroRuolo) termInMacroRuolo=item.macroRuolo.toLowerCase().indexOf($rootScope.filterMacroRuolo.toLowerCase()) > -1;
 	              var termInRuolo=true;
 	              if($rootScope.filterRuolo) termInRuolo=item.ruolo.toLowerCase().indexOf($rootScope.filterRuolo.toLowerCase()) > -1;
 	              var termInNome=true;
@@ -773,7 +795,7 @@ app.filter('myTableFilter', function($rootScope){
 	            	  var tmp=-$rootScope.filterQuotazione;
 	            	  termInQuotazione = item.quotazione <= tmp;
 	              }
-	              return termInRuolo && termInNome && termInSquadra && termInQuotazione;
+	              return termInRuolo && termInMacroRuolo && termInNome && termInSquadra && termInQuotazione;
 	              
 	              
 	           });

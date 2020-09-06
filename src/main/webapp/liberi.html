@@ -22,28 +22,29 @@
  <table>
     <thead>
         <tr>
+ 			<th ng-show="isMantra" style="cursor: pointer;width:1px" ng:class="selectedCls('macroRuolo')" ng:click="changeSorting('macroRuolo')">
+ 		        <span class="sortorder" ng-show="sort.column === 'macroRuolo'" ng-class="{reverse: sort.descending}"></span>
+ 		        <span ng-hide="sort.column === 'macroRuolo'"><i class="fa fa-sort"></i></span>
+ 			</th>
  			<th style="cursor: pointer;width:1px" ng:class="selectedCls('ruolo')" ng:click="changeSorting('ruolo')">
- 				
  		        <span class="sortorder" ng-show="sort.column === 'ruolo'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'ruolo'"><i class="fa fa-sort"></i></span>
  			</th>
-			<th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('nome')">
-				
+			<th style="cursor: pointer" ng:class="selectedCls('nome')" ng:click="changeSorting('nome')">
  		        <span class="sortorder" ng-show="sort.column === 'nome'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'nome'"><i class="fa fa-sort"></i></span>
 			</th>
-            <th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('squadra')">
-            	
+            <th style="cursor: pointer" ng:class="selectedCls('squadra')" ng:click="changeSorting('squadra')">
  		        <span class="sortorder" ng-show="sort.column === 'squadra'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'squadra'"><i class="fa fa-sort"></i></span>
             </th>
-            <th style="cursor: pointer" ng:class="selectedCls('ruolo')" ng:click="changeSorting('quotazione')">
-            	
+            <th style="cursor: pointer" ng:class="selectedCls('quotazione')" ng:click="changeSorting('quotazione')">
  		        <span class="sortorder" ng-show="sort.column === 'quotazione'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'quotazione'"><i class="fa fa-sort"></i></span>
             </th>
         </tr>
         <tr>
+            <th ng-show="isMantra"><input class="divCalciatore"style="width:70px;text-align:center" type=text ng-model="filterMacroRuolo"></input></th>
             <th><input class="divCalciatore"style="width:70px;text-align:center" type=text ng-model="filterRuolo"></input></th>
             <th><input class="divCalciatore"style="width:400px;text-align:center" type=text ng-model="filterNome"></input></th>
             <th><input class="divCalciatore"style="width:300px;text-align:center" type=text ng-model="filterSquadra"></input></th>
@@ -54,6 +55,7 @@
     
     
   <tr style="width:1px" ng-repeat="calciatore in calciatori | orderBy: sort.column: sort.descending | myTableFilter">
+        <td ng-show="isMantra" class="divCalciatore">{{calciatore.macroRuolo}}</td>
         <td class="divCalciatore">{{calciatore.ruolo}}</td>
         <td class="divCalciatore">{{calciatore.nome}}</td>
       	<td class="divCalciatore">{{calciatore.squadra}}</td>

@@ -45,6 +45,9 @@
 	Numero acquisti:<input  class="inputDato" type="number"  ng-model="numAcquisti"></input>
 	<br>
 	Gestione a turni<input class="checkbox"   type="checkbox"  ng-model="isATurni"></input>
+	<br>
+	Mantra<input class="checkbox"   type="checkbox"  ng-model="isMantra"></input>
+	<br>
 		<button ng-if="numeroUtenti>1" ng-click="confermaConfigIniziale()">conferma</button>
 </div>
 
@@ -132,12 +135,14 @@
 					<div ng-show="isAdmin || nomeGiocatoreTurno==nomegiocatore || !isATurni"  style="padding-top:10px;border-style:double;width:98%;text-align:center;margin: auto">
 						<div>
 			 				 <div ng-show=false style="text-align:center;overflow-y:scroll;padding-bottom:0px">
+								 <label ng-show="isMantra" class="divCalciatore" style="width:70px;text-align:center">Macroruolo</label>
 								 <label class="divCalciatore" style="width:70px;text-align:center">Ruolo</label>
 								 <label class="divCalciatore"style="width:400px;text-align:center">Nome</label>
 								 <label class="divCalciatore"style="width:200px;text-align:center">Squadra</label>
 								 <label class="divCalciatore"style="width:100px;text-align:center">Quot.</label>
 							</div>
 			 				 <div style="text-align:center;overflow-y:scroll;padding-bottom:0px;padding-top:0px">
+								 <input ng-show="isMantra" class="divInputCalciatore" style="width:70px;text-align:center" type=text ng-model=filterMacroRuolo></input>
 								 <input class="divInputCalciatore" style="width:70px;text-align:center" type=text ng-model=filterRuolo></input>
 								 <input class="divInputCalciatore" style="width:400px;text-align:center" type=text ng-model=filterNome></input>
 								 <input class="divInputCalciatore" style="width:200px;text-align:center" type=text ng-model=filterSquadra></input>
@@ -147,6 +152,7 @@
 						 <div class="selCalciatore" style="text-align:center;overflow-y:scroll;">
 							 <div ng-class="{calciatoreNonSelezionato: selCalciatoreId!=calciatore.id, calciatoreSelezionato: selCalciatoreId==calciatore.id}" 
 							 ng-repeat="calciatore in calciatori | orderBy:'nome' | myTableFilter" ng-click="selezionaCalciatore(calciatore)" >
+								 <label ng-show="isMantra" class="divCalciatore" style="width:70px;text-align:center;cursor:pointer">{{calciatore.macroRuolo}}</label>
 								 <label class="divCalciatore" style="width:70px;text-align:center;cursor:pointer">{{calciatore.ruolo}}</label>
 								 <label class="divCalciatore" style="width:400px;text-align:center;cursor:pointer">{{calciatore.nome}}</label>
 								 <label class="divCalciatore" style="width:200px;text-align:center;cursor:pointer">{{calciatore.squadra}}</label>

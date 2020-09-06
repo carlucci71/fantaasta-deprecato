@@ -73,6 +73,7 @@ public class MyController {
 	private String turno="0";
 	private String nomeGiocatoreTurno="";
 	private Boolean isATurni;
+	private Boolean isMantra;
 
 	@RequestMapping("/init")
 	public Map<String, Object> init() {
@@ -107,6 +108,13 @@ public class MyController {
 			}
 			else {
 				ret.put("isATurni", "N");
+			}
+			setIsMantra(configurazione.isMantra());
+			if(getIsMantra()) {
+				ret.put("isMantra", "S");
+			}
+			else {
+				ret.put("isMantra", "N");
 			}
 			ret.put("numAcquisti", numAcquisti);
 			ret.put("budget", budget);
@@ -149,6 +157,25 @@ public class MyController {
 		ret.put("out", readAllLines);
 		return ret;
 	}
+
+	private static final Map<String, String> macroRuoliMantra = new HashMap<>();
+    static {
+    	macroRuoliMantra.put("Por", "P");
+    	
+    	macroRuoliMantra.put("Dd", "D");
+    	macroRuoliMantra.put("Ds", "D");
+    	macroRuoliMantra.put("Dc", "D");
+
+    	macroRuoliMantra.put("E", "C");
+    	macroRuoliMantra.put("C", "C");
+    	macroRuoliMantra.put("W", "C");
+    	macroRuoliMantra.put("M", "C");
+
+    	macroRuoliMantra.put("T", "A");
+    	macroRuoliMantra.put("Pc", "A");
+    	macroRuoliMantra.put("A", "A");
+    }	
+	
 	
 	@PostMapping("/caricaFile")
 	public Map<String, Object> caricaFile(@RequestBody Map<String,Object> body) throws Exception {
@@ -177,6 +204,7 @@ public class MyController {
 						giocatori.setNome(nome);
 						giocatori.setQuotazione(Integer.parseInt(quotazione));
 						giocatori.setRuolo(ruolo);
+						giocatori.setMacroRuolo(ruolo);
 						giocatori.setSquadra(squadra);
 						giocatoriRepository.save(giocatori);
 					}
@@ -198,7 +226,12 @@ public class MyController {
 					{	
 						giocatori.setQuotazione(-1);
 					}
-					giocatori.setRuolo(colonne[1].replaceAll("\"", ""));
+					String ruolo = colonne[1].replaceAll("\"", "");
+					giocatori.setRuolo(ruolo);
+					String primoRuolo=ruolo;
+					if(ruolo.indexOf(";")>0)
+						primoRuolo=ruolo.substring(0,ruolo.indexOf(";"));
+					giocatori.setMacroRuolo(macroRuoliMantra.get(primoRuolo));
 					giocatori.setSquadra(colonne[3]);
 					giocatoriRepository.save(giocatori);
 				}
@@ -283,12 +316,14 @@ public class MyController {
 			setBudget((Integer) body.get("budget"));
 			setNumAcquisti((Integer) body.get("numAcquisti"));
 			isATurni=(Boolean) body.get("isATurni");
+			setIsMantra((Boolean) body.get("isMantra"));
 			if (configurazione==null) configurazione=new Configurazione();
 			configurazione.setId(0);
 			configurazione.setNumeroGiocatori(numUtenti);
 			configurazione.setBudget(getBudget());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
 			configurazione.setIsATurni(isATurni);
+			configurazione.setMantra(getIsMantra());
 			configurazioneRepository.save(configurazione);
 			for(int i=0;i<numUtenti;i++) {
 				Allenatori al = new Allenatori();
@@ -341,6 +376,7 @@ public class MyController {
 			setBudget((Integer) body.get("budget"));
 			Boolean admin = (Boolean) body.get("admin");
 			isATurni = (Boolean) body.get("isATurni");
+			setIsMantra((Boolean) body.get("isMantra"));
 			List<Map<String, Object>> elencoAllenatori = (List<Map<String, Object>>) body.get("elencoAllenatori");
 			for (Map<String, Object> map : elencoAllenatori) {
 				Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
@@ -369,6 +405,7 @@ public class MyController {
 			}
 			Configurazione configurazione = getConfigurazione();
 			configurazione.setIsATurni(isATurni);
+			configurazione.setMantra(getIsMantra());
 			configurazione.setBudget(getBudget());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
 			configurazioneRepository.save(configurazione);
@@ -377,6 +414,12 @@ public class MyController {
 			}
 			else {
 				ret.put("isATurni", "N");
+			}
+			if(getIsMantra()) {
+				ret.put("isMantra", "S");
+			}
+			else {
+				ret.put("isMantra", "N");
 			}
 			ret.put("esitoDispositiva", "OK");
 			socketHandler.aggiornaConfigLega(utentiRinominati,getAllAllenatori(),configurazione);
@@ -644,7 +687,8 @@ public class MyController {
 			m.put("squadra",  row[1]);
 			m.put("nome",  row[2]);
 			m.put("ruolo",  row[3]);
-			m.put("quotazione",  row[4]);
+			m.put("macroRuolo",  row[4]);
+			m.put("quotazione",  row[5]);
 			ret.add(m);
 		}
 		return ret;
@@ -684,6 +728,16 @@ public class MyController {
 	}
 	public void setMapSpesoPerRuolo(Map<String, Map<String, Long>> mapSpesoPerRuolo) {
 		this.mapSpesoPerRuolo = mapSpesoPerRuolo;
+	}
+
+
+	public Boolean getIsMantra() {
+		return isMantra;
+	}
+
+
+	public void setIsMantra(Boolean isMantra) {
+		this.isMantra = isMantra;
 	}
 
 }

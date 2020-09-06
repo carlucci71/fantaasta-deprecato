@@ -50,31 +50,34 @@
 			</td>	
 		  </tr>
 	</table>
-	<span ng-show="isAdmin" >
-		Gestione a turni<input  class="checkbox" type="checkbox"  ng-model="isATurni"></input>
-		Budget:<input  class="inputAllinea" type="number"  ng-model="budget"></input>
+	<span ng-show="isAdmin">
+		Gestione a turni<input  class="checkbox" type="checkbox"  ng-model="isATurni"></input><br>
+		Mantra<input  class="checkbox" type="checkbox"  ng-model="isMantra"></input><br>
+		Budget:<input  class="inputAllinea" type="number"  ng-model="budget"></input><br>
 		Numero acquisti:<input  class="inputAllinea" type="number"  ng-model="numAcquisti"></input>
 	</span>
 	<br>
 	<br>
-	<input type="button" value="aggiorna" ng-click="aggiornaConfigLega(isAdmin)"></input>
+	<input type="button" value="aggiorna configurazione" ng-click="aggiornaConfigLega(isAdmin)"></input>
 	<br><br>
 	<div ng-show="isAdmin">
-		<input type="button" value="AZZERA" ng-click="azzera()"></input>
-			<br><label >Carica file</label>
+		<input type="button" value="AZZERA TUTTO" ng-click="azzera()"></input>
+		<br><br>
+		<div style="width:450px;border-style:dotted">
+			<label >Carica file</label>
 			<div >
 				<input type="file" id="file" name="file"/>
 			</div>
-		<br>
-		<button ng-click="caricaFile('FS')">Carica FS</button>
-	<!-- scarica lista svincolati, apri excel, rimuovi prime 2 righe, -esporta - cambia tipo file - testo delimitato da tabulazione  -->
-		<button ng-click="caricaFile('MANTRA')">Carica Mantra</button>
-		<label ng-if="caricamentoInCorso">CARICAMENTO IN CORSO</label>
+			<button ng-if="!isMantra" ng-click="caricaFile('FS')">Carica FS</button>
+			<!-- scarica lista svincolati, apri excel, rimuovi prime 2 righe, -esporta - cambia tipo file - testo delimitato da tabulazione  -->
+			<button ng-if="isMantra"  ng-click="caricaFile('MANTRA')">Carica Mantra</button>
+			<label ng-if="caricamentoInCorso">CARICAMENTO IN CORSO</label>
+		</div>
 	</div>
 	<br>
 </div>
 <div>
-	<button ng-click="ritornaIndex()">CHIUDI</button>
+	<button ng-click="ritornaIndex()">Ritorna all'home page</button>
 </div>	
 </body>
 </html>

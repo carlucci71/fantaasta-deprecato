@@ -468,6 +468,12 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else {
 			m.put("isATurni", "N");
 		}
+		if(myController.getIsMantra()) {
+			m.put("isMantra", "S");
+		}
+		else {
+			m.put("isMantra", "N");
+		}
 		m.put("numAcquisti", myController.getNumAcquisti());
 		m.put("budget", myController.getBudget());
 		m.put("messaggi", messaggi);

@@ -16,12 +16,8 @@ public class Giocatori {
 	private String squadra;
 	private String nome;
 	private String ruolo;
+	private String macroRuolo;
 	private Integer quotazione;
-	@Override
-	public String toString() {
-		return "Giocatori [id=" + id + ", squadra=" + squadra + ", nome=" + nome + ", ruolo=" + ruolo + ", quotazione="
-				+ quotazione + "]";
-	}
 	public Integer getId() {
 		return id;
 	}
@@ -51,5 +47,16 @@ public class Giocatori {
 	}
 	public void setQuotazione(Integer quotazione) {
 		this.quotazione = quotazione;
+	}
+	public String getMacroRuolo() {
+		return macroRuolo;
+	}
+	public void setMacroRuolo(String macroRuolo) {
+		this.macroRuolo = macroRuolo;
+	}
+	@Override
+	public String toString() {
+		return "Giocatori [id=" + id + ", squadra=" + squadra + ", nome=" + nome + ", ruolo=" + ruolo + ", macroRuolo="
+				+ macroRuolo + ", quotazione=" + quotazione + "]";
 	}
 }
