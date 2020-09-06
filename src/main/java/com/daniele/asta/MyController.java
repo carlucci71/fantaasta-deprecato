@@ -457,13 +457,6 @@ public class MyController {
 	}
 
 	
-	private static final Map<String, String> ruoliOrdine = new HashMap<>();
-    static {
-    	ruoliOrdine.put("P", "1P");
-    	ruoliOrdine.put("D", "2D");
-    	ruoliOrdine.put("C", "3C");
-    	ruoliOrdine.put("A", "4A");
-    }	
     
 	@RequestMapping("/giocatoriPerSquadra")
 	public Map<String, Map<String, Object>> giocatoriPerSquadra() {
@@ -485,9 +478,9 @@ public class MyController {
 			if(ret.get(allenatore) != null)
 				mapRuoli =(Map<String, List<String>>) ret.get(allenatore).get("ruoli");
 			if(mapRuoli==null) {
-				mapRuoli=new TreeMap();
+				mapRuoli=new LinkedHashMap<>();
 			}
-			String ruolo = ruoliOrdine.get(giocatorePerSquadra.getRuolo());
+			String ruolo = giocatorePerSquadra.getRuolo();
 			List<String> list = (List<String>) mapRuoli.get(ruolo);
 			if (list==null) {
 				list=new ArrayList<>();

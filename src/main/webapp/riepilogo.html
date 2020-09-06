@@ -18,7 +18,7 @@
 <body  x-ng-app="app" style="margin-left:20px">
 <div  ng-repeat="(allenatore, value)  in giocatoriPerSquadra"><label>{{allenatore}} </label>
 	Speso: {{value.spese.speso}} Presi:{{value.spese.conta}} Max rilancio:{{value.spese.maxRilancio}}
-	<div  ng-repeat="(ruolo, listaGiocatoriPresi)  in value.ruoli"><label>{{ruolo.substring(1)}}</label> {{listaGiocatoriPresi}}
+	<div  ng-repeat="(ruolo, listaGiocatoriPresi)  in value.ruoli"><label>{{ruolo}}</label> {{listaGiocatoriPresi}}
 
 	</div>
 	<br>
