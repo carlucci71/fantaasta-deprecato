@@ -21,7 +21,7 @@
 
 <script>
 </script>
-<body x-ng-app="app" style="margin-left:20px">
+<body x-ng-app="app" style="margin-left:20px">{{selCalciatoreMacroRuolo}}
  <div ng-controller="ModalDemoCtrl as pc" class="modal-demo">
 	<!-- 
 	     <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
@@ -43,6 +43,14 @@
 	Budget:<input  class="inputDato" type="number"  ng-model="budget"></input>
 	<br>
 	Numero acquisti:<input  class="inputDato" type="number"  ng-model="numAcquisti"></input>
+	<br>
+	Max portieri:<input  class="inputDato" type="number"  ng-model="maxP"></input>
+	<br>
+	Max difensori:<input  class="inputDato" type="number"  ng-model="maxD"></input>
+	<br>
+	Max centrocampisti:<input  class="inputDato" type="number"  ng-model="maxC"></input>
+	<br>
+	Max attaccanti:<input  class="inputDato" type="number"  ng-model="maxA"></input>
 	<br>
 	Gestione a turni<input class="checkbox"   type="checkbox"  ng-model="isATurni"></input>
 	<br>
@@ -100,7 +108,7 @@
 				</td>
 		    	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia -->
 					<a ng-show="selCalciatore && durataAsta>0" href=#>
-						<img title="avvia asta" class="imgConnetti" style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
+						<img title="avvia asta" ng-show="verificaAvviaAsta(utente.nome)" class="imgConnetti" style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
 					</a>
 		    	</td>
 		    	<td ng-show="isATurni" style="padding-left:10px;padding-right:10px;text-align:center">  <!-- turno -->
@@ -109,20 +117,20 @@
 						<img title="forza turno" class="imgConnetti" style="margin-bottom:2px" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
 					</a>
 				</td>
-		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presi -->
-		    		{{getFromMapSpesoTotale('CONTA',utente.nome)}}({{getFromMapSpesoTotale('SPESO',utente.nome)}})
+		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTA',utente.nome)>=numAcquisti}" style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presi -->
+		    		{{getFromMapSpesoTotale('CONTA',utente.nome)}} ({{getFromMapSpesoTotale('SPESO',utente.nome)}})
 		    	</td>
-		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiP -->
-		    		{{getFromMapSpesoTotale('CONTAP',utente.nome)}}({{getFromMapSpesoTotale('SPESOP',utente.nome)}})
+		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTAP',utente.nome)>=maxP}"  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiP -->
+		    		{{getFromMapSpesoTotale('CONTAP',utente.nome)}} ({{getFromMapSpesoTotale('SPESOP',utente.nome)}})
 		    	</td>
-		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiD -->
-		    		{{getFromMapSpesoTotale('CONTAD',utente.nome)}}({{getFromMapSpesoTotale('SPESOD',utente.nome)}})
+		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTAD',utente.nome)>=maxD}"  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiD -->
+		    		{{getFromMapSpesoTotale('CONTAD',utente.nome)}} ({{getFromMapSpesoTotale('SPESOD',utente.nome)}})
 		    	</td>
-		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiC -->
-		    		{{getFromMapSpesoTotale('CONTAC',utente.nome)}}({{getFromMapSpesoTotale('SPESOC',utente.nome)}})
+		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTAC',utente.nome)>=maxC}"  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiC -->
+		    		{{getFromMapSpesoTotale('CONTAC',utente.nome)}} ({{getFromMapSpesoTotale('SPESOC',utente.nome)}})
 		    	</td>
-		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiA -->
-		    		{{getFromMapSpesoTotale('CONTAA',utente.nome)}}({{getFromMapSpesoTotale('SPESOA',utente.nome)}})
+		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTAA',utente.nome)>=maxA}"  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiA -->
+		    		{{getFromMapSpesoTotale('CONTAA',utente.nome)}} ({{getFromMapSpesoTotale('SPESOA',utente.nome)}})
 		    	</td>
 		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- max rilancio -->
 		    		{{getFromMapSpesoTotale('MAXRILANCIO',utente.nome)}}
@@ -175,15 +183,21 @@
 					<span ng-show="calciatori.length>0">
 						<label class="nextOperation" ng-show="!selCalciatore && (nomeGiocatoreTurno==nomegiocatore||!isATurni) && bSemaforoAttivo" >Seleziona il calciatore</label>
 						<span ng-show="selCalciatore && (nomeGiocatoreTurno==nomegiocatore || !isATurni) && durataAsta>0">
-							<label class="nextOperation" >Avvia asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-							<a href=# ng-show="selCalciatore && durataAsta>0 && (nomeGiocatoreTurno==nomegiocatore || !isATurni)"><img title="avvia asta" src='./startGiocatore.png' ng-click="start()" height="30" width="30"/></a> 
+							<label ng-show="verificaAvviaAsta(nomegiocatore)" class="nextOperation" >Avvia asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+							<label ng-show="!verificaAvviaAsta(nomegiocatore,10)" class="nextOperation" >Non puoi avviare asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+							<a href=# ng-show="selCalciatore && durataAsta>0 && (nomeGiocatoreTurno==nomegiocatore || !isATurni)">
+								<img ng-show="verificaAvviaAsta(nomegiocatore)" title="avvia asta" src='./startGiocatore.png' ng-click="inizia(nomegiocatore,idgiocatore)" height="30" width="30"/>
+							</a> 
 						</span>
 						<span ng-show="isATurni && bSemaforoAttivo">
 							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >E' il turno di {{nomeGiocatoreTurno}}</label>
 							<label class="nextOperation" ng-show="isAdmin && nomeGiocatoreTurno!=nomegiocatore && !selCalciatore" > puoi selezionare il calciatore al suo posto</label>
 							<span ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">
-								<label class="nextOperation"> puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-								<a href=#><img title="avvia asta" style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" /></a>
+								<label ng-show="verificaAvviaAsta(nomeGiocatoreTurno)" class="nextOperation"> puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+								<label ng-show="!verificaAvviaAsta(nomeGiocatoreTurno)" class="nextOperation">non puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+								<a href=#>
+									<img ng-show="verificaAvviaAsta(nomeGiocatoreTurno)" title="avvia asta" style="margin-bottom:2px" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" />
+								</a>
 							</span>
 						</span>
 						<span ng-show="selCalciatore">
@@ -200,7 +214,7 @@
 	
 			<div style="width:98%;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
 				<div style="border-style:double;text-align:center">
-					<span ng-show="offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',giocatore) ">
+					<span ng-show=" verificaAvviaAsta(giocatore,10) && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',giocatore) ">
 						<span class="spanBtnAllinea">
 						<input class="btnAllinea" type="button" value="allinea" ng-click="offerta=offertaVincente.offerta"></input>
 							&nbsp;
@@ -229,6 +243,7 @@
 						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',giocatore)}})</label>
 					</span>
 					<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',giocatore)">Non hai crediti sufficienti per rilanciare</label>
+					<label class="nextOperation" ng-show="!verificaAvviaAsta(giocatore) && offertaVincente.nomegiocatore!=giocatore">Non puoi rilanciare</label>
 				</div>
 				<div ng-show="isAdmin" style="border-style:double;text-align:center">
 					<div style="color: green;text-align:center;cursor:pointer" ng-click="sezOperaComeVisible=!sezOperaComeVisible">
@@ -244,7 +259,7 @@
 						</table>
 						<label class="nextOperation" ng-show="idgiocatoreOperaCome<0">Puoi selezionare altro allenatore</label>
 						<span ng-if="idgiocatoreOperaCome>=0">
-							<span ng-show="offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome) ">
+							<span ng-show=" verificaAvviaAsta(nomegiocatoreOperaCome) && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome) ">
 								<span class="spanBtnAllinea">
 									<input class="btnAllinea" type="button" value="allinea" ng-click="offertaOC=offertaVincente.offerta"></input>
 									&nbsp;
@@ -273,6 +288,7 @@
 								<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=nomegiocatoreOperaCome">Puoi rilanciare per {{nomegiocatoreOperaCome}} (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)}})</label>
 							</span>
 							<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)">{{nomegiocatoreOperaCome}} non ha crediti sufficienti per rilanciare</label>
+							<label class="nextOperation" ng-show="!verificaAvviaAsta(nomegiocatoreOperaCome)">Non puoi rilanciare per {{nomegiocatoreOperaCome}}</label>
 						</span>
 					</div> <!-- OPERACOME -->
 				</div>

@@ -58,6 +58,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	Calendar calInizioOfferta;
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ssZ");
 	int durataAsta;
+	String selCalciatoreMacroRuolo="";
 	String idCalciatore;
 	String timeOut="N";
 	String nomeCalciatore;
@@ -167,6 +168,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			messaggi = new ArrayList<>();
 			creaMessaggio("Asta confermata per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra() + ". Assegnato a " + offertaVincente.get("nomegiocatore") + " per " + offertaVincente.get("offerta"),EnumCategoria.Asta);
 			offertaVincente = new HashMap<>();
+			selCalciatoreMacroRuolo="";
 			Map<String, Object> m = new HashMap<>();
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
@@ -202,6 +204,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			messaggi = new ArrayList<>();
 			creaMessaggio("Asta annullata per:" + offertaVincente.get("nomeCalciatore"),EnumCategoria.Asta);
 			offertaVincente = new HashMap<>();
+			selCalciatoreMacroRuolo="";
 			Map<String, Object> m = new HashMap<>();
 			m.put("clearOfferta", "x");
 			m.put("messaggi", messaggi);
@@ -247,10 +250,10 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			sSemaforoAttivo="S";
 		}
 		else if (operazione != null && operazione.equals("start")) {
+			selCalciatoreMacroRuolo = (String) jsonToMap.get("selCalciatoreMacroRuolo");
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
-			String idgiocatoreOperaCome = jsonToMap.get("idgiocatoreOperaCome").toString();
 			durataAsta = (Integer) jsonToMap.get("durataAsta");
 			if (durataAsta<1) durataAsta=1;
 			String selCalciatore = (String)jsonToMap.get("selCalciatore");
@@ -347,6 +350,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 					offertaVincente.put("idgiocatore", idgiocatore);
 					offertaVincente.put("offerta", offerta);
 					m.put("offertaVincente", offertaVincente);
+					m.put("selCalciatoreMacroRuolo", selCalciatoreMacroRuolo);
 					creaMessaggio(str,EnumCategoria.Asta);
 				}
 			}
@@ -393,6 +397,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
 			m.put("sSemaforoAttivo", sSemaforoAttivo);
 			m.put("offertaVincente", offertaVincente);
+			m.put("selCalciatoreMacroRuolo",selCalciatoreMacroRuolo);
 			m.put("pingUtenti", pingUtenti);
 			m.put("messaggi", messaggi);
 			m.put("giocatoreTimeout", giocatoreTimeout);
@@ -475,6 +480,10 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("isMantra", "N");
 		}
 		m.put("numAcquisti", myController.getNumAcquisti());
+		m.put("maxP", myController.getMaxP());
+		m.put("maxD", myController.getMaxD());
+		m.put("maxC", myController.getMaxC());
+		m.put("maxA", myController.getMaxA());
 		m.put("budget", myController.getBudget());
 		m.put("messaggi", messaggi);
 		m.put("utentiRinominati", utentiRinominati);

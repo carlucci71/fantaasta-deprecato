@@ -67,6 +67,10 @@ public class MyController {
 	@Autowired SocketHandler socketHandler;
 	private Map<String, Map<String, Long>> mapSpesoTotale = new HashMap();
 	private Integer numAcquisti=0;
+	private Integer maxP=0;
+	private Integer maxD=0;
+	private Integer maxC=0;
+	private Integer maxA=0;
 	private Integer budget=0;
 	private String turno="0";
 	private String nomeGiocatoreTurno="";
@@ -99,6 +103,10 @@ public class MyController {
 				}
 			}
 			setNumAcquisti(configurazione.getNumeroAcquisti());
+			setMaxP(configurazione.getMaxP());
+			setMaxD(configurazione.getMaxD());
+			setMaxC(configurazione.getMaxC());
+			setMaxA(configurazione.getMaxA());
 			setBudget(configurazione.getBudget());
 			isATurni = configurazione.getIsATurni();
 			if(isATurni) {
@@ -115,6 +123,10 @@ public class MyController {
 				ret.put("isMantra", "N");
 			}
 			ret.put("numAcquisti", numAcquisti);
+			ret.put("maxP", maxP);
+			ret.put("maxD", maxD);
+			ret.put("maxC", maxC);
+			ret.put("maxA", maxA);
 			ret.put("budget", budget);
 			ret.put("elencoAllenatori", allAllenatori);
 			ret.put("nomeGiocatoreTurno", getNomeGiocatoreTurno());
@@ -313,6 +325,10 @@ public class MyController {
 			Integer numUtenti=(Integer) body.get("numUtenti");
 			setBudget((Integer) body.get("budget"));
 			setNumAcquisti((Integer) body.get("numAcquisti"));
+			setMaxP((Integer) body.get("maxP"));
+			setMaxD((Integer) body.get("maxD"));
+			setMaxC((Integer) body.get("maxC"));
+			setMaxA((Integer) body.get("maxA"));
 			isATurni=(Boolean) body.get("isATurni");
 			setIsMantra((Boolean) body.get("isMantra"));
 			if (configurazione==null) configurazione=new Configurazione();
@@ -320,6 +336,10 @@ public class MyController {
 			configurazione.setNumeroGiocatori(numUtenti);
 			configurazione.setBudget(getBudget());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
+			configurazione.setMaxP(getMaxP());
+			configurazione.setMaxD(getMaxD());
+			configurazione.setMaxC(getMaxC());
+			configurazione.setMaxA(getMaxA());
 			configurazione.setIsATurni(isATurni);
 			configurazione.setMantra(getIsMantra());
 			configurazioneRepository.save(configurazione);
@@ -371,6 +391,10 @@ public class MyController {
 			Map <String, String> utentiRinominati = new HashMap<>();
 			int i=0;
 			setNumAcquisti((Integer) body.get("numAcquisti"));
+			setMaxP((Integer) body.get("maxP"));
+			setMaxD((Integer) body.get("maxD"));
+			setMaxC((Integer) body.get("maxC"));
+			setMaxA((Integer) body.get("maxA"));
 			setBudget((Integer) body.get("budget"));
 			Boolean admin = (Boolean) body.get("admin");
 			isATurni = (Boolean) body.get("isATurni");
@@ -406,6 +430,10 @@ public class MyController {
 			configurazione.setMantra(getIsMantra());
 			configurazione.setBudget(getBudget());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
+			configurazione.setMaxP(getMaxP());
+			configurazione.setMaxD(getMaxD());
+			configurazione.setMaxC(getMaxC());
+			configurazione.setMaxA(getMaxA());
 			configurazioneRepository.save(configurazione);
 			if(isATurni) {
 				ret.put("isATurni", "S");
@@ -734,6 +762,46 @@ public class MyController {
 
 	public void setIsMantra(Boolean isMantra) {
 		this.isMantra = isMantra;
+	}
+
+
+	public Integer getMaxP() {
+		return maxP;
+	}
+
+
+	public void setMaxP(Integer maxP) {
+		this.maxP = maxP;
+	}
+
+
+	public Integer getMaxD() {
+		return maxD;
+	}
+
+
+	public void setMaxD(Integer maxD) {
+		this.maxD = maxD;
+	}
+
+
+	public Integer getMaxC() {
+		return maxC;
+	}
+
+
+	public void setMaxC(Integer maxC) {
+		this.maxC = maxC;
+	}
+
+
+	public Integer getMaxA() {
+		return maxA;
+	}
+
+
+	public void setMaxA(Integer maxA) {
+		this.maxA = maxA;
 	}
 
 }
