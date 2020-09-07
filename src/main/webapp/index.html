@@ -98,8 +98,8 @@
 				    <img ng-show="sonoLoggato(utente)" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./disconnect-icon.png' title='disconnetti' ng-click="doDisconnect()" />
 					<label class="latenza" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
 				</td>
-		    	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia -->
-					<img ng-show="selCalciatore && durataAsta>0" title="avvia asta" ng-show="verificaAvviaAsta(utente.nome)" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
+		    	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia --> 
+					<img ng-show="selCalciatore && durataAsta>0 && avviabili.indexOf(utente.nome)>=0" title="avvia asta"  class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
 		    	</td>
 		    	<td ng-show="isATurni" style="padding-left:10px;padding-right:10px;text-align:center">  <!-- turno -->
 					<label ng-show="utente.ordine==turno"><i class="fa fa-thumbs-up"></i></label>
@@ -171,17 +171,17 @@
 					<span ng-show="calciatori.length>0">
 						<label class="nextOperation" ng-show="!selCalciatore && (nomeGiocatoreTurno==nomegiocatore||!isATurni) && bSemaforoAttivo" >Seleziona il calciatore</label>
 						<span ng-show="selCalciatore && (nomeGiocatoreTurno==nomegiocatore || !isATurni) && durataAsta>0">
-							<label ng-show="verificaAvviaAsta(nomegiocatore)" class="nextOperation" >Avvia asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-							<label ng-show="!verificaAvviaAsta(nomegiocatore,10)" class="nextOperation" >Non puoi avviare asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-							<img style="cursor:pointer" ng-show="selCalciatore && durataAsta>0 && (nomeGiocatoreTurno==nomegiocatore || !isATurni) && verificaAvviaAsta(nomegiocatore)" title="avvia asta" src='./startGiocatore.png' ng-click="inizia(nomegiocatore,idgiocatore)"/>
+							<label ng-show="avviabili.indexOf(nomegiocatore)>=0" class="nextOperation" >Avvia asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+							<label ng-show="avviabili.indexOf(nomegiocatore)<0" class="nextOperation" >Non puoi avviare asta per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+							<img style="cursor:pointer" ng-show="selCalciatore && durataAsta>0 && (nomeGiocatoreTurno==nomegiocatore || !isATurni) && avviabili.indexOf(nomegiocatore)>=0" title="avvia asta" src='./startGiocatore.png' ng-click="inizia(nomegiocatore,idgiocatore)"/>
 						</span>
 						<span ng-show="isATurni && bSemaforoAttivo">
 							<label class="nextOperation" ng-show="nomeGiocatoreTurno!=nomegiocatore" >E' il turno di {{nomeGiocatoreTurno}}</label>
 							<label class="nextOperation" ng-show="isAdmin && nomeGiocatoreTurno!=nomegiocatore && !selCalciatore" > puoi selezionare il calciatore al suo posto</label>
 							<span ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">
-								<label ng-show="verificaAvviaAsta(nomeGiocatoreTurno)" class="nextOperation"> puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-								<label ng-show="!verificaAvviaAsta(nomeGiocatoreTurno)" class="nextOperation">non puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-								<img ng-show="verificaAvviaAsta(nomeGiocatoreTurno)" title="avvia asta" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" />
+								<label ng-show="avviabili.indexOf(nomeGiocatoreTurno)>=0" class="nextOperation"> puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+								<label ng-show="avviabili.indexOf(nomeGiocatoreTurno)<0" class="nextOperation">non puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
+								<img ng-show="avviabili.indexOf(nomeGiocatoreTurno)>=0" title="avvia asta" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" />
 							</span>
 						</span>
 						<span ng-show="selCalciatore">
@@ -198,7 +198,7 @@
 	
 			<div style="width:98%;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
 				<div style="border-style:double;text-align:center">
-					<span ng-show=" verificaAvviaAsta(giocatore,10) && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',giocatore) ">
+					<span ng-show=" avviabili.indexOf(nomegiocatore)>=0 && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',giocatore) ">
 						<span class="spanAutoAllinea">
 							<i ng-click="autoAllinea=!autoAllinea" ng-show="autoAllinea" class="autoAllinea fa fa-check-square"></i>
 							<i ng-click="autoAllinea=!autoAllinea" ng-show="!autoAllinea" class="autoAllinea fa fa-square"></i>
@@ -232,7 +232,7 @@
 						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',giocatore)}})</label>
 					</span>
 					<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',giocatore)">Non hai crediti sufficienti per rilanciare</label>
-					<label class="nextOperation" ng-show="!verificaAvviaAsta(giocatore) && offertaVincente.nomegiocatore!=giocatore">Non puoi rilanciare</label>
+					<label class="nextOperation" ng-show="avviabili.indexOf(nomegiocatore)<0 && offertaVincente.nomegiocatore!=giocatore">Non puoi rilanciare</label>
 				</div>
 				<div ng-show="isAdmin" style="border-style:double;text-align:center">
 					<div style="color: green;text-align:center;cursor:pointer" ng-click="sezOperaComeVisible=!sezOperaComeVisible">
@@ -248,7 +248,7 @@
 						</table>
 						<label class="nextOperation" ng-show="idgiocatoreOperaCome<0">Puoi selezionare altro allenatore</label>
 						<span ng-show="idgiocatoreOperaCome>=0">
-							<span ng-show=" verificaAvviaAsta(nomegiocatoreOperaCome) && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome) ">
+							<span ng-show=" avviabili.indexOf(nomegiocatoreOperaCome)>=0 && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome) ">
 								<span class="spanAutoAllinea">
 									<i ng-click="autoAllineaOC=!autoAllineaOC" ng-show="autoAllineaOC" class="fa fa-check-square autoAllinea"></i>
 									<i ng-click="autoAllineaOC=!autoAllineaOC" ng-show="!autoAllineaOC" class="fa fa-square autoAllinea"></i>
@@ -282,7 +282,7 @@
 								<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=nomegiocatoreOperaCome">Puoi rilanciare per {{nomegiocatoreOperaCome}} (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)}})</label>
 							</span>
 							<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)">{{nomegiocatoreOperaCome}} non ha crediti sufficienti per rilanciare</label>
-							<label class="nextOperation" ng-show="!verificaAvviaAsta(nomegiocatoreOperaCome)">Non puoi rilanciare per {{nomegiocatoreOperaCome}}</label>
+							<label class="nextOperation" ng-show="avviabili.indexOf(nomegiocatoreOperaCome)<0">Non puoi rilanciare per {{nomegiocatoreOperaCome}}</label>
 						</span>
 					</div> <!-- OPERACOME -->
 				</div>

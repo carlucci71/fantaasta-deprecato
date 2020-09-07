@@ -567,10 +567,7 @@ app.run(
 				$rootScope.sendMsg(JSON.stringify({'operazione':'liberaSemaforo'}));
 			}
 			
-			$rootScope.verificaAvviaAsta = function(ng,x) {
-				if(x==10) {
-					console.log();
-				}
+			$rootScope.verificaAvviaAsta = function(ng) {
 				if(!$rootScope.selCalciatoreMacroRuolo) return true;
 				var max;
 				if($rootScope.selCalciatoreMacroRuolo == 'P') max=$rootScope.maxP;
@@ -667,6 +664,22 @@ app.run(
 			$rootScope.$watch("elencoAllenatori", function(newValue, oldValue) {
 				$rootScope.calcolaIsAdmin();
 			});
+
+			$rootScope.$watch("selCalciatoreMacroRuolo", function(newValue, oldValue) {
+				if(!newValue) return true;
+				var max;
+				if(newValue == 'P') max=$rootScope.maxP;
+				if(newValue == 'D') max=$rootScope.maxD;
+				if(newValue == 'C') max=$rootScope.maxC;
+				if(newValue == 'A') max=$rootScope.maxA;
+				$rootScope.avviabili=[];
+				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
+					if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) $rootScope.avviabili.push(value.nome);
+				});
+				
+
+			});
+			
 			
 			$rootScope.sort = {
 				    column: 'Ruolo',
@@ -685,19 +698,6 @@ app.run(
 				        sort.descending = false;
 				    }
 				};			
-			
-			
-			
-			
-/*			
-			$rootScope.$watch("selAllenatore", function(newValue, oldValue) {
-				if (newValue){
-					var posToken = newValue.indexOf("@");
-					$rootScope.idgiocatore=newValue.substr(0,posToken);
-					$rootScope.nomegiocatore=newValue.substr(posToken+1);
-				}
-			});
-			*/
 	}
 )
 
