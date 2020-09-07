@@ -200,33 +200,28 @@
 				<div style="border-style:double;text-align:center">
 					<span ng-show=" avviabili.indexOf(nomegiocatore)>=0 && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',giocatore) ">
 						<span class="spanAutoAllinea">
-							<i ng-click="autoAllinea=!autoAllinea" ng-show="autoAllinea" class="autoAllinea fa fa-check-square"></i>
-							<i ng-click="autoAllinea=!autoAllinea" ng-show="!autoAllinea" class="autoAllinea fa fa-square"></i>
-							Auto
+							<i title="auto allinea" ng-click="autoAllinea=!autoAllinea" ng-show="autoAllinea" class="fa fa-check-square"></i>
+							<i title="auto allinea" ng-click="autoAllinea=!autoAllinea" ng-show="!autoAllinea" class="fa fa-square"></i>
+							<span class="spanTestoAutoAllinea">Auto</span>
 						</span>
-						<span class="spanImgPunta">
-							<img   title="allinea" ng-click="offerta=offertaVincente.offerta" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./allinea.jpeg'/>
-							&nbsp;
+						<span class="spanIconePunta" ng-show="!autoAllinea">
+							<i title="allinea" style="cursor:pointer;" class="fa fa-retweet" ng-click="offerta=offertaVincente.offerta"></i>
 						</span>
-						<span class="spanInputDato">
-							<input  class="inputDato" type="number"  ng-model="offerta"></input>
-							&nbsp;
+						<span class="spanInputDatoOfferta">
+							<input  class="inputDatoOfferta" type="number"  ng-model="offerta"></input>
 						</span>
-						<span class="spanImgPunta">
-							<img  title="offri" ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('IO',offerta)"/>
-							&nbsp;
+						<span class="spanIconePunta">
+							<i title="offri" style="cursor:pointer;" class="fa fa-money" ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)" ng-click="inviaOfferta('IO',offerta)"></i>
 						</span>
+						
 						<span class="spanBtnIncrementa">
 							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)-1" class="btnIncrementa" type="button" value="{{offerta+1}}" ng-click="offerta=offerta+1;inviaOfferta('IO',offerta)"></input>
-							&nbsp;
 						</span>
 						<span class="spanBtnIncrementa">
 							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)-5" class="btnIncrementa" type="button" value="{{offerta++5}}" ng-click="offerta=offerta+5;inviaOfferta('IO',offerta)"></input>
-							&nbsp;
 						</span>
 						<span class="spanBtnIncrementa">
 							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)-10" class="btnIncrementa" type="button" value="{{offerta++10}}" ng-click="offerta=offerta+10;inviaOfferta('IO',offerta)"></input>
-							&nbsp;
 						</span>
 						<br>
 						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',giocatore)}})</label>
@@ -250,33 +245,28 @@
 						<span ng-show="idgiocatoreOperaCome>=0">
 							<span ng-show=" avviabili.indexOf(nomegiocatoreOperaCome)>=0 && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome) ">
 								<span class="spanAutoAllinea">
-									<i ng-click="autoAllineaOC=!autoAllineaOC" ng-show="autoAllineaOC" class="fa fa-check-square autoAllinea"></i>
-									<i ng-click="autoAllineaOC=!autoAllineaOC" ng-show="!autoAllineaOC" class="fa fa-square autoAllinea"></i>
-									Auto
+									<i title="auto allinea" ng-click="autoAllineaOC=!autoAllineaOC" ng-show="autoAllineaOC" class="fa fa-check-square"></i>
+									<i title="auto allinea" ng-click="autoAllineaOC=!autoAllineaOC" ng-show="!autoAllineaOC" class="fa fa-square"></i>
+								<span class="spanTestoAutoAllinea">Auto</span>
 								</span>
-								<span class="spanImgPunta">
-							    	<img   title="allinea" ng-click="offertaOC=offertaVincente.offerta" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./allinea.jpeg'/>
-									&nbsp;
+								<span class="spanIconePunta" ng-show="!autoAllineaOC">
+									<i  title="allinea" style="cursor:pointer;"class="fa fa-retweet" ng-click="offertaOC=offertaVincente.offerta"></i>
 								</span>
-								<span class="spanInputDato">
-									<input class="inputDato"  type="number"  ng-model="offertaOC"></input>
-									&nbsp;
+								<span class="spanInputDatoOfferta">
+									<input class="inputDatoOfferta"  type="number"  ng-model="offertaOC"></input>
 								</span>
-								<span class="spanImgPunta">
-							    	<img   title="offri" ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)" class="imgPunta" style="cursor:pointer;margin-bottom:2px" src='./rilancio.png' ng-click="inviaOfferta('OC',offertaOC)"/>
-									&nbsp;
+								<span class="spanIconePunta">
+									<i title="offri" style="cursor:pointer;" class="fa fa-money" ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)" ng-click="inviaOfferta('OC',offertaOC)"></i>
 								</span>
+								
 								<span class="spanBtnIncrementa">
 									<input ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)-1" class="btnIncrementa" type="button" value="{{offertaOC+1}}" ng-click="offertaOC=offertaOC+1;inviaOfferta('OC',offertaOC)"></input>
-									&nbsp;
 								</span>
 								<span class="spanBtnIncrementa">
 									<input ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)-5" class="btnIncrementa" type="button" value="{{offertaOC+5}}" ng-click="offertaOC=offertaOC+5;inviaOfferta('OC',offertaOC)"></input>
-									&nbsp;
 								</span>
 								<span class="spanBtnIncrementa">
 									<input ng-show="offertaOC<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)-10" class="btnIncrementa" type="button" value="{{offertaOC+10}}" ng-click="offertaOC=offertaOC+10;inviaOfferta('OC',offertaOC)"></input>
-									&nbsp;
 								</span>
 								<br>
 								<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=nomegiocatoreOperaCome">Puoi rilanciare per {{nomegiocatoreOperaCome}} (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)}})</label>
@@ -322,7 +312,7 @@
 							<img style="cursor:pointer" title="annulla" src='./annulla.jpeg' ng-click="annulla()"/>
 						</span> 
 				</div>
-				<div ng-show="timeStart<3" style="padding-top:0px;width:98%;text-align:center;marginX:auto">
+				<div ng-show="timeStart<3" style="padding-top:0px;width:98%;text-align:center">
 			 		<div class="pb"> 
 			 				<track-progress-bar style="width:100%" col-val='{{timeStart}}' cur-val='{{contaTempo}}' max-val='{{durataAsta*1000}}'></track-progress-bar>
 			 				<label>{{contaTempo /1000 |number:0}}/{{durataAsta | number}}</label>
