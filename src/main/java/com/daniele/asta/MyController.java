@@ -539,20 +539,23 @@ public class MyController {
 		for (GiocatoriPerSquadra giocatorePerSquadra : giocatoriPerSquadra) {
 			String allenatore = giocatorePerSquadra.getAllenatore();
 			Map<String, Long> spese = getMapSpesoTotale().get(allenatore);
-			Map<String, List<String>> mapRuoli =null;
+			Map<String, List<Map<String,Object>>> mapRuoli =null;
 			if(ret.get(allenatore) != null)
-				mapRuoli =(Map<String, List<String>>) ret.get(allenatore).get("ruoli");
+				mapRuoli = (Map<String, List<Map<String, Object>>>) ret.get(allenatore).get("ruoli");
 			if(mapRuoli==null) {
 				mapRuoli=new LinkedHashMap<>();
 			}
 			String ruolo = giocatorePerSquadra.getMacroRuolo();
-			List<String> list = (List<String>) mapRuoli.get(ruolo);
+			List<Map<String,Object>> list = mapRuoli.get(ruolo);
 			if (list==null) {
 				list=new ArrayList<>();
 			}
-			String mr="";
-			if(isMantra) mr=" -" + giocatorePerSquadra.getRuolo() + "- ";
-			list.add(giocatorePerSquadra.getGiocatore() + " " + giocatorePerSquadra.getSquadra() + mr + " (" + giocatorePerSquadra.getCosto() + ")");
+			Map<String,Object> riga=new HashMap<>();
+			riga.put("ruolo", giocatorePerSquadra.getRuolo());
+			riga.put("giocatore", giocatorePerSquadra.getGiocatore());
+			riga.put("squadra", giocatorePerSquadra.getSquadra());
+			riga.put("costo", giocatorePerSquadra.getCosto());
+			list.add(riga);
 			mapRuoli.put(ruolo, list);
 			Map<String, Object> t = new HashMap<>();
 			t.put("ruoli", mapRuoli);

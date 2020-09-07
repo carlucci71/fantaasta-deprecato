@@ -18,8 +18,11 @@
 <body  x-ng-app="app" style="margin-left:20px">
 <div  ng-repeat="(allenatore, value)  in giocatoriPerSquadra"><label>{{allenatore}} </label>
 	Speso: {{value.spese.speso}} Presi:{{value.spese.conta}} Max rilancio:{{value.spese.maxRilancio}}
-	<div  style="margin-left:100px" ng-repeat="(ruolo, listaGiocatoriPresi)  in value.ruoli"><label>{{ruolo}}</label> {{listaGiocatoriPresi}}
-
+	<div  style="margin-left:100px" ng-repeat="(ruolo, listaGiocatoriPresi)  in value.ruoli"><label>{{ruolo}} -></label> 
+		<span ng-repeat="g in listaGiocatoriPresi">
+			{{g.giocatore}} ({{g.squadra}}) <span style="color:blue">{{g.ruolo}}</span> ({{g.costo}})&nbsp;
+		</span> 	
+		<br>
 	</div>
 	<br>
 </div>
