@@ -1,8 +1,8 @@
 var app = angular.module('app', [ 'ngResource','ngAnimate', 'ngSanitize', 'ui.bootstrap' ]);
 app.run(
 		function($rootScope, $resource, $interval){
-			$rootScope.sezLinkVisible=false;
-			$rootScope.sezUtentiVisible=false;
+			$rootScope.sezLinkVisible=true;
+			$rootScope.sezUtentiVisible=true;
 			$rootScope.sezOperaComeVisible=true;
 			$rootScope.sezOfferte=true;
 			$rootScope.sezLog=true;

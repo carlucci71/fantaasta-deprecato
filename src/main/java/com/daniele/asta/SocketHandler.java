@@ -88,7 +88,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		
 		if (operazione != null && operazione.equals("cancellaUtente")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
-			Integer iIdgiocatore = (Integer) jsonToMap.get("idgiocatore");
+			Integer iIdgiocatore = Integer.parseInt(jsonToMap.get("idgiocatore").toString());
 			getUtentiLoggati().remove(nomegiocatore);
 			utentiScaduti.remove(nomegiocatore);
 			pingUtenti.remove(nomegiocatore);
