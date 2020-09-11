@@ -123,6 +123,7 @@ public class MyController {
 				ret.put("isMantra", "N");
 			}
 			ret.put("numAcquisti", numAcquisti);
+			ret.put("utenti", socketHandler.getUtentiLoggati());
 			ret.put("maxP", maxP);
 			ret.put("maxD", maxD);
 			ret.put("maxC", maxC);

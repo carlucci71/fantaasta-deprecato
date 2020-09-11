@@ -27,8 +27,8 @@
 	     <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
 	 -->
  </div>
- 	<div class="utenteLoggato" ng-show="giocatore">
-		Buona fortuna {{giocatore}}
+ 	<div class="utenteLoggato" ng-show="nomegiocatore">
+		Buona fortuna {{nomegiocatore}}
 		<img ng-click="forzaLogout()" class="imgForzaLogout" style="margin-bottom:2px;cursor:pointer" title="disconntetti" src='./cestino.png'/>
 	</div>
 	<span ng-show=false style="background-color:red;width: 10%;border-style: dotted;border-22px;border-color:yellow;position:absolute;">xxx</span>
@@ -64,7 +64,7 @@
 		Link
 	</div>
 	<div ng-show="sezLinkVisible" > <!-- LINK -->
-		<a ng-show="giocatore && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Admin</a>
+		<a ng-show="nomegiocatore && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Admin</a>
 		<a href="./cronologiaOfferte.html" ng-click="aggiornaCronologiaOfferte()" target="_blank">Offerte</a>
 		<a href="./logger.html" target="_blank">Log</a>
 		<a href="./liberi.html" target="_blank">Liberi</a>
@@ -79,60 +79,54 @@
 		<br>
 		<table border>
 		  <tr>
-		  	<td class="tblUtenti" ></td>
-		  	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">Avvia</td>
-		  	<td ng-show="isATurni" style="padding-left:10px;padding-right:10px;text-align:center">Turno</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Presi</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">P</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">D</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">C</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">A</td>
-		  	<td style="padding-left:10px;padding-right:10px;text-align:center">Max rilancio</td>
+		  	<td class="tblUtenti" style="width:1px"></td>
+		  	<td ng-show="isATurni" class="tabellaUtenti" >Turno</td>
+		  	<td class="tabellaUtenti">Presi</td>
+		  	<td class="tabellaUtenti">P</td>
+		  	<td class="tabellaUtenti">D</td>
+		  	<td class="tabellaUtenti">C</td>
+		  	<td class="tabellaUtenti">A</td>
 		  </tr>
 		  <tr ng-repeat="utente in elencoAllenatori  | orderBy:'ordine'">
-		    	<td> <!-- nome -->
-		    		<label ng-class="{nonSonoIo: utente.nome!=giocatore, sonoIo: utente.nome==giocatore}">{{utente.nome}}</label>
-			    	<img ng-show="!giocatore && utenti.indexOf(utente.nome)==-1" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" title='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)"/>
+		    	<td class="tdUtenti"> <!-- nome -->
+		    		<label ng-class="{nonSonoIo: utente.nome!=nomegiocatore, sonoIo: utente.nome==nomegiocatore}">{{utente.nome}}</label>
+			    	<br>
+			    	<img ng-show="!nomegiocatore && utenti.indexOf(utente.nome)==-1" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" title='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)"/>
 					<img title="connesso" class="imgConnetti" ng-show="utenti.indexOf(utente.nome)>-1" style="margin-bottom:2px" src='./connesso.jpeg' />		    	
-		    		<img ng-show="utente.nome!=giocatore && ((isAdmin && utenti.indexOf(utente.nome)>-1) || utentiScaduti.indexOf(utente.nome)>-1)" title="cancella utente" style="cursor:pointer"class="imgConnetti" src='./cestino.png' ng-click="cancellaUtente(utente)" />
-				    <img ng-show="utente.nome==giocatore" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./disconnect-icon.png' title='disconnetti' ng-click="doDisconnect()" />
-					<label class="latenza" ng-show="utenti.indexOf(utente.nome)>-1">({{latenza(utente)}})</label>
+		    		<img ng-show="utente.nome!=nomegiocatore && ((isAdmin && utenti.indexOf(utente.nome)>-1) || utentiScaduti.indexOf(utente.nome)>-1)" title="cancella utente" style="cursor:pointer"class="imgConnetti" src='./cestino.png' ng-click="cancellaUtente(utente)" />
+				    <img ng-show="utente.nome==nomegiocatore" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./disconnect-icon.png' title='disconnetti' ng-click="doDisconnect()" />
+					<img ng-show="isAdmin && selCalciatore && durataAsta>0 && avviabili.indexOf(utente.nome)>=0" title="avvia asta"  class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
+					<label class="lblLatenza" ng-show="utenti.indexOf(utente.nome)>-1">({{latenza(utente)}})</label>
 				</td>
-		    	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia --> 
-					<img ng-show="selCalciatore && durataAsta>0 && avviabili.indexOf(utente.nome)>=0" title="avvia asta"  class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
-		    	</td>
 		    	<td ng-show="isATurni" style="padding-left:10px;padding-right:10px;text-align:center">  <!-- turno -->
 					<label ng-show="utente.ordine==turno"><i class="fa fa-thumbs-up"></i></label>
 					<img title="forza turno" ng-show="isAdmin && utente.ordine!=turno" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
 				</td>
-		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTA',utente.nome)>=numAcquisti}" style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presi -->
+		    	<td ng-class="getFromMapSpesoTotale('CONTA',utente.nome)>=numAcquisti?'tuttiPresi':'nonTuttiPresi'">  <!-- presi -->
 		    		{{getFromMapSpesoTotale('CONTA',utente.nome)}} ({{getFromMapSpesoTotale('SPESO',utente.nome)}})
 		    	</td>
-		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTAP',utente.nome)>=maxP}"  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiP -->
+		    	<td ng-class="getFromMapSpesoTotale('CONTAP',utente.nome)>=maxP?'tuttiPresi':'nonTuttiPresi'">  <!-- presiP -->
 		    		{{getFromMapSpesoTotale('CONTAP',utente.nome)}} ({{getFromMapSpesoTotale('SPESOP',utente.nome)}})
 		    	</td>
-		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTAD',utente.nome)>=maxD}"  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiD -->
+		    	<td ng-class="getFromMapSpesoTotale('CONTAD',utente.nome)>=maxD?'tuttiPresi':'nonTuttiPresi'">  <!-- presiD -->
 		    		{{getFromMapSpesoTotale('CONTAD',utente.nome)}} ({{getFromMapSpesoTotale('SPESOD',utente.nome)}})
 		    	</td>
-		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTAC',utente.nome)>=maxC}"  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiC -->
+		    	<td ng-class="getFromMapSpesoTotale('CONTAC',utente.nome)>=maxC?'tuttiPresi':'nonTuttiPresi'">  <!-- presiC -->
 		    		{{getFromMapSpesoTotale('CONTAC',utente.nome)}} ({{getFromMapSpesoTotale('SPESOC',utente.nome)}})
 		    	</td>
-		    	<td ng-class="{tuttiPresi: getFromMapSpesoTotale('CONTAA',utente.nome)>=maxA}"  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- presiA -->
+		    	<td ng-class="getFromMapSpesoTotale('CONTAA',utente.nome)>=maxA?'tuttiPresi':'nonTuttiPresi'">  <!-- presiA -->
 		    		{{getFromMapSpesoTotale('CONTAA',utente.nome)}} ({{getFromMapSpesoTotale('SPESOA',utente.nome)}})
-		    	</td>
-		    	<td  style="padding-left:10px;padding-right:10px;text-align:center">  <!-- max rilancio -->
-		    		{{getFromMapSpesoTotale('MAXRILANCIO',utente.nome)}}
 		    	</td>
 		  </tr>
 		</table>
 		<br>
-		<label class="nextOperation" ng-show="!giocatore && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
-		<label class="nextOperation" ng-show="!giocatore && elencoAllenatori.length>0">Connettiti</label>
-		<div ng-show="giocatore">		
+		<label class="nextOperation" ng-show="!nomegiocatore && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
+		<label class="nextOperation" ng-show="!nomegiocatore && elencoAllenatori.length>0">Connettiti</label>
+		<div ng-show="nomegiocatore">		
 			<label>Frequenza refresh (ms)</label>&nbsp;<input class="inputLarge" type="number" ng-model="timePing" ng-change="aggiornaTimePing(timePing)"></input>
 		</div>
 	</div> <!-- UTENTI -->
-	<div ng-show="giocatore"> 
+	<div ng-show="nomegiocatore"> 
 		<div class="sezione" ng-click="sezOfferte=!sezOfferte">
 		<i class="fa fa-chevron-down" ng-show="!sezOfferte"></i>
 		<i class="fa fa-chevron-up" ng-show="sezOfferte"></i>
@@ -198,7 +192,7 @@
 	
 			<div style="width:98%;text-align:center" ng-show="offertaVincente.nomegiocatore && timeStart<3"> <!-- RILANCIA -->
 				<div style="border-style:double;text-align:center">
-					<span ng-show=" avviabili.indexOf(nomegiocatore)>=0 && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',giocatore) ">
+					<span ng-show=" avviabili.indexOf(nomegiocatore)>=0 && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore) ">
 						<span class="spanAutoAllinea">
 							<i title="auto allinea" ng-click="autoAllinea=!autoAllinea" ng-show="autoAllinea" class="fa fa-check-square"></i>
 							<i title="auto allinea" ng-click="autoAllinea=!autoAllinea" ng-show="!autoAllinea" class="fa fa-square"></i>
@@ -211,23 +205,23 @@
 							<input  class="inputDatoOfferta" type="number"  ng-model="offerta"></input>
 						</span>
 						<span class="spanIconePunta">
-							<i title="offri" style="cursor:pointer;" class="fa fa-money" ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)" ng-click="inviaOfferta('IO',offerta)"></i>
+							<i title="offri" style="cursor:pointer;" class="fa fa-money" ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)" ng-click="inviaOfferta('IO',offerta)"></i>
 						</span>
 						
 						<span class="spanBtnIncrementa">
-							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)-1" class="btnIncrementa" type="button" value="{{offerta+1}}" ng-click="offerta=offerta+1;inviaOfferta('IO',offerta)"></input>
+							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)-1" class="btnIncrementa" type="button" value="{{offerta+1}}" ng-click="offerta=offerta+1;inviaOfferta('IO',offerta)"></input>
 						</span>
 						<span class="spanBtnIncrementa">
-							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)-5" class="btnIncrementa" type="button" value="{{offerta++5}}" ng-click="offerta=offerta+5;inviaOfferta('IO',offerta)"></input>
+							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)-5" class="btnIncrementa" type="button" value="{{offerta++5}}" ng-click="offerta=offerta+5;inviaOfferta('IO',offerta)"></input>
 						</span>
 						<span class="spanBtnIncrementa">
-							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',giocatore)-10" class="btnIncrementa" type="button" value="{{offerta++10}}" ng-click="offerta=offerta+10;inviaOfferta('IO',offerta)"></input>
+							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)-10" class="btnIncrementa" type="button" value="{{offerta++10}}" ng-click="offerta=offerta+10;inviaOfferta('IO',offerta)"></input>
 						</span>
 						<br>
-						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=giocatore">Puoi rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',giocatore)}})</label>
+						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=nomegiocatore">Puoi rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)}})</label>
 					</span>
-					<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',giocatore)">Non hai crediti sufficienti per rilanciare</label>
-					<label class="nextOperation" ng-show="avviabili.indexOf(nomegiocatore)<0 && offertaVincente.nomegiocatore!=giocatore">Non puoi rilanciare</label>
+					<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)">Non hai crediti sufficienti per rilanciare</label>
+					<label class="nextOperation" ng-show="avviabili.indexOf(nomegiocatore)<0 && offertaVincente.nomegiocatore!=nomegiocatore">Non puoi rilanciare</label>
 				</div>
 				<div ng-show="isAdmin" style="border-style:double;text-align:center">
 					<div style="color: green;text-align:center;cursor:pointer" ng-click="sezOperaComeVisible=!sezOperaComeVisible">
@@ -291,16 +285,16 @@
 			</div> <!-- TIMEOUT -->
 			<div ng-show="offertaVincente.nomegiocatore && !timeout"> <!-- OFFERTAINCORSO -->
 				<div align=center>
-					<label ng-show="timeStart==3 && offertaVincente.nomegiocatore==giocatore" class="finitoVincente">
+					<label ng-show="timeStart==3 && offertaVincente.nomegiocatore==nomegiocatore" class="finitoVincente">
 						Hai vinto {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}    
 					</label>
-					<label ng-show="timeStart==3 && offertaVincente.nomegiocatore!=giocatore" class="finitoPerdente">
+					<label ng-show="timeStart==3 && offertaVincente.nomegiocatore!=nomegiocatore" class="finitoPerdente">
 						{{offertaVincente.nomegiocatore}} ha vinto {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}
 					</label>
-					<label ng-show="timeStart<3 && offertaVincente.nomegiocatore==giocatore" class="correnteVincente">
+					<label ng-show="timeStart<3 && offertaVincente.nomegiocatore==nomegiocatore" class="correnteVincente">
 						Stai vincendo {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}
 					</label>
-					<label ng-show="timeStart<3 && offertaVincente.nomegiocatore!=giocatore" class="correntePerdente">
+					<label ng-show="timeStart<3 && offertaVincente.nomegiocatore!=nomegiocatore" class="correntePerdente">
 						{{offertaVincente.nomegiocatore}} sta vincendo {{offertaVincente.giocatore.nome}} ({{offertaVincente.giocatore.ruolo}}) {{offertaVincente.giocatore.squadra}} con {{offertaVincente.offerta}}
 					</label>
 						<br>

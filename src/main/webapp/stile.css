@@ -12,8 +12,31 @@ input {
  	width:40px;
  	height:40px;
  }
+ .tabellaUtenti{
+	 padding-left:5px;
+	 padding-right:5px;
+	 text-align:center;
+	 font-size:12;
+ }
  .tuttiPresi{
- 	background-color: red;
+	padding-left:5px;
+	padding-right:5px;
+	background-color: yellow;
+    font-weight: bold;
+	font-size:12;
+ }
+ .tdUtenti{
+ 	width:100px;
+ }
+ .lblLatenza{
+	font-size: 10px;
+	width:45px;
+ }
+ .nonTuttiPresi{
+	padding-left:5px;
+	padding-right:5px;
+	background-color: white;
+	font-size:12;
  }
  .checkbox{
  	width: 13px;
@@ -97,9 +120,6 @@ input {
  .btnIncrementa{
 	width: 55px;
  }
-.latenza {
-	font-size: 10px;
-}
 .sortorder:after {
   content: '\25b2';   
 }
@@ -211,9 +231,32 @@ input {
 	 	width:160px;
 	 	height:160px;
 	 }
- 	 .latenza {
-    		font-size: 30px;
-	 } 
+	 .tabellaUtenti{
+		 padding-left:5px;
+		 padding-right:5px;
+		 text-align:center;
+		font-size:30;
+	 }
+	 .tdUtenti{
+	 	width:300px;
+	 }
+	 .lblLatenza{
+    	font-size: 30px;
+		width:50px;
+	 }
+	 .tuttiPresi{
+		padding-left:5px;
+		padding-right:5px;
+		background-color: yellow;
+	    font-weight: normal;
+		font-size:40;
+	 }
+	 .nonTuttiPresi{
+		 padding-left:5px;
+		 padding-right:5px;
+		background-color: white;
+		font-size:40;
+	 }
 	 .checkbox{
 	 	width: 50px;
 	 	height: 50px; 	
@@ -253,7 +296,7 @@ input {
 		 text-align:right;
 		 padding-right:10px;
 		 width: 98%;
-		 font-size: 30px;
+		 font-size: 40px;
 		 font-weight: bold;
 	 }
 	 .imgPunta {

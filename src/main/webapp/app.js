@@ -7,7 +7,7 @@ app.run(
 			$rootScope.sezOfferte=true;
 			$rootScope.sezLog=true;
 			$rootScope.config=false;
-			$rootScope.giocatore="";
+			$rootScope.nomegiocatore="";
 			$rootScope.offerta=1;
 			$rootScope.offertaOC=1;
 			$rootScope.durataAsta=10;
@@ -16,6 +16,7 @@ app.run(
 			$rootScope.tokenUtente;
 			$rootScope.isAdmin=false;
 			$rootScope.calciatori=[];
+			$rootScope.utenti=[];
 			$rootScope.numeroUtenti=8;
 			$rootScope.turno=0;
 			$rootScope.tokenDispositiva=-1;
@@ -35,7 +36,7 @@ app.run(
 			$rootScope.nomegiocatoreOperaCome="";
 			$rootScope.forzaLogout= function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
-				$rootScope.giocatore='';
+				$rootScope.nomegiocatore='';
 			};
 			$rootScope.callDoConnect = function(nome,id, pwd) {
 				var esci=false;
@@ -53,11 +54,10 @@ app.run(
 			}
 			$rootScope.doConnect = function() {
 //		        console.log('Connected');
-		        if (!$rootScope.giocatore){
+		        if ($rootScope.nomegiocatore!=''){
 		        	$rootScope.tokenUtente=new Date().getTime();
 					$rootScope.sendMsg(JSON.stringify({'operazione':'connetti', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore, 'tokenUtente':$rootScope.tokenUtente}));
 		        }
-				$rootScope.giocatore=$rootScope.nomegiocatore;
 				$rootScope.calcolaIsAdmin();
 			}
 			$rootScope.caricaFile = function(tipoFile){
@@ -71,7 +71,7 @@ app.run(
 						$rootScope.caricamentoInCorso=false;
 					}
 					else {
-						alert('Errore!')
+						alert('Carica file. Errore!')
 					}
 						
 					});
@@ -123,7 +123,6 @@ app.run(
 						if(data.esitoDispositiva == 'OK'){
 							if (data.nuovoNomeLoggato){
 								$rootScope.nomegiocatore=data.nuovoNomeLoggato;
-								$rootScope.giocatore=data.nuovoNomeLoggato;
 							}
 							if(data.isATurni=="S")
 								$rootScope.isATurni=true;
@@ -136,14 +135,14 @@ app.run(
 							window.location.href = './index.html';
 						}
 						else {
-							alert('Errore!')
+							alert('Aggiorna config lega. Errore!')
 						}
 					});
 				}
 			}
 			$rootScope.doDisconnect = function() {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'disconnetti', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
-				$rootScope.giocatore="";
+				$rootScope.nomegiocatore="";
 				$rootScope.isAdmin=false;
 			}
 			$rootScope.connect = function() {
@@ -242,7 +241,7 @@ app.run(
 							$rootScope.cronologiaOfferte=data.ret;
 						}
 						else {
-							alert('Errore!')
+							alert('Cancella offerta. Errore!')
 						}
 					});
 				}
@@ -275,7 +274,7 @@ app.run(
 								$rootScope.isMantra=false;
 						}
 						else {
-							alert('Errore!')
+							alert('Conferma config iniziale. Errore!')
 						}
 					});
 				}
@@ -295,7 +294,7 @@ app.run(
 							$rootScope.inizializza(true);
 						}
 						else {
-							alert('Errore!')
+							alert('Azzera. Errore!')
 						}
 
 					});
@@ -311,9 +310,8 @@ app.run(
 					} else {
 						$rootScope.config=false;
 						$rootScope.connect();
-						$rootScope.giocatore=data.giocatoreLoggato;
-						if ($rootScope.giocatore){
-							$rootScope.nomegiocatore=$rootScope.giocatore;
+						$rootScope.nomegiocatore=data.giocatoreLoggato;
+						if ($rootScope.nomegiocatore){
 							$rootScope.idgiocatore=data.idLoggato;
 							$rootScope.doConnect();
 							$rootScope.pinga();
@@ -326,6 +324,7 @@ app.run(
 							$rootScope.isMantra=true;
 						else
 							$rootScope.isMantra=false;
+						$rootScope.utenti=data.utenti;
 						$rootScope.turno=data.turno;
 						$rootScope.budget=data.budget;
 						$rootScope.numAcquisti=data.numAcquisti;
@@ -346,6 +345,7 @@ app.run(
 				try {
 					ws.send(s);
 	            } catch (error) {
+	            		alert();
 	                	console.log("Errore invio messaggio:" + s);
 	            }				
 			}
@@ -398,7 +398,6 @@ app.run(
 							$resource('./cancellaSessioneNomeUtente',{}).save().$promise.then(function(data) {
 								$rootScope.idgiocatore="";
 								$rootScope.nomegiocatore="";
-								$rootScope.giocatore="";
 								if(msg.azzera=='X') $rootScope.elencoAllenatori=[];
 						});
 					}
@@ -428,7 +427,6 @@ app.run(
 						angular.forEach(msg.utentiRinominati, function(nuovoNome,vecchioNome) {
 							if ($rootScope.nomegiocatore==vecchioNome){
 								$rootScope.nomegiocatore=nuovoNome;
-								$rootScope.giocatore=nuovoNome;
 								$resource('./aggiornaSessioneNomeUtente',{}).save({'nuovoNome':nuovoNome}).$promise.then(function(data) {
 								});
 								
@@ -461,7 +459,7 @@ app.run(
 					}
 					if (msg.RESET_UTENTE){
 						if (msg.RESET_UTENTE==$rootScope.tokenUtente){
-							$rootScope.giocatore="";
+							$rootScope.nomegiocatore="";
 							alert("Utente esistente. Riconnettiti!");
 						}
 					}			
@@ -526,7 +524,7 @@ app.run(
 				}
 			}
 			$rootScope.pinga = function(){
-				if ($rootScope.giocatore)
+				if ($rootScope.nomegiocatore)
 					$rootScope.sendMsg(JSON.stringify({'operazione':'ping', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 			}
 			$rootScope.aggiornaTimePing= function(timePing) {
@@ -567,7 +565,7 @@ app.run(
 						$rootScope.sendMsg(JSON.stringify({'operazione':'confermaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 					}
 					else {
-						alert('Errore!')
+						alert('Conferma. Errore!')
 					}
 				});
 			}

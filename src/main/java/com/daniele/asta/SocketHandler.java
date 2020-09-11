@@ -127,6 +127,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			} 
 			httpSession.setAttribute("nomeGiocatoreLoggato", nomegiocatore);
 			httpSession.setAttribute("idLoggato", idgiocatore);
+			getUtentiLoggati().remove(nomegiocatore);
 			getUtentiLoggati().add(nomegiocatore);
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
