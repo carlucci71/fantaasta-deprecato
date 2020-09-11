@@ -27,7 +27,7 @@
 	     <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
 	 -->
  </div>
- 	<div class="utenteLoggato" ng-show="isLoggato()">
+ 	<div class="utenteLoggato" ng-show="giocatore">
 		Buona fortuna {{giocatore}}
 		<img ng-click="forzaLogout()" class="imgForzaLogout" style="margin-bottom:2px;cursor:pointer" title="disconntetti" src='./cestino.png'/>
 	</div>
@@ -64,7 +64,7 @@
 		Link
 	</div>
 	<div ng-show="sezLinkVisible" > <!-- LINK -->
-		<a ng-show="isLoggato() && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Admin</a>
+		<a ng-show="giocatore && bSemaforoAttivo" href="#" ng-click="caricaAdmin()">Admin</a>
 		<a href="./cronologiaOfferte.html" ng-click="aggiornaCronologiaOfferte()" target="_blank">Offerte</a>
 		<a href="./logger.html" target="_blank">Log</a>
 		<a href="./liberi.html" target="_blank">Liberi</a>
@@ -91,12 +91,12 @@
 		  </tr>
 		  <tr ng-repeat="utente in elencoAllenatori  | orderBy:'ordine'">
 		    	<td> <!-- nome -->
-		    		<label ng-class="{nonSonoIo: !sonoLoggato(utente), sonoIo: sonoLoggato(utente)}">{{utente.nome}}</label>
-			    	<img ng-show="!isLoggato() && !utenteCollegato(utente)" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" title='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)"/>
-					<img title="connesso" class="imgConnetti" ng-show="utenteCollegato(utente)" style="margin-bottom:2px" src='./connesso.jpeg' />		    	
-		    		<img ng-show="!sonoLoggato(utente) && ((isAdmin && utenteCollegato(utente)) || utenteScaduto(utente))" title="cancella utente" style="cursor:pointer"class="imgConnetti" src='./cestino.png' ng-click="cancellaUtente(utente)" />
-				    <img ng-show="sonoLoggato(utente)" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./disconnect-icon.png' title='disconnetti' ng-click="doDisconnect()" />
-					<label class="latenza" ng-show="utenteCollegato(utente)">({{latenza(utente)}})</label>
+		    		<label ng-class="{nonSonoIo: utente.nome!=giocatore, sonoIo: utente.nome==giocatore}">{{utente.nome}}</label>
+			    	<img ng-show="!giocatore && utenti.indexOf(utente.nome)==-1" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" title='connetti' src='./connect-icon.png' ng-click="callDoConnect(utente.nome, utente.id, utente.pwd)"/>
+					<img title="connesso" class="imgConnetti" ng-show="utenti.indexOf(utente.nome)>-1" style="margin-bottom:2px" src='./connesso.jpeg' />		    	
+		    		<img ng-show="utente.nome!=giocatore && ((isAdmin && utenti.indexOf(utente.nome)>-1) || utentiScaduti.indexOf(utente.nome)>-1)" title="cancella utente" style="cursor:pointer"class="imgConnetti" src='./cestino.png' ng-click="cancellaUtente(utente)" />
+				    <img ng-show="utente.nome==giocatore" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./disconnect-icon.png' title='disconnetti' ng-click="doDisconnect()" />
+					<label class="latenza" ng-show="utenti.indexOf(utente.nome)>-1">({{latenza(utente)}})</label>
 				</td>
 		    	<td ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center"> <!-- avvia --> 
 					<img ng-show="selCalciatore && durataAsta>0 && avviabili.indexOf(utente.nome)>=0" title="avvia asta"  class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(utente.nome, utente.id)" />
@@ -126,13 +126,13 @@
 		  </tr>
 		</table>
 		<br>
-		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
-		<label class="nextOperation" ng-show="!isLoggato() && elencoAllenatori.length>0">Connettiti</label>
-		<div ng-show="isLoggato()">		
+		<label class="nextOperation" ng-show="!giocatore && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
+		<label class="nextOperation" ng-show="!giocatore && elencoAllenatori.length>0">Connettiti</label>
+		<div ng-show="giocatore">		
 			<label>Frequenza refresh (ms)</label>&nbsp;<input class="inputLarge" type="number" ng-model="timePing" ng-change="aggiornaTimePing(timePing)"></input>
 		</div>
 	</div> <!-- UTENTI -->
-	<div ng-show="isLoggato()"> 
+	<div ng-show="giocatore"> 
 		<div class="sezione" ng-click="sezOfferte=!sezOfferte">
 		<i class="fa fa-chevron-down" ng-show="!sezOfferte"></i>
 		<i class="fa fa-chevron-up" ng-show="sezOfferte"></i>

@@ -37,10 +37,6 @@ app.run(
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				$rootScope.giocatore='';
 			};
-			$rootScope.isLoggato= function(){
-				if (!$rootScope.giocatore) return false;
-				return $rootScope.giocatore!='';
-			};
 			$rootScope.callDoConnect = function(nome,id, pwd) {
 				var esci=false;
 				if (pwd != '') {
@@ -64,14 +60,6 @@ app.run(
 				$rootScope.giocatore=$rootScope.nomegiocatore;
 				$rootScope.calcolaIsAdmin();
 			}
-			$rootScope.utenteScaduto = function(u){
-				var ret = false;
-				angular.forEach($rootScope.utentiScaduti, function(value,chiave) {
-					if(value == u.nome)
-						ret = true;
-					});
-				return ret;
-			}
 			$rootScope.caricaFile = function(tipoFile){
 				$rootScope.caricamentoInCorso=true;
 				var f = document.getElementById('file').files[0], r = new FileReader();
@@ -89,22 +77,6 @@ app.run(
 					});
 			    }
 			    r.readAsBinaryString(f);
-			}
-			$rootScope.sonoLoggato = function(u){
-				var ret = false;
-				angular.forEach($rootScope.utenti, function(value,chiave) {
-					if($rootScope.giocatore == u.nome)
-						ret = true;
-					});
-				return ret;
-			}
-			$rootScope.utenteCollegato = function(u){
-				var ret = false;
-				angular.forEach($rootScope.utenti, function(value,chiave) {
-					if(value == u.nome)
-						ret = true;
-					});
-				return ret;
 			}
 			$rootScope.ordinaUtente= function(u,verso) {
 				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
