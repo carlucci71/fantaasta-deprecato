@@ -67,6 +67,7 @@ public class MyController {
 	@Autowired SocketHandler socketHandler;
 	private Map<String, Map<String, Long>> mapSpesoTotale = new HashMap();
 	private Integer numAcquisti=0;
+	private Integer numMinAcquisti=0;
 	private Integer maxP=0;
 	private Integer maxD=0;
 	private Integer maxC=0;
@@ -103,6 +104,7 @@ public class MyController {
 				}
 			}
 			setNumAcquisti(configurazione.getNumeroAcquisti());
+			setNumMinAcquisti(configurazione.getNumeroMinAcquisti());
 			setMaxP(configurazione.getMaxP());
 			setMaxD(configurazione.getMaxD());
 			setMaxC(configurazione.getMaxC());
@@ -123,6 +125,7 @@ public class MyController {
 				ret.put("isMantra", "N");
 			}
 			ret.put("numAcquisti", numAcquisti);
+			ret.put("numMinAcquisti", numMinAcquisti);
 			ret.put("utenti", socketHandler.getUtentiLoggati());
 			ret.put("maxP", maxP);
 			ret.put("maxD", maxD);
@@ -187,9 +190,9 @@ public class MyController {
 
     	macroRuoliMantra.put("E", "C");
     	macroRuoliMantra.put("C", "C");
-    	macroRuoliMantra.put("W", "C");
     	macroRuoliMantra.put("M", "C");
 
+    	macroRuoliMantra.put("W", "A");
     	macroRuoliMantra.put("T", "A");
     	macroRuoliMantra.put("Pc", "A");
     	macroRuoliMantra.put("A", "A");
@@ -334,6 +337,7 @@ public class MyController {
 			Integer numUtenti=(Integer) body.get("numUtenti");
 			setBudget((Integer) body.get("budget"));
 			setNumAcquisti((Integer) body.get("numAcquisti"));
+			setNumMinAcquisti((Integer) body.get("numMinAcquisti"));
 			setMaxP((Integer) body.get("maxP"));
 			setMaxD((Integer) body.get("maxD"));
 			setMaxC((Integer) body.get("maxC"));
@@ -345,6 +349,7 @@ public class MyController {
 			configurazione.setNumeroGiocatori(numUtenti);
 			configurazione.setBudget(getBudget());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
+			configurazione.setNumeroMinAcquisti(getNumMinAcquisti());
 			configurazione.setMaxP(getMaxP());
 			configurazione.setMaxD(getMaxD());
 			configurazione.setMaxC(getMaxC());
@@ -400,6 +405,7 @@ public class MyController {
 			Map <String, String> utentiRinominati = new HashMap<>();
 			int i=0;
 			setNumAcquisti((Integer) body.get("numAcquisti"));
+			setNumMinAcquisti((Integer) body.get("numMinAcquisti"));
 			setMaxP((Integer) body.get("maxP"));
 			setMaxD((Integer) body.get("maxD"));
 			setMaxC((Integer) body.get("maxC"));
@@ -439,6 +445,7 @@ public class MyController {
 			configurazione.setMantra(getIsMantra());
 			configurazione.setBudget(getBudget());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
+			configurazione.setNumeroMinAcquisti(getNumMinAcquisti());
 			configurazione.setMaxP(getMaxP());
 			configurazione.setMaxD(getMaxD());
 			configurazione.setMaxC(getMaxC());
@@ -538,7 +545,7 @@ public class MyController {
 			if (tmp==null) tmp=new HashMap();
 			tmp.put("speso", tmp.get("speso")==null?speso.getCosto():tmp.get("speso") + speso.getCosto());
 			tmp.put("conta", tmp.get("conta")==null?speso.getConta():tmp.get("conta") + speso.getConta());
-			tmp.put("maxRilancio", budget-tmp.get("speso")-(numAcquisti-tmp.get("conta"))+1);
+			tmp.put("maxRilancio", budget-tmp.get("speso")-(numMinAcquisti-tmp.get("conta"))+1);
 			tmp.put("speso"+speso.getMacroRuolo(),speso.getCosto());
 			tmp.put("conta"+speso.getMacroRuolo(),speso.getConta());
 			getMapSpesoTotale().put(speso.getNome(), tmp);
@@ -814,6 +821,16 @@ public class MyController {
 
 	public void setMaxA(Integer maxA) {
 		this.maxA = maxA;
+	}
+
+
+	public Integer getNumMinAcquisti() {
+		return numMinAcquisti;
+	}
+
+
+	public void setNumMinAcquisti(Integer numMinAcquisti) {
+		this.numMinAcquisti = numMinAcquisti;
 	}
 
 }

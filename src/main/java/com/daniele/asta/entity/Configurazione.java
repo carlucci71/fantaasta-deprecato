@@ -13,6 +13,7 @@ public class Configurazione {
 	private boolean isMantra;
 	private Integer budget;
 	private Integer numeroAcquisti;
+	private Integer numeroMinAcquisti;
 	
 	private Integer maxP;
 	private Integer maxD;
@@ -87,11 +88,17 @@ public class Configurazione {
 	public void setMaxA(Integer maxA) {
 		this.maxA = maxA;
 	}
+	public Integer getNumeroMinAcquisti() {
+		return numeroMinAcquisti;
+	}
+	public void setNumeroMinAcquisti(Integer numeroMinAcquisti) {
+		this.numeroMinAcquisti = numeroMinAcquisti;
+	}
 	@Override
 	public String toString() {
 		return "Configurazione [id=" + id + ", isATurni=" + isATurni + ", isMantra=" + isMantra + ", budget=" + budget
-				+ ", numeroAcquisti=" + numeroAcquisti + ", maxP=" + maxP + ", maxD=" + maxD + ", maxC=" + maxC
-				+ ", maxA=" + maxA + ", numeroGiocatori=" + numeroGiocatori + "]";
+				+ ", numeroAcquisti=" + numeroAcquisti + ", numeroMinAcquisti=" + numeroMinAcquisti + ", maxP=" + maxP
+				+ ", maxD=" + maxD + ", maxC=" + maxC + ", maxA=" + maxA + ", numeroGiocatori=" + numeroGiocatori + "]";
 	}
 
 }

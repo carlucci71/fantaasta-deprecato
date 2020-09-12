@@ -46,6 +46,8 @@
 	<br>
 	Numero acquisti:<input  class="inputDato" type="number"  ng-model="numAcquisti"></input>
 	<br>
+	Numero minimo acquisti:<input  class="inputDato" type="number"  ng-model="numMinAcquisti"></input>
+	<br>
 	Max portieri:<input  class="inputDato" type="number"  ng-model="maxP"></input>
 	<br>
 	Max difensori:<input  class="inputDato" type="number"  ng-model="maxD"></input>
@@ -106,7 +108,7 @@
 					<label ng-show="utente.ordine==turno"><i class="fa fa-thumbs-up"></i></label>
 					<img title="forza turno" ng-show="isAdmin && utente.ordine!=turno" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
 				</td>
-		    	<td ng-class="getFromMapSpesoTotale('CONTA',utente.nome)>=numAcquisti?'tuttiPresi':'nonTuttiPresi'">  <!-- presi -->
+		    	<td ng-class="getFromMapSpesoTotale('CONTA',utente.nome)>=numMinAcquisti?'tuttiPresi':'nonTuttiPresi'">  <!-- presi -->
 		    		{{getFromMapSpesoTotale('CONTA',utente.nome)}} ({{getFromMapSpesoTotale('SPESO',utente.nome)}})
 		    	</td>
 		    	<td ng-class="getFromMapSpesoTotale('CONTAP',utente.nome)>=maxP?'tuttiPresi':'nonTuttiPresi'">  <!-- presiP -->

@@ -482,6 +482,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("isMantra", "N");
 		}
 		m.put("numAcquisti", myController.getNumAcquisti());
+		m.put("numMinAcquisti", myController.getNumMinAcquisti());
 		m.put("maxP", myController.getMaxP());
 		m.put("maxD", myController.getMaxD());
 		m.put("maxC", myController.getMaxC());

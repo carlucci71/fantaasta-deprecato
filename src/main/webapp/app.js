@@ -18,7 +18,7 @@ app.run(
 			$rootScope.isAdmin=false;
 			$rootScope.calciatori=[];
 			$rootScope.utenti=[];
-			$rootScope.numeroUtenti=8;
+			$rootScope.numeroUtenti=10;
 			$rootScope.turno=0;
 			$rootScope.tokenDispositiva=-1;
 			$rootScope.isATurni=true;
@@ -28,11 +28,12 @@ app.run(
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.timePing=1000;
 			$rootScope.budget=500;
-			$rootScope.numAcquisti=23;
-			$rootScope.maxP=3;
-			$rootScope.maxD=8;
-			$rootScope.maxC=8;
-			$rootScope.maxA=6;
+			$rootScope.numAcquisti=27;
+			$rootScope.numMinAcquisti=23;
+			$rootScope.maxP=$rootScope.numAcquisti;
+			$rootScope.maxD=$rootScope.numAcquisti;
+			$rootScope.maxC=$rootScope.numAcquisti;
+			$rootScope.maxA=$rootScope.numAcquisti;
 			$rootScope.idgiocatoreOperaCome=-1;
 			$rootScope.nomegiocatoreOperaCome="";
 			$rootScope.forzaLogout= function(){
@@ -120,7 +121,7 @@ app.run(
 					alert("Errore!! Nomi non univoci");
 				} else {
 					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
-					$resource('./aggiornaConfigLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+					$resource('./aggiornaConfigLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							if (data.nuovoNomeLoggato){
 								$rootScope.nomegiocatore=data.nuovoNomeLoggato;
@@ -226,7 +227,7 @@ app.run(
 				}
 				if (tipo=='MAXRILANCIO'){
 					if(!$rootScope.mapSpesoTotale || !$rootScope.mapSpesoTotale[nome]){
-						return $rootScope.budget-$rootScope.numAcquisti+1;
+						return $rootScope.budget-$rootScope.numMinAcquisti+1;
 					}else{
 //						console.log("1-" + $rootScope.mapSpesoTotale[nome] + "2-" + nome + "3-" + $rootScope.mapSpesoTotale);
 						return $rootScope.mapSpesoTotale[nome].maxRilancio;
@@ -262,7 +263,7 @@ app.run(
 			}
 			$rootScope.confermaConfigIniziale=function(){
 				if ($rootScope.numeroUtenti>0){
-					$resource('./inizializzaLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
+					$resource('./inizializzaLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							$rootScope.ricaricaIndex(false);
 							if(data.isATurni=="S")
@@ -335,6 +336,7 @@ app.run(
 						$rootScope.turno=data.turno;
 						$rootScope.budget=data.budget;
 						$rootScope.numAcquisti=data.numAcquisti;
+						$rootScope.numMinAcquisti=data.numMinAcquisti;
 						$rootScope.maxP=data.maxP;
 						$rootScope.maxD=data.maxD;
 						$rootScope.maxC=data.maxC;
@@ -647,7 +649,13 @@ app.run(
 				if(newValue == 'A') max=$rootScope.maxA;
 				$rootScope.avviabili=[];
 				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
-					if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) $rootScope.avviabili.push(value.nome);
+					var avv1=false;
+					var avv2=false;
+					if($rootScope.getFromMapSpesoTotale('CONTA',value.nome)<$rootScope.numAcquisti) avv1=true;
+					if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) avv2=true;
+					if(avv1 && avv2){
+						$rootScope.avviabili.push(value.nome)					
+					}
 				});
 				
 
