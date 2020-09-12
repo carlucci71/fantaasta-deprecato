@@ -45,22 +45,22 @@ server.port=8081
 
 # Attività iniziali dopo il primo accesso
 Al primo accesso verrà chiesto di inserire i seguenti valori:
->Numero utenti
-Budget
-Numero massimo giocatori acquistabili
-Numero massimo portieri acquistabili
-Numero massimo difensori acquistabili
-Numero massimo centrocampisti acquistabili
-Numero massimo attaccanti acquistabili
-Se le chiamate verranno fatte a turno o chiunque può chiamare senza ordine
-Se il fantacalcio sarà in modalità Mantra
+* Numero utenti
+* Budget
+* Numero massimo giocatori acquistabili
+* Numero massimo portieri acquistabili
+* Numero massimo difensori acquistabili
+* Numero massimo centrocampisti acquistabili
+* Numero massimo attaccanti acquistabili
+* Se le chiamate verranno fatte a turno o chiunque può chiamare senza ordine
+* Se il fantacalcio sarà in modalità Mantra
 
 Confermando questi dati verrà caricata la pagina di admin in cui sarà possibile:
->Cambiare i nomi degli allenatori
-Impostare le password
-Attribuire il ruolo di admin agli allenatori
-Cambiare l'ordine degli allenatori (per le chiamate a turni)
-Modificare altre informazioni già presentate in precedenza
+* Cambiare i nomi degli allenatori
+* Impostare le password
+* Attribuire il ruolo di admin agli allenatori
+* Cambiare l'ordine degli allenatori (per le chiamate a turni)
+* Modificare altre informazioni già presentate in precedenza
 
 Se si modifica qualche informazione, andrà confermata con il bottone `aggiorna configurazione`.
 
