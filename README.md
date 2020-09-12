@@ -72,6 +72,8 @@ L'ultima attività di configurazione da effettuare consiste nel caricare la list
 * leghefantacalcio  (se selezionata la scelta Mantra)
 scarica lista svincolati da https://leghe.fantacalcio.it/fanta-viva/lista-svincolati, aprilo con excel, rimuovi le prime 4 righe, -esporta - cambia tipo file - testo delimitato da tabulazione e salva con nome
 
+Sono presenti due file di esempio.
+
 # Funzionalità di gioco
 La pagina è divisa in accordion, in modo da collassare le sezioni che non si vogliono vedere. Sono presenti dei suggerimenti, in rosso, contestualizzati per suggerire l'operatività da effettuare. In modalità mantra, oltre ai ruoli, è previsto un macro ruolo per aiutare i filtri.
 
@@ -104,4 +106,13 @@ Quando il tempo finisce, o l'amministratore termina l'asta, questo potrà **conf
 
 #### Accordion log sessione corrente
 Verranno elencate tutte le attività effettuate fino all'avvio di una nuova asta.
+
+# Ripristino database
+Sia con il database H2 che con MySql (avendo l'accortezza di settare il parametro APPEND come indicato in precedenza sul file `spy.properties`) è possibile ripristinare un database ad un salvataggio precedente.
+
+Tutte le operazioni sul db sono tracciate nel file indicato dalla chiave logfile del `spy.properties` (il valore di default è spyAsta.log che verrà generato nella cartella di avvio dell'applicazione).
+Se la chiave APPEND sarà indicata a true, verranno accodate le istruzioni per ogni riavvio dell'applicazione.
+
+In caso di crash dell'applicazione è possibile recuperare questo file, salvarlo in un altro path, ad es. c:\restoreAs.txt e, una volta riavviata l'applicazione, ripristinare questa fotografia di database con il comando:
+`curl -X POST "http://localhost:8081/restore" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"PATH\": \"C:\\restoreAs.txt\"}"`
 
