@@ -73,7 +73,7 @@ L'ultima attività di configurazione da effettuare consiste nel caricare la list
 scarica lista svincolati da https://leghe.fantacalcio.it/fanta-viva/lista-svincolati, aprilo con excel, rimuovi le prime 4 righe, -esporta - cambia tipo file - testo delimitato da tabulazione e salva con nome
 
 # Funzionalità di gioco
-La pagina è divisa in accordion, in modo da collassare le sezioni che non si vogliono vedere
+La pagina è divisa in accordion, in modo da collassare le sezioni che non si vogliono vedere. Sono presenti dei suggerimenti, in rosso, contestualizzati per suggerire l'operatività da effettuare. In modalità mantra, oltre ai ruoli, è previsto un macro ruolo per aiutare i filtri.
 
 #### Accordion Link
 E' possibile accedere a:
@@ -91,7 +91,9 @@ Solo l'amministratore, avrà anche la possibilità di avviare un'asta per un alt
 
 #### Accordion offerte
 Se è il proprio turno (o se si è amministratori) la prima attività da fare sarà **selezionare** il calciatore da offrire ed **avviare** l'asta (la durata è personalizzabile dall'amministratore). Dopo che sarà avviata, tutti gli allenatori vedranno il **progressivo del tempo rimanente** per effettuare un rilancio, la **situazione aggiornata** ed avranno la possibilità di **rilanciare** quanto indicato nell'apposito campo. Esiste la possibilità di **allineare in automatico** con i rilanci degli altri allenatori o **manualmente** con l'apposita icona. Inoltre esistono le scorciatoie per puntare **+1, +5 o +10**. 
+
 Chiunque potrà sospendere il conto alla rovescia con il bottone **pausa**.
+Sono presenti i controlli per **bloccare** l'avvio ed il rilancio in caso di credito insufficiente o slot ruolo già completo.
 
 L'**amministratore** avrà le seguenti possibilità aggiuntive:
 * operare per qualunque altro allenatore.
@@ -102,13 +104,4 @@ Quando il tempo finisce, o l'amministratore termina l'asta, questo potrà **conf
 
 #### Accordion log sessione corrente
 Verranno elencate tutte le attività effettuate fino all'avvio di una nuova asta.
-
-
-
-
-
-
-
-
-
 
