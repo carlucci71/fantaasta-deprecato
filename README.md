@@ -1,5 +1,5 @@
 # Asta online
-Asta online è una applicazione per gestire le asta del fantacalcio. Funziona sia in modalità "admin" singolo utente che con accessi multipli. Sono previsti due stile di presentazioni una per schermi fino a 980px ed una per schermi maggiori.
+Asta online è una applicazione per gestire le asta del fantacalcio. Funziona sia in modalità singolo utente ("amministratore") che con accessi multipli. Sono previsti due stile di presentazioni una per schermi fino a 980px ed una per schermi maggiori.
 
 # Configurazione iniziale
 Funziona sia con database MySql che H2 in memory (in questo caso tutte le informazioni si perdono al riavvio del programma, anche se esiste una modalità di recupero da file che verrà spiegata in seguito).
