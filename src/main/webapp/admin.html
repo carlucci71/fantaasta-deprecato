@@ -22,7 +22,7 @@
 <div ng-show ="!bSemaforoAttivo">
 <label>OFFERTA IN CORSO</label>
 </div>
-<div ng-show="giocatore && bSemaforoAttivo">
+<div ng-show="nomegiocatore && bSemaforoAttivo">
 	<table>
 		  <tr>
 		  	<td ng-show="isAdmin" colspan=2>Ordine</td>
@@ -30,7 +30,7 @@
 		  	<td>Password</td>
 			<td ng-show="isAdmin">Admin</td>
 		  </tr>
-		  <tr ng-repeat="utente in elencoAllenatori | orderBy:'ordine'" ng-show="isAdmin || utente.nome==giocatore">
+		  <tr ng-repeat="utente in elencoAllenatori | orderBy:'ordine'" ng-show="isAdmin || utente.nome==nomegiocatore">
 			<td ng-show="isAdmin" style="padding-left:5px;padding-right:5px;text-align:center;widht:50px">
 				<i ng-show="utente.ordine<elencoAllenatori.length-1" class="fa fa-angle-double-down" 
 				style="cursor: pointer" ng-click='ordinaUtente(utente,"D")'></i>

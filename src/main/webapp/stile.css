@@ -74,13 +74,7 @@ input {
 	 font-size: 16px;
 	 font-weight: bold;
  }
- .tblUtenti{
-	padding-left:10px;
-	padding-right:10px;
-	text-align:center;
-	width:200px;
- }
- .inputLarge{
+  .inputLarge{
 	width: 70px;'
  }
  .imgPunta {
@@ -275,12 +269,6 @@ input {
 	 }
 	 .selCalciatore{
 	 	height:350px;
-	 }
-	 .tblUtenti{
-		padding-left:10px;
-		padding-right:10px;
-		text-align:center;
-		width:600px;
 	 }
 	 .inputLarge{
 		width: 180px;'

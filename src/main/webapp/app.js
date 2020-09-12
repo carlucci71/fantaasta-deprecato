@@ -1,6 +1,7 @@
 var app = angular.module('app', [ 'ngResource','ngAnimate', 'ngSanitize', 'ui.bootstrap' ]);
 app.run(
-		function($rootScope, $resource, $interval){
+		function($rootScope, $resource, $interval,$q){
+	    	$rootScope.connessioneKO="Connessione al backend in corso...";
 			$rootScope.sezLinkVisible=true;
 			$rootScope.sezUtentiVisible=true;
 			$rootScope.sezOperaComeVisible=true;
@@ -145,29 +146,28 @@ app.run(
 				$rootScope.nomegiocatore="";
 				$rootScope.isAdmin=false;
 			}
-			$rootScope.connect = function() {
-				 var loc = window.location, new_uri;
-	             if (loc.protocol === "https:") {
-	                 new_uri = "wss:";
-	             } else {
-	                 new_uri = "ws:";
-	             }
-	             new_uri += "//" + loc.host;
-//	             new_uri += loc.pathname + "messaggi-websocket";
-	             new_uri += '/' + "messaggi-websocket";
-	             ws = new WebSocket(new_uri);
-                 ws.onmessage = function(data){
+			$rootScope.connectWS = function() {
+				var alreadyConnected;
+				var deferred = $q.defer();
+				deferred.resolve("Hi");
+				var loc = window.location, new_uri;
+				if (loc.protocol === "https:") {
+					new_uri = "wss:";
+				} else {
+					new_uri = "ws:";
+				}
+				new_uri += "//" + loc.host;
+				//				new_uri += loc.pathname + "messaggi-websocket";
+				new_uri += '/' + "messaggi-websocket";
+				ws = new WebSocket(new_uri);
+				ws.onmessage = function(data){
 					$rootScope.getMessaggio(data.data);
 				}
+				return deferred.promise;			
 			}
+
 			$rootScope.forzaTurno= function(turno) {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'forzaTurno', 'turno':turno,'idgiocatore':$rootScope.idgiocatore}));
-			}
-			$rootScope.disconnect= function() {
-			    if (ws != null) {
-			        ws.close();
-			    }
-//			    console.log("Disconnected");
 			}
 			$resource('./giocatoriLiberi',{}).query().$promise.then(function(data) {
 				$rootScope.calciatori=data;
@@ -183,6 +183,7 @@ app.run(
 				
 			}
 			$rootScope.getFromMapSpesoTotale=function(tipo, nome){
+				if (!$rootScope || !$rootScope.mapSpesoTotale) return 0;
 				if (tipo=='SPESO'){
 					if(!$rootScope.mapSpesoTotale[nome]) return 0;
 					return $rootScope.mapSpesoTotale[nome].speso;
@@ -263,7 +264,7 @@ app.run(
 				if ($rootScope.numeroUtenti>0){
 					$resource('./inizializzaLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
-							$rootScope.inizializza(false);
+							$rootScope.ricaricaIndex(false);
 							if(data.isATurni=="S")
 								$rootScope.isATurni=true;
 							else
@@ -272,6 +273,12 @@ app.run(
 								$rootScope.isMantra=true;
 							else
 								$rootScope.isMantra=false;
+					    	$rootScope.connectWS().then(function(){
+						        setTimeout(function () {
+									$rootScope.callDoConnect("GIOC0",0,"");
+									window.location.href = './admin.html';
+						        }, 1000);
+					        });
 						}
 						else {
 							alert('Conferma config iniziale. Errore!')
@@ -291,7 +298,7 @@ app.run(
 					$resource('./azzera',{}).save({'conferma':'S','idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							$rootScope.sendMsg(JSON.stringify({'operazione':'azzera', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
-							$rootScope.inizializza(true);
+							$rootScope.ricaricaIndex(true);
 						}
 						else {
 							alert('Azzera. Errore!')
@@ -300,8 +307,9 @@ app.run(
 					});
 				}
 			}
-			$rootScope.inizializza=function(chiudi){
+			$rootScope.ricaricaIndex=function(chiudi){
 				$resource('./init',{}).get().$promise.then(function(data) {
+					$rootScope.connectWS();
 					if (data.DA_CONFIGURARE){
 						$rootScope.config=true;
 						if(chiudi){
@@ -309,11 +317,10 @@ app.run(
 						}
 					} else {
 						$rootScope.config=false;
-						$rootScope.connect();
 						$rootScope.nomegiocatore=data.giocatoreLoggato;
 						if ($rootScope.nomegiocatore){
 							$rootScope.idgiocatore=data.idLoggato;
-							$rootScope.doConnect();
+//							$rootScope.doConnect();
 							$rootScope.pinga();
 						}
 						if(data.isATurni=="S")
@@ -338,40 +345,36 @@ app.run(
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
 						$rootScope.aggiornaTimePing($rootScope.timePing);
 					}
-				});
-			}
-			$rootScope.inizializza(false);
-			$rootScope.sendMsgORIG=function(s){
+	            })}
+			
+			$rootScope.ricaricaIndex(false);
+			$rootScope.sendMsg=function(s){
 				try {
-					ws.send(s);
+				    if (ws.readyState === 1) {
+				    	ws.send(s);
+				    	$rootScope.connessioneKO="";
+				    }
+				    else 
+				    {
+				    	if (ws.readyState ==0){
+					    	$rootScope.connessioneKO="Connessione al backend in corso...";
+				    	}
+				    	else if (ws.readyState ==3){
+					    	$rootScope.connessioneKO="Backend non raggiungibile";
+					    	$rootScope.connectWS().then(function(){
+						        setTimeout(function () {
+									$rootScope.ricaricaIndex(false);
+						        }, 1000);
+					        });
+				    	}
+				    	else {
+					    	$rootScope.connessioneKO="Errore di connessione";
+				    	}
+				    }
 	            } catch (error) {
-	            		alert();
-	                	console.log("Errore invio messaggio:" + s);
+			    	$rootScope.connessioneKO=error;
 	            }				
 			}
-			/* */
-			$rootScope.sendMsg=function (message, callback) {
-				$rootScope.waitForConnection(function () {
-					ws.send(message);
-			        if (typeof callback !== 'undefined') {
-			          callback();
-			        }
-			    }, 1000);
-			};
-			$rootScope.waitForConnection = function (callback, interval) {
-			    if (ws.readyState === 1) {
-			        callback();
-			    } else {
-			        var that = this;
-			        // optional: implement backoff for interval here
-			        setTimeout(function () {
-			            that.waitForConnection(callback, interval);
-			        }, interval);
-			    }
-			};			
-			/* */
-			
-			
 			$rootScope.latenza = function(u){
 				var ret = -1;
 				angular.forEach($rootScope.pingUtenti, function(value,chiave) {
@@ -524,7 +527,7 @@ app.run(
 				}
 			}
 			$rootScope.pinga = function(){
-				if ($rootScope.nomegiocatore)
+//				if ($rootScope.nomegiocatore)
 					$rootScope.sendMsg(JSON.stringify({'operazione':'ping', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 			}
 			$rootScope.aggiornaTimePing= function(timePing) {

@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -527,7 +528,24 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTPSESSIONID");
+//		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTPSESSIONID");
+//		Iterator<WebSocketSession> iterator = sessions.iterator();
+//		System.out.println("++++++++++++++++++++++++++++++++++++++++");
+//		int c =0;
+//		List<WebSocketSession> rimuovibili= new ArrayList<>();
+//		while (iterator.hasNext()) {
+//			WebSocketSession webSocketSession = (WebSocketSession) iterator.next();
+//			HttpSession httpSession2 = (HttpSession) webSocketSession.getAttributes().get("HTTPSESSIONID");
+//			if(httpSession2 !=null && httpSession2.getId().equals(httpSession.getId())) {
+//				System.out.println(httpSession2.getId());
+//				rimuovibili.add(webSocketSession);
+//				c++;
+//			}
+//		}
+//		System.out.println("-------------------------------------" + c);
+//		for (WebSocketSession webSocketSession : rimuovibili) {
+//			sessions.remove(webSocketSession);
+//		}
 		sessions.add(session);
 		
 	}

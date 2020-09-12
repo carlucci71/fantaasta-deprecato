@@ -22,24 +22,24 @@
 </div>	
 <table border class="tblLog" >
   <tr>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">Ruolo</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">Id</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">Giocatore</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">Squadra</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">Costo</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">Allenatore</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">SqlTime</td>
-    <td class="divCalciatore" ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">Cancella</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">Ruolo</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">Id</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">Giocatore</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">Squadra</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">Costo</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">Allenatore</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">SqlTime</td>
+    <td class="tabellaUtenti" ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">Cancella</td>
   </tr>
   <tr ng-repeat="offerta in cronologiaOfferte">
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.ruolo}}</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.idGiocatore}}</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.giocatore}}</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.squadra}}</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.costo}}</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.allenatore}}</td>
-    <td class="divCalciatore" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.sqlTime}}</td>
-    <td class="divCalciatore" ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.ruolo}}</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.idGiocatore}}</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.giocatore}}</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.squadra}}</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.costo}}</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.allenatore}}</td>
+    <td class="tabellaUtenti" style="padding-left:10px;padding-right:10px;text-align:center">{{offerta.sqlTime}}</td>
+    <td class="tabellaUtenti" ng-show="isAdmin" style="padding-left:10px;padding-right:10px;text-align:center">
 		<a href=#><img src='./cestino.png' ng-click="cancellaOfferta(offerta)" height="20" width="20"/></a>
 	</td>
      

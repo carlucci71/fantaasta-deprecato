@@ -140,7 +140,7 @@ public class MyController {
 	
 	
 	/*
-	 curl -X POST "http://localhost:8080/restore" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"PATH\": \"C:\\1\\restoreAs.txt\"}"
+	 curl -X POST "http://localhost:8081/restore" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"PATH\": \"C:\\restoreAs.txt\"}"
 	 */
 	@PostMapping("/restore")
 	@Transactional 
@@ -153,12 +153,20 @@ public class MyController {
 			if (sql.toUpperCase().startsWith("CREATE")) {
 				String tableName=sql.toUpperCase().replace("CREATE TABLE ", "");
 				tableName=tableName.substring(0,tableName.indexOf(" "));
-				Query qy = em.createNativeQuery("DROP TABLE " + tableName);
-				qy.executeUpdate();
+				try {
+					String sqlString = "DROP TABLE if exists " + tableName;
+					System.out.println(sqlString);
+					Query qy = em.createNativeQuery(sqlString);
+					qy.executeUpdate();
+				}
+				catch (Exception e) {
+					System.out.println("Drop table:" + tableName + " in errore");
+				}
 			}
-//			System.out.println(sql);
+			//			System.out.println(sql);
 			Query qy = em.createNativeQuery(sql);
 			try {
+				System.out.println(sql);
 				qy.executeUpdate();
 			}
 			catch (Exception e) {
