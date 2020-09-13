@@ -1,8 +1,8 @@
-# Asta online
-Asta online è una applicazione per gestire le asta del fantacalcio. Funziona sia in modalità singolo utente ("amministratore") che con accessi multipli. Sono previsti due stile di presentazioni una per schermi fino a 980px ed una per schermi maggiori.
+# Descrizione
+Fantaasta è una applicazione per gestire, in modalità online, le asta del fantacalcio. Funziona sia in modalità singolo utente ("amministratore") che con accessi multipli. Sono previsti due stile di presentazioni una per schermi fino a 980px ed una per schermi maggiori.
 
 # Configurazione iniziale
-Funziona sia con database MySql che H2 in memory (in questo caso tutte le informazioni si perdono al riavvio del programma, anche se esiste una modalità di recupero da file che verrà spiegata in seguito).
+Funziona sia con database MySql/Postgres che H2 in memory (in questo caso tutte le informazioni si perdono al riavvio del programma, anche se esiste una modalità di recupero da file che verrà spiegata in seguito). 
 
 Per creare un database ed un utente su mysql si può usare lo script seguente:
  	
@@ -19,7 +19,7 @@ spring.datasource.username=
 spring.datasource.password=
 ~~~~
 
-Se il database è h2 o la prima esecuzione di mysql configurare le chiavi:
+Se il database è h2 o la prima esecuzione di mysql/postgres configurare le chiavi:
 `application.properties`
 ~~~~
 spring.jpa.hibernate.ddl-auto=create
@@ -29,7 +29,7 @@ spring.jpa.hibernate.ddl-auto=create
 append = false
 ~~~~
 
-Se il database è mysql, dalla seconda esecuzione cambiare i valori in (se si vuole partire dai dati salvati in precedenza senza perdere tutto ad ogni esecuzione):
+Se il database è mysql/postgres, dalla seconda esecuzione cambiare i valori in (se si vuole partire dai dati salvati in precedenza senza perdere tutto ad ogni esecuzione):
 ~~~~
 spring.jpa.hibernate.ddl-auto=update
 ~~~~
@@ -42,6 +42,10 @@ E' possibile configurare la porta modificando la chiave:
 ~~~~
 server.port=8081
 ~~~~
+
+# Esecuzione dell'applicazione
+L'applicazione si può avviare con il seguente comando, dalla root del progetto:
+`mvn spring-boot:run`
 
 # Attività iniziali dopo il primo accesso
 Al primo accesso verrà chiesto di inserire i seguenti valori:
@@ -89,6 +93,7 @@ E' possibile accedere a:
 Una volta caricato l'url dell'applicazione è possibile connettersi cliccando sull'apposita icona, se si è settata una passowrd verrà richiesta altrimenti l'accesso sarà diretto.
 Una volta connessi si potrà uscire scollegarsi tramite l'icona vicino al proprio nome oppure dal cestino in alto a destra. L'amministratore può escludere qualunque altro allenatore tramite l'iconda del cestino. Se un allenatore non contatta il backend per più di 20 secondi (conteggiato da latenza) potrà essere cacciato da chiunque.
 In ciascuna riga sarà presente una icona, per segnalare l'effettivo collegamento degli altri allenatori. L'indicazione del giocatore di turno (forzabile dall'amministratore) e un riepilogo dei giocatori presi (dettagliato per ruolo).
+E' presente anche la possibilità di configurare la frequenza di **refresh** del client verso il backend. Si **sconsigliano** valori sotto i 1000 ms.
 Solo l'amministratore, avrà anche la possibilità di avviare un'asta per un altro allenatore, tramite l'icona che appare una volta selezionato un giocatore.
 
 #### Accordion offerte
