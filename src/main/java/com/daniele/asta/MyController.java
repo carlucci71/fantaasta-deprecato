@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
@@ -23,6 +24,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,8 +85,51 @@ public class MyController {
 	private Boolean isATurni;
 	private Boolean isMantra;
 
-	@RequestMapping("/ses")
-	public Map<String, Object> ses() {
+	
+	@Autowired HttpSessionConfig httpSessionConfig;
+	
+	@RequestMapping("/sesH")
+	public Map<String, Object> sesH() {
+		Map<String, Object> ret = new HashMap<>();
+		List<HttpSession> activeSessions = httpSessionConfig.getActiveSessions();
+		Map<String, Object> m=new HashMap<>();
+		for (HttpSession hs : activeSessions) {
+			List<Object> l = new ArrayList<>();
+			l.add(e(hs,"SPRING_SECURITY_SAVED_REQUEST"));
+			l.add(e(hs,"SPRING_SECURITY_CONTEXT"));
+			l.add("creation   :"+d(hs.getCreationTime()));
+			l.add("last access:"+d(hs.getLastAccessedTime()));
+			l.add("max inactive interval:" + String.valueOf(hs.getMaxInactiveInterval()));
+			l.add("new:"+hs.isNew());
+			m.put(hs.getId(), l);
+		}
+		ret.put("sessioni",m);
+		return ret;
+	}
+
+	private String d(Long l) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(l);
+		return sdf.format(c.getTime());
+	}
+	private String e(HttpSession hs,String name) {
+		String s=name + ":";
+		if(hs.getAttribute(name) != null) {
+			s=s + hs.getAttribute(name).toString();
+			if (hs.getAttribute(name) instanceof DefaultSavedRequest) {
+				List<Cookie> cookies = ((DefaultSavedRequest)hs.getAttribute(name)).getCookies();
+				for (Cookie cookie : cookies) {
+					s = s + "COOKIE:" + cookie.getName() + " " + cookie.getValue() + " ";
+				}
+			}
+		}
+		return s;
+	}
+	
+	
+	@RequestMapping("/sesW")
+	public Map<String, Object> sesW() {
 		Map<String, Object> ret = new HashMap<>();
 		List<WebSocketSession> sessions = socketHandler.getSessions();
 		Map<String,List<LogSocket>> l=new LinkedHashMap<>();
@@ -127,7 +172,7 @@ public class MyController {
 			list.add(ls);
 			l.put(jSessionID,list);
 		}
-		ret.put("mappa", l);
+		ret.put("sessioni", l);
 		return ret;
 	}
 	
