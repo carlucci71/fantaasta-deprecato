@@ -1,28 +1,43 @@
 package com.daniele.asta;
 
+import java.util.List;
+
 public class LogSocket {
 	private String id;
-	private String hand;
-	private String local;
+//	private String jSessionId;
+	private String pagina;
+	private List<String> handAgent;
+//	private Long handDate;
+//	private Long handExpire;
+//	private Long handIfModifiedSince;
+//	private Long handIfUnmodifiedSince;
+//	private Long handLastModify;
+	private String handOrigin;
+//	private String local;
 	private String remote;
-	private boolean open;
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getHand() {
-		return hand;
+	public String getPagina() {
+		return pagina;
 	}
-	public void setHand(String hand) {
-		this.hand = hand;
+	public void setPagina(String pagina) {
+		this.pagina = pagina;
 	}
-	public String getLocal() {
-		return local;
+	public List<String> getHandAgent() {
+		return handAgent;
 	}
-	public void setLocal(String local) {
-		this.local = local;
+	public void setHandAgent(List<String> handAgent) {
+		this.handAgent = handAgent;
+	}
+	public String getHandOrigin() {
+		return handOrigin;
+	}
+	public void setHandOrigin(String handOrigin) {
+		this.handOrigin = handOrigin;
 	}
 	public String getRemote() {
 		return remote;
@@ -30,21 +45,12 @@ public class LogSocket {
 	public void setRemote(String remote) {
 		this.remote = remote;
 	}
-	public boolean isOpen() {
-		return open;
-	}
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
 	@Override
 	public String toString() {
-		return "LogSocket [id=" + id + ", hand=" + hand + ", local=" + local + ", remote=" + remote + ", open=" + open
-				+ "]";
+		return "LogSocket [id=" + id + ", pagina=" + pagina + ", handAgent=" + handAgent + ", handOrigin=" + handOrigin
+				+ ", remote=" + remote + "]";
 	}
 
-	
 
-	
-	
-	
+
 }

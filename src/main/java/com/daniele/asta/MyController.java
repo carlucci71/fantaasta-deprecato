@@ -22,6 +22,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,6 +58,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequestMapping({ "/" })
 public class MyController {
 
+	private static final String JSESSIONID = "JSESSIONID=";
+	private static final String PAGINA = "PAGINA=";
 	@Autowired Environment environment;	
 	@Autowired HttpSession httpSession;
 	@Autowired AllenatoriRepository allenatoriRepository;
@@ -84,17 +87,40 @@ public class MyController {
 	public Map<String, Object> ses() {
 		Map<String, Object> ret = new HashMap<>();
 		List<WebSocketSession> sessions = socketHandler.getSessions();
-		List<LogSocket> l=new ArrayList<>();
+		Map<String,List<LogSocket>> l=new LinkedHashMap<>();
 		for (WebSocketSession webSocketSession : sessions) {
+			if(!webSocketSession.isOpen()) continue;
 			LogSocket ls=new LogSocket();
-			ls.setHand(webSocketSession.getHandshakeHeaders().toString());
+			String jSessionID="";
+			String pagina="";
+			List<String> listCookie = webSocketSession.getHandshakeHeaders().get(HttpHeaders.COOKIE);
+			for (String cookie : listCookie) {
+				String[] split = cookie.split(";");
+				for (String string : split) {
+					if (string.startsWith(" ")) string=string.substring(1);
+					if (string.startsWith(JSESSIONID)) jSessionID=string.substring(JSESSIONID.length());
+					if (string.startsWith(PAGINA)) pagina=string.substring(PAGINA.length());
+				}
+			}
+			List<LogSocket> list = l.get(jSessionID);
+			if(list==null) list=new ArrayList<>();
+//			ls.setjSessionId(jSessionID);
+			ls.setPagina(pagina);
+//			ls.setHandDate(webSocketSession.getHandshakeHeaders().getDate());
+//			ls.setHandExpire(webSocketSession.getHandshakeHeaders().getExpires());
+//			ls.setHandIfModifiedSince(webSocketSession.getHandshakeHeaders().getIfModifiedSince());
+//			ls.setHandIfUnmodifiedSince(webSocketSession.getHandshakeHeaders().getIfUnmodifiedSince());
+//			ls.setHandLastModify(webSocketSession.getHandshakeHeaders().getLastModified());
+			ls.setHandOrigin(webSocketSession.getHandshakeHeaders().getOrigin());
+			ls.setHandAgent(webSocketSession.getHandshakeHeaders().get(HttpHeaders.USER_AGENT));
 			ls.setId(webSocketSession.getId());
-			ls.setLocal(webSocketSession.getLocalAddress().toString());
-			ls.setOpen(webSocketSession.isOpen());
+//			ls.setLocal(webSocketSession.getLocalAddress().toString());
+//			ls.setOpen(webSocketSession.isOpen());
 			ls.setRemote(webSocketSession.getRemoteAddress().toString());
-			l.add(ls);
+			list.add(ls);
+			l.put(jSessionID,list);
 		}
-		ret.put("lista", l);
+		ret.put("mappa", l);
 		return ret;
 	}
 	
