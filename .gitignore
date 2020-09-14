@@ -39,3 +39,5 @@ target/classes/data/schema.sql
 target/classes/data/schema.sql
 target/
 target/classes/application.properties
+src/main/resources/application.properties.AZ
+src/main/resources/spy.properties.AZ

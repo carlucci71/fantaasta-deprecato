@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import javax.xml.parsers.DocumentBuilder;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.WebSocketSession;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -78,6 +80,24 @@ public class MyController {
 	private Boolean isATurni;
 	private Boolean isMantra;
 
+	@RequestMapping("/ses")
+	public Map<String, Object> ses() {
+		Map<String, Object> ret = new HashMap<>();
+		List<WebSocketSession> sessions = socketHandler.getSessions();
+		List<LogSocket> l=new ArrayList<>();
+		for (WebSocketSession webSocketSession : sessions) {
+			LogSocket ls=new LogSocket();
+			ls.setHand(webSocketSession.getHandshakeHeaders().toString());
+			ls.setId(webSocketSession.getId());
+			ls.setLocal(webSocketSession.getLocalAddress().toString());
+			ls.setOpen(webSocketSession.isOpen());
+			ls.setRemote(webSocketSession.getRemoteAddress().toString());
+			l.add(ls);
+		}
+		ret.put("lista", l);
+		return ret;
+	}
+	
 	@RequestMapping("/init")
 	public Map<String, Object> init() {
 		Map<String, Object> ret = new HashMap<>();
@@ -200,7 +220,7 @@ public class MyController {
 	
 	
 	@PostMapping("/caricaFile")
-	public Map<String, Object> caricaFile(@RequestBody Map<String,Object> body) throws Exception {
+	public Map<String, Object> caricaFile(@RequestBody Map<String,Object> body,HttpServletRequest request) throws Exception {
 		Map<String,Object> ret = new HashMap<>();
 		if(isOkDispositiva(body)) {
 			String content = (String) body.get("file");
@@ -261,7 +281,7 @@ public class MyController {
 			else {
 				throw new RuntimeException("Tipo file non riconoscituo:" + tipoFile);
 			}
-			socketHandler.notificaCaricaFile();
+			socketHandler.notificaCaricaFile(request.getRemoteAddr());
 			ret.put("esitoDispositiva", "OK");
 		}
 		else {
@@ -294,13 +314,13 @@ public class MyController {
 	}
 	
 	@PostMapping("/cancellaOfferta")
-	public Map<String,Object>  cancellaOfferta(@RequestBody Map<String, Object> body) throws Exception {
+	public Map<String,Object>  cancellaOfferta(@RequestBody Map<String, Object> body,HttpServletRequest request) throws Exception {
 		Map<String,Object> ret = new HashMap<>();
 		if(isOkDispositiva(body)) {
 			Map<String, Object> mapOfferta = (Map)body.get("offerta");
 			Integer idGiocatore=(Integer) mapOfferta.get("idGiocatore");
 			fantaroseRepository.delete(idGiocatore);
-			socketHandler.notificaCancellaOfferta(mapOfferta);
+			socketHandler.notificaCancellaOfferta(mapOfferta,request.getRemoteAddr());
 			ret.put("ret", elencoCronologiaOfferte());
 			ret.put("esitoDispositiva", "OK");
 		}
@@ -330,7 +350,7 @@ public class MyController {
 		return ret;
 	}
 	@PostMapping("/inizializzaLega")
-	public Map<String, Object> inizializzaLega(@RequestBody Map<String, Object> body) throws Exception {
+	public Map<String, Object> inizializzaLega(@RequestBody Map<String, Object> body,HttpServletRequest request) throws Exception {
 		Configurazione configurazione = getConfigurazione();
 		Map<String,Object> ret = new HashMap<>();
 		if(configurazione == null || configurazione.getNumeroGiocatori() == null) {
@@ -377,7 +397,7 @@ public class MyController {
 				}
 				al.setPwd("");
 				allenatoriRepository.save(al);
-				socketHandler.notificaInizializzaLega();
+				socketHandler.notificaInizializzaLega(request.getRemoteAddr());
 			}
 			ret.put("esitoDispositiva", "OK");
 		}
@@ -399,7 +419,7 @@ public class MyController {
 		return ret;
 	}
 	@PostMapping("/aggiornaConfigLega")
-	public  Map<String,Object>  aggiornaConfigLega(@RequestBody Map<String, Object> body) throws Exception {
+	public  Map<String,Object>  aggiornaConfigLega(@RequestBody Map<String, Object> body,HttpServletRequest request) throws Exception {
 		Map <String, Object> ret = new HashMap<>();
 		if(isOkDispositiva(body)) {
 			Map <String, String> utentiRinominati = new HashMap<>();
@@ -464,7 +484,7 @@ public class MyController {
 				ret.put("isMantra", "N");
 			}
 			ret.put("esitoDispositiva", "OK");
-			socketHandler.aggiornaConfigLega(utentiRinominati,getAllAllenatori(),configurazione);
+			socketHandler.aggiornaConfigLega(utentiRinominati,getAllAllenatori(),configurazione, request.getRemoteAddr());
 		}
 		else {
 			ret.put("esitoDispositiva", "KO");
@@ -662,6 +682,7 @@ public class MyController {
 			throw new RuntimeException(e);
 		}
 	}
+
 	@RequestMapping("/riepilogoAllenatori")
 	public List<Map<String, Object>>  riepilogoAllenatori() {
 		try {

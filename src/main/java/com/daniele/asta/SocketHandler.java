@@ -35,23 +35,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class SocketHandler extends TextWebSocketHandler implements WebSocketHandler {
 	
-	private void creaMessaggio(String messaggio, EnumCategoria categoria) {
+	private void creaMessaggio(String indirizzo,String messaggio, EnumCategoria categoria) {
 		Long now = System.currentTimeMillis();
 		UUID uuid = UUID.randomUUID();
 		Map<String, Object> msg = new HashMap<>();
 		msg.put("key",uuid.toString());
 		msg.put("data",now);
 		msg.put("testo", messaggio);
+		msg.put("indirizzo", indirizzo);
 		msg.put("categoria", categoria);
 		messaggi.add(msg);
-		LoggerMessaggi entity= new LoggerMessaggi();
-		entity.setId(now);
-		entity.setMessaggio(messaggio);
-		entity.setCategoria(categoria.name());
-		loggerRepository.save(entity);
+		LoggerMessaggi loggerMessaggi= new LoggerMessaggi();
+		loggerMessaggi.setId(now);
+		loggerMessaggi.setMessaggio(messaggio);
+		loggerMessaggi.setCategoria(categoria.name());
+		loggerMessaggi.setIndirizzo(indirizzo);
+		loggerRepository.save(loggerMessaggi);
 	}
 	
-	List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
+	private List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 	private List<String> utentiLoggati = new ArrayList<>();
 	List<String> utentiScaduti=new ArrayList<>();
 	Map<String, Map<String, Object>> pingUtenti = new HashMap<>();
@@ -75,6 +77,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	@Autowired GiocatoriRepository giocatoriRepository;
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws InterruptedException, IOException {
+		String indirizzo = session.getRemoteAddress().toString();
 		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTPSESSIONID");
 		String payload = message.getPayload();
 		Map<String, Object> jsonToMap = jsonToMap(payload);
@@ -95,14 +98,14 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			pingUtenti.remove(nomegiocatore);
 			Map<String, Object> m = new HashMap<>();
 			m.put("utenti", getUtentiLoggati());
-			creaMessaggio("Utente cancellato: " + nomegiocatore,EnumCategoria.Alert);
+			creaMessaggio(indirizzo,"Utente cancellato: " + nomegiocatore,EnumCategoria.Alert);
 			m.put("azzera", String.valueOf(iIdgiocatore));
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}
 		if (operazione != null && operazione.equals("azzera")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
-			creaMessaggio("AZZERATO DA: " + nomegiocatore,EnumCategoria.Alert);
+			creaMessaggio(indirizzo,"AZZERATO DA: " + nomegiocatore,EnumCategoria.Alert);
 			Map<String, Object> m = new HashMap<>();
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			setUtentiLoggati(new ArrayList<>());
@@ -124,7 +127,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				pingUtenti.remove(nomegiocatore);
 			}
 			if (getUtentiLoggati() != null && getUtentiLoggati().contains(nomegiocatore)) {
-				creaMessaggio("Sessione RUBATA da " + nomegiocatore,EnumCategoria.Alert);
+				creaMessaggio(indirizzo,"Sessione RUBATA da " + nomegiocatore,EnumCategoria.Alert);
 			} 
 			httpSession.setAttribute("nomeGiocatoreLoggato", nomegiocatore);
 			httpSession.setAttribute("idLoggato", idgiocatore);
@@ -133,7 +136,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			m.put("utenti", getUtentiLoggati());
-			creaMessaggio("Connesso: " + nomegiocatore,EnumCategoria.Connessione);
+			creaMessaggio(indirizzo,"Connesso: " + nomegiocatore,EnumCategoria.Connessione);
 			m.put("messaggi", messaggi);
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			invia(toJson(m));
@@ -160,7 +163,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			} else {
 				calInizioOfferta = Calendar.getInstance();
 			}
-			creaMessaggio("Tempo azzerato da "+ nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra(),EnumCategoria.Asta);
+			creaMessaggio(indirizzo,"Tempo azzerato da "+ nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra(),EnumCategoria.Asta);
 			m.put("millisFromPausa", Long.toString(millisFromPausa));
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
@@ -168,7 +171,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else if (operazione != null && operazione.equals("confermaAsta")) {
 			sSemaforoAttivo="S";
 			messaggi = new ArrayList<>();
-			creaMessaggio("Asta confermata per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra() + ". Assegnato a " + offertaVincente.get("nomegiocatore") + " per " + offertaVincente.get("offerta"),EnumCategoria.Asta);
+			creaMessaggio(indirizzo,"Asta confermata per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra() + ". Assegnato a " + offertaVincente.get("nomegiocatore") + " per " + offertaVincente.get("offerta"),EnumCategoria.Asta);
 			offertaVincente = new HashMap<>();
 			selCalciatoreMacroRuolo="";
 			Map<String, Object> m = new HashMap<>();
@@ -204,7 +207,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		else if (operazione != null && operazione.equals("annullaAsta")) {
 			sSemaforoAttivo="S";
 			messaggi = new ArrayList<>();
-			creaMessaggio("Asta annullata per:" + offertaVincente.get("nomeCalciatore"),EnumCategoria.Asta);
+			creaMessaggio(indirizzo,"Asta annullata per:" + offertaVincente.get("nomeCalciatore"),EnumCategoria.Asta);
 			offertaVincente = new HashMap<>();
 			selCalciatoreMacroRuolo="";
 			Map<String, Object> m = new HashMap<>();
@@ -217,7 +220,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Calendar now = Calendar.getInstance();
 			calInizioOfferta.setTimeInMillis(now.getTimeInMillis() - millisFromPausa);
 			Map<String, Object> m = new HashMap<>();
-			creaMessaggio("Offerta tolta dalla pausa da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + ". Riparte dopo " + millisFromPausa + " millisecondi",EnumCategoria.Asta);
+			creaMessaggio(indirizzo,"Offerta tolta dalla pausa da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + ". Riparte dopo " + millisFromPausa + " millisecondi",EnumCategoria.Asta);
 			timeOut="N";
 			m.put("timeout", timeOut);
 			m.put("contaTempo", now.getTimeInMillis() - calInizioOfferta.getTimeInMillis());
@@ -230,7 +233,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			millisFromPausa=now.getTimeInMillis()-calInizioOfferta.getTimeInMillis();
 			calInizioOfferta.set(Calendar.YEAR, 2971);
 			Map<String, Object> m = new HashMap<>();
-			creaMessaggio("Offerta messa in pausa da da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + " dopo " + millisFromPausa + " millisecondi",EnumCategoria.Asta);
+			creaMessaggio(indirizzo,"Offerta messa in pausa da da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore") + " dopo " + millisFromPausa + " millisecondi",EnumCategoria.Asta);
 			timeOut="S";
 			m.put("millisFromPausa", Long.toString(millisFromPausa));
 			giocatoreTimeout=nomegiocatore;
@@ -244,7 +247,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			calInizioOfferta.set(Calendar.YEAR, 1971);
 			Map<String, Object> m = new HashMap<>();
-			creaMessaggio("Offerta terminata in anticipo da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore"),EnumCategoria.Asta);
+			creaMessaggio(indirizzo,"Offerta terminata in anticipo da " + nomegiocatore + " per " + offertaVincente.get("nomeCalciatore"),EnumCategoria.Asta);
 			m.put("messaggi", messaggi);
 			invia(toJson(m));
 		}
@@ -280,7 +283,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			}
 			m.put("loggerMessaggi", myController.elencoLoggerMessaggi());
 			messaggi=new ArrayList<>();
-			creaMessaggio(str,EnumCategoria.Asta);
+			creaMessaggio(indirizzo,str,EnumCategoria.Asta);
 			invia(toJson(m));
 		}
 		else if (operazione != null && operazione.equals("disconnetti")) {
@@ -292,7 +295,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			httpSession.removeAttribute("nomeGiocatoreLoggato");
 			httpSession.removeAttribute("idLoggato");
 			Map<String, Object> m = new HashMap<>();
-			creaMessaggio("Utente disconnesso: " + nomegiocatore,EnumCategoria.Connessione);
+			creaMessaggio(indirizzo,"Utente disconnesso: " + nomegiocatore,EnumCategoria.Connessione);
 			m.put("utenti", getUtentiLoggati());
 			invia(toJson(m));
 		}
@@ -303,7 +306,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Map<String, Object> m = new HashMap<>();
 			m.put("durataAsta", durataAsta);
 			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
-			creaMessaggio("Durata asta modificata da: " + giocatoreDurataAsta,EnumCategoria.Alert);
+			creaMessaggio(indirizzo,"Durata asta modificata da: " + giocatoreDurataAsta,EnumCategoria.Alert);
 			invia(toJson(m));
 			
 		}
@@ -326,7 +329,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 					str = str + "(" + nomegiocatoreOperaCome + ")";
 				}
-				creaMessaggio(str,EnumCategoria.Asta);
+				creaMessaggio(indirizzo,str,EnumCategoria.Asta);
 				offerta=maxRilancio;
 			}
 			if (now.after(scadenzaAsta)) {
@@ -335,7 +338,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				if(!nomegiocatoreOperaCome.equalsIgnoreCase(nomegiocatore)) {
 					str = str + "(" + nomegiocatoreOperaCome + ")";
 				}
-				creaMessaggio(str,EnumCategoria.Asta);
+				creaMessaggio(indirizzo,str,EnumCategoria.Asta);
 			} 
 			else {
 				String str = "Rilancio di " + offerta + " fatto da " + nomegiocatore;
@@ -344,7 +347,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				}
 				str = str + " per " + offertaVincente.get("nomeCalciatore") + "(" + ((Giocatori)offertaVincente.get("giocatore")).getRuolo()  + ") " + ((Giocatori)offertaVincente.get("giocatore")).getSquadra();
 				if (attOfferta != null && offerta<=attOfferta) {
-					creaMessaggio(str + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"),EnumCategoria.Asta);
+					creaMessaggio(indirizzo,str + " non superiore all'offerta vincente di " + attOfferta + " fatta da " + offertaVincente.get("nomegiocatore"),EnumCategoria.Asta);
 				}
 				else {
 					calInizioOfferta = Calendar.getInstance();
@@ -353,7 +356,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 					offertaVincente.put("offerta", offerta);
 					m.put("offertaVincente", offertaVincente);
 					m.put("selCalciatoreMacroRuolo", selCalciatoreMacroRuolo);
-					creaMessaggio(str,EnumCategoria.Asta);
+					creaMessaggio(indirizzo,str,EnumCategoria.Asta);
 				}
 			}
 			invia(toJson(m));
@@ -415,8 +418,10 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			invia(payload);
 		}
 	}
-	public void notificaInizializzaLega() throws IOException {
+	public void notificaInizializzaLega(String indirizzo) throws IOException {
 		Map<String, Object> m = new HashMap<>();
+		creaMessaggio(indirizzo,"Lega inizializzata",EnumCategoria.Alert);
+		m.put("messaggi", messaggi);
 		m.put("elencoAllenatori", myController.getAllAllenatori());
 		invia(toJson(m));
 	}
@@ -433,9 +438,9 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		}
 	}
 	
-	public void notificaCancellaOfferta(Map<String, Object> mapOfferta) throws IOException {
+	public void notificaCancellaOfferta(Map<String, Object> mapOfferta, String indirizzo) throws IOException {
 		Map<String, Object> m = new HashMap<>();
-		creaMessaggio("Offerta registrata CANCELLATA: " + mapOfferta.get("allenatore") + " per " + mapOfferta.get("giocatore") + "(" + mapOfferta.get("ruolo") 
+		creaMessaggio(indirizzo,"Offerta registrata CANCELLATA: " + mapOfferta.get("allenatore") + " per " + mapOfferta.get("giocatore") + "(" + mapOfferta.get("ruolo") 
 		+ ") " + mapOfferta.get("squadra") + " vinto a " + mapOfferta.get("costo"),EnumCategoria.Alert);
 		m.put("messaggi", messaggi);
 		m.put("giocatoriPerSquadra", myController.giocatoriPerSquadra());
@@ -443,7 +448,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		m.put("calciatori", myController.getGiocatoriLiberi());
 		invia(toJson(m));
 	}
-	public void aggiornaConfigLega(Map<String, String> utentiRinominati, Iterable<Allenatori> allAllenatori, Configurazione configurazione) throws IOException {
+	public void aggiornaConfigLega(Map<String, String> utentiRinominati, Iterable<Allenatori> allAllenatori, Configurazione configurazione, String indirizzo) throws IOException {
 
 		Iterator<String> iterator = utentiRinominati.keySet().iterator();
 		while (iterator.hasNext()) {
@@ -467,8 +472,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			}
 		}
 		Map<String, Object> m = new HashMap<>();
-		creaMessaggio("Aggiornata configurazione: " + configurazione ,EnumCategoria.Alert);
-		if (!utentiRinominati.isEmpty()) creaMessaggio("Utenti rinominati: " + utentiRinominati,EnumCategoria.Alert);
+		creaMessaggio(indirizzo,"Aggiornata configurazione: " + configurazione ,EnumCategoria.Alert);
+		if (!utentiRinominati.isEmpty()) creaMessaggio(indirizzo,"Utenti rinominati: " + utentiRinominati,EnumCategoria.Alert);
 		if(myController.getIsATurni()) {
 			m.put("isATurni", "S");
 		}
@@ -493,16 +498,16 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		m.put("elencoAllenatori", allAllenatori);
 		invia(toJson(m));
 	}
-	public void notificaCaricaFile() throws IOException {
+	public void notificaCaricaFile(String indirizzo) throws IOException {
 		Map<String, Object> m = new HashMap<>();
-		creaMessaggio("Giocatori caricati",EnumCategoria.Alert);
+		creaMessaggio(indirizzo,"Giocatori caricati",EnumCategoria.Alert);
 		m.put("calciatori", myController.getGiocatoriLiberi());
 		m.put("messaggi", messaggi);
 		invia(toJson(m));
 	}
 	
 	private void invia(String payload) throws IOException {
-		for (WebSocketSession webSocketSession : sessions) {
+		for (WebSocketSession webSocketSession : getSessions()) {
 			if (webSocketSession.isOpen()) {
 				synchronized(webSocketSession) {
 					webSocketSession.sendMessage(new TextMessage(payload));
@@ -530,24 +535,18 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 //		HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTPSESSIONID");
-//		Iterator<WebSocketSession> iterator = sessions.iterator();
-//		System.out.println("++++++++++++++++++++++++++++++++++++++++");
-//		int c =0;
-//		List<WebSocketSession> rimuovibili= new ArrayList<>();
-//		while (iterator.hasNext()) {
-//			WebSocketSession webSocketSession = (WebSocketSession) iterator.next();
-//			HttpSession httpSession2 = (HttpSession) webSocketSession.getAttributes().get("HTTPSESSIONID");
-//			if(httpSession2 !=null && httpSession2.getId().equals(httpSession.getId())) {
-//				System.out.println(httpSession2.getId());
-//				rimuovibili.add(webSocketSession);
-//				c++;
-//			}
-//		}
-//		System.out.println("-------------------------------------" + c);
-//		for (WebSocketSession webSocketSession : rimuovibili) {
-//			sessions.remove(webSocketSession);
-//		}
-		sessions.add(session);
+		getSessions().add(session);
+		Iterator<WebSocketSession> iterator = sessions.iterator();
+		List<WebSocketSession> rimuovibili= new ArrayList<>();
+		while (iterator.hasNext()) {
+			WebSocketSession webSocketSession = (WebSocketSession) iterator.next();
+			if(!webSocketSession.isOpen()) {
+				rimuovibili.add(webSocketSession);
+			}
+		}
+		for (WebSocketSession webSocketSession : rimuovibili) {
+			sessions.remove(webSocketSession);
+		}
 		
 	}
 	private ObjectMapper mapper = new ObjectMapper();
@@ -586,6 +585,12 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	}
 	public void setUtentiLoggati(List<String> utentiLoggati) {
 		this.utentiLoggati = utentiLoggati;
+	}
+	public List<WebSocketSession> getSessions() {
+		return sessions;
+	}
+	public void setSessions(List<WebSocketSession> sessions) {
+		this.sessions = sessions;
 	}
 
 

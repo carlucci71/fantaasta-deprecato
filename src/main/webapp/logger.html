@@ -3,6 +3,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
+<title>Cronologia log</title>
 </head>
 <link href="./stile.css" rel="stylesheet" type="text/css">
 <link href="./bootstrap.css" rel="stylesheet" type="text/css">
@@ -22,6 +23,7 @@
 <table border>
   <tr ng-repeat="messaggio in loggerMessaggi | orderBy: 'id': 'reverse'">
     <td class=tabellaUtenti>{{messaggio.id | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
+    <td class=tabellaUtenti>{{messaggio.indirizzo}}</td>
     <td class="tabellaUtenti">{{messaggio.categoria}}</td>
     <td class="tabellaUtenti">{{messaggio.messaggio}}</td>
   </tr>

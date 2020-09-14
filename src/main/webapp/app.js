@@ -160,9 +160,15 @@ app.run(
 				new_uri += "//" + loc.host;
 				//				new_uri += loc.pathname + "messaggi-websocket";
 				new_uri += '/' + "messaggi-websocket";
+				
 				ws = new WebSocket(new_uri);
+//				ws = new WebSocket("ws://username:password@"+ loc.host + '/' + "messaggi-websocket");
+//				ws = new WebSocket(new_uri,"soap");
 				ws.onmessage = function(data){
 					$rootScope.getMessaggio(data.data);
+				}
+				ws.onclose = function(){
+					console.log("connessione chiusa");
 				}
 				return deferred.promise;			
 			}

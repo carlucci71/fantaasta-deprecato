@@ -42,6 +42,19 @@ E' possibile configurare la porta modificando la chiave:
 ~~~~
 server.port=8081
 ~~~~
+E' possibile **proteggere** l'accesso alla pagina principale abilitando la chiave:
+`application.properties`
+~~~~
+spring.profiles.active=protetto
+~~~~
+In tal caso, verrà richiesto di digitare il nome della lega e si accederà alle pagine successive solo se corrisponde alla chiave:
+`application.properties`
+~~~~
+security.user.name
+~~~~
+ il cui valore di default è `mialega`
+
+
 
 # Esecuzione dell'applicazione
 L'applicazione si può avviare con il seguente comando, dalla root del progetto:
@@ -85,7 +98,7 @@ La pagina è divisa in accordion, in modo da collassare le sezioni che non si vo
 E' possibile accedere a:
 * **pagina di amministrazione** oltre alle funzionalità descritte in precedenza per l'amministratore chiunque potrà personalizzare il proprio nome e la propria password.
 * **elenco offerte** oltre alla cronologia delle offerte l'amministratore potrà cancellare una offerta salvata
-* **log** cronologia di tutte le operazioni dispositive effettuate con indicazione oraria
+* **log** cronologia di tutte le operazioni dispositive effettuate con indicazione oraria e indirizzo IP
 * **giocatori liberi** elenco dei giocatori ancora disponibili, filtrabili per nome/ruolo/squadra/quotazione (maggiore di oppure mettendo il - minore di)
 * **riepilogo** situazione riassuntiva per allenatore dei giocatori presi
 
@@ -110,7 +123,7 @@ L'**amministratore** avrà le seguenti possibilità aggiuntive:
 Quando il tempo finisce, o l'amministratore termina l'asta, questo potrà **confermare** o **annullare** l'asta appena conclusa.
 
 #### Accordion log sessione corrente
-Verranno elencate tutte le attività effettuate fino all'avvio di una nuova asta.
+Verranno elencate tutte le attività effettuate, fino all'avvio di una nuova asta.
 
 # Ripristino database
 Sia con il database H2 che con MySql (avendo l'accortezza di settare il parametro APPEND come indicato in precedenza sul file `spy.properties`) è possibile ripristinare un database ad un salvataggio precedente.

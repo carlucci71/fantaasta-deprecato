@@ -3,6 +3,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
+<title>FantaAsta</title>
 </head>
 <link href="./stile.css" rel="stylesheet" type="text/css">
 
@@ -129,7 +130,9 @@
 		<label class="nextOperation" ng-show="!nomegiocatore && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
 		<label class="nextOperation" ng-show="!nomegiocatore && elencoAllenatori.length>0">Connettiti</label>
 		<div ng-show="nomegiocatore">		
-			<label>Frequenza refresh (ms)</label>&nbsp;<input class="inputLarge" type="number" ng-model="timePing" ng-change="aggiornaTimePing(timePing)"></input>
+			<label>Frequenza refresh (ms). </label>
+			<input class="inputLarge" type="number" ng-model="timePing" ng-change="aggiornaTimePing(timePing)"></input>
+			<label ng-show="timePing<1000" class="nextOperation" >Sconsigliato refresh minore di 1000ms</label>
 		</div>
 	</div> <!-- UTENTI -->
 	<div ng-show="nomegiocatore"> 
@@ -343,6 +346,7 @@
 		<table class="tblLog" style="border-style:double;width:98%;" border>
 		  <tr ng-repeat="messaggio in messaggi | orderBy: 'data': 'reverse'">
 		    <td style="widt=10%;padding-left:10px;padding-right:10px;text-align:left">{{messaggio.data | date :'dd/MM/yyyy, HH:mm:ss:sss'}}</td>
+		    <td style="widt=10%;padding-left:10px;padding-right:10px;text-align:left">{{messaggio.indirizzo}}</td>
 		    <td style="widt=10%;padding-left:10px;padding-right:10px;text-align:left">{{messaggio.categoria}}</td>
 		    <td style="widt=80%;padding-left:10px;padding-right:10px;text-align:left">{{messaggio.testo}}</td>
 		  </tr>

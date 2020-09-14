@@ -12,6 +12,7 @@ public class LoggerMessaggi {
 	private long id;
 	private String messaggio;
 	private String categoria;
+	private String indirizzo;
 	public long getId() {
 		return id;
 	}
@@ -30,9 +31,16 @@ public class LoggerMessaggi {
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
+	public String getIndirizzo() {
+		return indirizzo;
+	}
+	public void setIndirizzo(String indirizzo) {
+		this.indirizzo = indirizzo;
+	}
 	@Override
 	public String toString() {
-		return "LoggerMessaggi [id=" + id + ", messaggio=" + messaggio + ", categoria=" + categoria + "]";
+		return "LoggerMessaggi [id=" + id + ", messaggio=" + messaggio + ", categoria=" + categoria + ", indirizzo="
+				+ indirizzo + "]";
 	}
 
 }
