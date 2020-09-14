@@ -42,7 +42,7 @@ public class BasicAuthConfigurationProtetto
              .usernameParameter("nomeLega")
              .passwordParameter("password")
              .loginProcessingUrl("/loginAPI")
-             .defaultSuccessUrl("/index.html")
+             .defaultSuccessUrl("/")
              .failureUrl("/login.html")
              .permitAll()
           .and()

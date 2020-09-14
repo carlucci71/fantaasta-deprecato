@@ -134,7 +134,7 @@ app.run(
 								$rootScope.isMantra=true;
 							else
 								$rootScope.isMantra=false;
-							window.location.href = './index.html';
+							window.location.href = '/';
 						}
 						else {
 							alert('Aggiorna config lega. Errore!')
@@ -291,7 +291,7 @@ app.run(
 				}
 			}
 			$rootScope.ritornaIndex=function(){
-				window.location.href = './index.html';
+				window.location.href = '/';
 			}
 			$rootScope.caricaAdmin=function(){
 				window.location.href = './admin.html';
@@ -317,7 +317,7 @@ app.run(
 					if (data.DA_CONFIGURARE){
 						$rootScope.config=true;
 						if(chiudi){
-							window.location.href = './index.html';
+							window.location.href = '/';
 						}
 					} else {
 						$rootScope.config=false;

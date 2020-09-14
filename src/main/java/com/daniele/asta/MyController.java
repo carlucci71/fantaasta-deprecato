@@ -99,7 +99,14 @@ public class MyController {
 				for (String string : split) {
 					if (string.startsWith(" ")) string=string.substring(1);
 					if (string.startsWith(JSESSIONID)) jSessionID=string.substring(JSESSIONID.length());
-					if (string.startsWith(PAGINA)) pagina=string.substring(PAGINA.length());
+					if (string.startsWith(PAGINA)) {
+						pagina=string.substring(PAGINA.length());
+						pagina=pagina.substring(pagina.indexOf("/")+1);
+						pagina=pagina.substring(pagina.indexOf("/")+1);
+						pagina=pagina.substring(pagina.indexOf("/")+1);
+						if(pagina.trim().equalsIgnoreCase("")) pagina="index.html";
+						pagina=pagina.substring(0,pagina.indexOf("."));
+					}
 				}
 			}
 			List<LogSocket> list = l.get(jSessionID);
@@ -111,7 +118,7 @@ public class MyController {
 //			ls.setHandIfModifiedSince(webSocketSession.getHandshakeHeaders().getIfModifiedSince());
 //			ls.setHandIfUnmodifiedSince(webSocketSession.getHandshakeHeaders().getIfUnmodifiedSince());
 //			ls.setHandLastModify(webSocketSession.getHandshakeHeaders().getLastModified());
-			ls.setHandOrigin(webSocketSession.getHandshakeHeaders().getOrigin());
+//			ls.setHandOrigin(webSocketSession.getHandshakeHeaders().getOrigin());
 			ls.setHandAgent(webSocketSession.getHandshakeHeaders().get(HttpHeaders.USER_AGENT));
 			ls.setId(webSocketSession.getId());
 //			ls.setLocal(webSocketSession.getLocalAddress().toString());

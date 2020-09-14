@@ -12,9 +12,13 @@ public class LogSocket {
 //	private Long handIfModifiedSince;
 //	private Long handIfUnmodifiedSince;
 //	private Long handLastModify;
-	private String handOrigin;
+//	private String handOrigin;
 //	private String local;
 	private String remote;
+	@Override
+	public String toString() {
+		return "LogSocket [id=" + id + ", pagina=" + pagina + ", handAgent=" + handAgent + ", remote=" + remote + "]";
+	}
 	public String getId() {
 		return id;
 	}
@@ -33,24 +37,10 @@ public class LogSocket {
 	public void setHandAgent(List<String> handAgent) {
 		this.handAgent = handAgent;
 	}
-	public String getHandOrigin() {
-		return handOrigin;
-	}
-	public void setHandOrigin(String handOrigin) {
-		this.handOrigin = handOrigin;
-	}
 	public String getRemote() {
 		return remote;
 	}
 	public void setRemote(String remote) {
 		this.remote = remote;
 	}
-	@Override
-	public String toString() {
-		return "LogSocket [id=" + id + ", pagina=" + pagina + ", handAgent=" + handAgent + ", handOrigin=" + handOrigin
-				+ ", remote=" + remote + "]";
-	}
-
-
-
 }
