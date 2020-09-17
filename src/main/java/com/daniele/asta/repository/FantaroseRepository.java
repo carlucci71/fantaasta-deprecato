@@ -1,8 +1,13 @@
 package com.daniele.asta.repository;
 
+import java.util.List;
+
+import javax.persistence.Tuple;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import com.daniele.asta.dto.ExportMantra;
 import com.daniele.asta.dto.GiocatoriPerSquadra;
 import com.daniele.asta.dto.SpesoTotale;
 import com.daniele.asta.entity.Fantarose;
@@ -18,5 +23,8 @@ public interface FantaroseRepository extends CrudRepository<Fantarose, Integer> 
 	
 	@Query("SELECT  new com.daniele.asta.dto.GiocatoriPerSquadra(a.nome as allenatore,g.squadra,g.ruolo,g.macroRuolo,g.nome as giocatore,f.costo) from Fantarose f,Giocatori g,Allenatori a where g.id = idGiocatore and a.id = idAllenatore order by a.ordine,g.macroRuolo desc,g.ruolo desc,giocatore")
 	Iterable<GiocatoriPerSquadra> giocatoriPerSquadra();
+	
+	@Query("SELECT new com.daniele.asta.dto.ExportMantra(a.nome, r.idGiocatore, r.costo) FROM Fantarose r,  Allenatori a WHERE  r.idAllenatore=a.id ORDER BY a.nome, r.idGiocatore")
+	Iterable<ExportMantra> exportMantra();
 
 }

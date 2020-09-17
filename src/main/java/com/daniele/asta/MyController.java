@@ -1,11 +1,13 @@
 package com.daniele.asta;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -16,12 +18,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
@@ -39,6 +43,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import com.daniele.asta.dto.ExportMantra;
 import com.daniele.asta.dto.GiocatoriPerSquadra;
 import com.daniele.asta.dto.SpesoTotale;
 import com.daniele.asta.entity.Allenatori;
@@ -633,7 +638,54 @@ public class MyController {
 			throw new RuntimeException(e);
 		}
 	}
-    
+
+	@Value("${security.user.name}")
+	private String nomeLega;
+	
+	@RequestMapping(value = "/esportaMantra")
+	public void esportaMantra(HttpServletResponse response) throws IOException {    
+		String csvFileName = nomeLega + "_export_per_sito.csv";
+		response.setContentType("text/csv");
+		String headerKey = "Content-Disposition";
+		String headerValue = String.format("attachment; filename=\"%s\"",csvFileName);
+		response.setHeader(headerKey, headerValue);		
+		Iterable<ExportMantra> exportMantra = fantaroseRepository.exportMantra();
+		String oldAll="";
+		StringBuilder s = new StringBuilder();
+		for (ExportMantra ex : exportMantra) {
+			if (!ex.getNome().equalsIgnoreCase(oldAll)) {
+				oldAll=ex.getNome();
+				s.append("$,$,$\n");
+			}
+			s.append(ex.getNome() + "," + ex.getIdGiocatore() + "," + ex.getCosto() + "\n");
+		}
+		response.getWriter().print(s);
+	}
+	
+	@RequestMapping(value = "/esporta")
+	public void esporta(HttpServletResponse response) throws IOException {    
+		String csvFileName = nomeLega + "_export.csv";
+		response.setContentType("text/csv");
+		String headerKey = "Content-Disposition";
+		String headerValue = String.format("attachment; filename=\"%s\"",csvFileName);
+		response.setHeader(headerKey, headerValue);
+		Map<String, Map<String, Object>> giocatoriPerSquadra = giocatoriPerSquadra();
+		Iterator<String> iterator = giocatoriPerSquadra.keySet().iterator();
+		StringBuilder s = new StringBuilder();
+		s.append("allenatore" + ";\"" + "ruolo"+ "\";" + "costo"+ ";" + "squadra"+ ";" + "giocatore" + "\n");
+		while (iterator.hasNext()) {
+			String allenatore = (String) iterator.next();
+			Map m = (Map) giocatoriPerSquadra.get(allenatore).get("ruoli");
+			Collection<List> giocatori = m.values();
+			for (List<Map> giocatore : giocatori) {
+				for (Map map : giocatore) {
+					s.append(allenatore + ";\"" + map.get("ruolo")+ "\";" + map.get("costo")+ ";" + map.get("squadra")+ ";" + map.get("giocatore") + "\n");
+				}
+			}
+		}
+		response.getWriter().print(s);
+	}
+	
 	@RequestMapping("/giocatoriPerSquadra")
 	public Map<String, Map<String, Object>> giocatoriPerSquadra() {
 		setMapSpesoTotale(new HashMap());

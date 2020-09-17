@@ -105,7 +105,6 @@ app.run(
 				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
 					value.ordine=value.nuovoOrdine;
 				});
-				
 			}
 			$rootScope.aggiornaConfigLega= function(amministratore) {
 				var checkNome=[];
