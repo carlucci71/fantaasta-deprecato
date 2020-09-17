@@ -100,7 +100,7 @@ E' possibile accedere a:
 * **elenco offerte** oltre alla cronologia delle offerte l'amministratore potrà cancellare una offerta salvata
 * **log** cronologia di tutte le operazioni dispositive effettuate con indicazione oraria e indirizzo IP
 * **giocatori liberi** elenco dei giocatori ancora disponibili, filtrabili per nome/ruolo/squadra/quotazione (maggiore di oppure mettendo il - minore di)
-* **riepilogo** situazione riassuntiva per allenatore dei giocatori presi
+* **riepilogo** situazione riassuntiva per allenatore dei giocatori presi. In questa pagina è possibile **esportare** i dati per il sito, se tipo lega mantra o in formato csv generico
 
 #### Accordion allenatori
 Una volta caricato l'url dell'applicazione è possibile connettersi cliccando sull'apposita icona, se si è settata una passowrd verrà richiesta altrimenti l'accesso sarà diretto.
