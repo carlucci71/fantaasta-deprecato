@@ -93,6 +93,7 @@
 		  	<td class="tabellaUtenti">D</td>
 		  	<td class="tabellaUtenti">C</td>
 		  	<td class="tabellaUtenti">A</td>
+		  	<td class="tabellaUtenti">Max</td>
 		  </tr>
 		  <tr ng-repeat="utente in elencoAllenatori  | orderBy:'ordine'">
 		    	<td class="tdUtenti"> <!-- nome -->
@@ -123,6 +124,9 @@
 		    	</td>
 		    	<td ng-class="getFromMapSpesoTotale('CONTAA',utente.nome)>=maxA?'tuttiPresi':'nonTuttiPresi'">  <!-- presiA -->
 		    		{{getFromMapSpesoTotale('CONTAA',utente.nome)}} ({{getFromMapSpesoTotale('SPESOA',utente.nome)}})
+		    	</td>
+		    	<td style="text-align:center">  <!-- max -->
+		    		{{getFromMapSpesoTotale('MAXRILANCIO',utente.nome)}}
 		    	</td>
 		  </tr>
 		</table>
@@ -228,6 +232,7 @@
 						</span>
 						<br>
 						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=nomegiocatore">Puoi rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)}})</label>
+						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore==nomegiocatore">Stai vincendo (max: {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)}})</label>
 					</span>
 					<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)">Non hai crediti sufficienti per rilanciare</label>
 					<label class="nextOperation" ng-show="avviabili.indexOf(nomegiocatore)<0 && offertaVincente.nomegiocatore!=nomegiocatore">Non puoi rilanciare</label>
