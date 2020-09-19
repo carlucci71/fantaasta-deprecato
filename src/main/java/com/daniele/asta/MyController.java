@@ -85,6 +85,7 @@ public class MyController {
 	private Integer maxC=0;
 	private Integer maxA=0;
 	private Integer budget=0;
+	private Integer durataAsta=0;
 	private String turno="0";
 	private String nomeGiocatoreTurno="";
 	private Boolean isATurni;
@@ -213,6 +214,7 @@ public class MyController {
 			setMaxC(configurazione.getMaxC());
 			setMaxA(configurazione.getMaxA());
 			setBudget(configurazione.getBudget());
+			setDurataAsta(configurazione.getDurataAsta());
 			isATurni = configurazione.getIsATurni();
 			if(isATurni) {
 				ret.put("isATurni", "S");
@@ -235,6 +237,7 @@ public class MyController {
 			ret.put("maxC", maxC);
 			ret.put("maxA", maxA);
 			ret.put("budget", budget);
+			ret.put("durataAsta", durataAsta);
 			ret.put("elencoAllenatori", allAllenatori);
 			ret.put("nomeGiocatoreTurno", getNomeGiocatoreTurno());
 			ret.put("giocatoriPerSquadra",giocatoriPerSquadra());
@@ -439,6 +442,7 @@ public class MyController {
 		if(configurazione == null || configurazione.getNumeroGiocatori() == null) {
 			Integer numUtenti=(Integer) body.get("numUtenti");
 			setBudget((Integer) body.get("budget"));
+			setDurataAsta((Integer) body.get("durataAsta"));
 			setNumAcquisti((Integer) body.get("numAcquisti"));
 			setNumMinAcquisti((Integer) body.get("numMinAcquisti"));
 			setMaxP((Integer) body.get("maxP"));
@@ -451,6 +455,7 @@ public class MyController {
 			configurazione.setId(0);
 			configurazione.setNumeroGiocatori(numUtenti);
 			configurazione.setBudget(getBudget());
+			configurazione.setDurataAsta(getDurataAsta());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
 			configurazione.setNumeroMinAcquisti(getNumMinAcquisti());
 			configurazione.setMaxP(getMaxP());
@@ -514,6 +519,7 @@ public class MyController {
 			setMaxC((Integer) body.get("maxC"));
 			setMaxA((Integer) body.get("maxA"));
 			setBudget((Integer) body.get("budget"));
+			setDurataAsta((Integer) body.get("durataAsta"));
 			Boolean admin = (Boolean) body.get("admin");
 			isATurni = (Boolean) body.get("isATurni");
 			setIsMantra((Boolean) body.get("isMantra"));
@@ -547,6 +553,7 @@ public class MyController {
 			configurazione.setIsATurni(isATurni);
 			configurazione.setMantra(getIsMantra());
 			configurazione.setBudget(getBudget());
+			configurazione.setDurataAsta(getDurataAsta());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
 			configurazione.setNumeroMinAcquisti(getNumMinAcquisti());
 			configurazione.setMaxP(getMaxP());
@@ -982,6 +989,14 @@ public class MyController {
 
 	public void setNumMinAcquisti(Integer numMinAcquisti) {
 		this.numMinAcquisti = numMinAcquisti;
+	}
+
+	public Integer getDurataAsta() {
+		return durataAsta;
+	}
+
+	public void setDurataAsta(Integer durataAsta) {
+		this.durataAsta = durataAsta;
 	}
 
 }

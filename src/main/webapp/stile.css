@@ -25,9 +25,6 @@ input {
     font-weight: bold;
 	font-size:12;
  }
- .tdUtenti{
- 	width:100px;
- }
  .lblLatenza{
 	font-size: 10px;
 	width:45px;
@@ -230,9 +227,6 @@ input {
 		 padding-right:5px;
 		 text-align:center;
 		font-size:30;
-	 }
-	 .tdUtenti{
-	 	width:300px;
 	 }
 	 .lblLatenza{
     	font-size: 30px;

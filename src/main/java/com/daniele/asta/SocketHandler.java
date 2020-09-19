@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
@@ -60,14 +58,12 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 	Map<String, Object> offertaVincente = new HashMap<>();
 	Calendar calInizioOfferta;
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ssZ");
-	int durataAsta;
 	String selCalciatoreMacroRuolo="";
 	String idCalciatore;
 	String timeOut="N";
 	String nomeCalciatore;
 	Long millisFromPausa=0l;
 	String giocatoreTimeout;
-	String giocatoreDurataAsta="";
 	String sSemaforoAttivo;
 	private Integer tokenVerifica=-1;
 	
@@ -259,8 +255,6 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
-			durataAsta = (Integer) jsonToMap.get("durataAsta");
-			if (durataAsta<1) durataAsta=1;
 			String selCalciatore = (String)jsonToMap.get("selCalciatore");
 			String[] split = selCalciatore.split("@");
 			idCalciatore=split[0];
@@ -299,17 +293,6 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("utenti", getUtentiLoggati());
 			invia(toJson(m));
 		}
-		else if (operazione != null && operazione.equals("aggiornaDurataAsta")) {
-			giocatoreDurataAsta = (String) jsonToMap.get("giocatoreDurataAsta");
-			durataAsta = (Integer) jsonToMap.get("durataAsta");
-			if (durataAsta<1) durataAsta=1;
-			Map<String, Object> m = new HashMap<>();
-			m.put("durataAsta", durataAsta);
-			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
-			creaMessaggio(indirizzo,"Durata asta modificata da: " + giocatoreDurataAsta,EnumCategoria.Alert);
-			invia(toJson(m));
-			
-		}
 		else if (operazione != null && operazione.equals("inviaOfferta")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
@@ -320,7 +303,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			Calendar now = Calendar.getInstance();
 			Calendar scadenzaAsta = Calendar.getInstance();
 			scadenzaAsta.setTimeInMillis(calInizioOfferta.getTimeInMillis());
-			scadenzaAsta.add(Calendar.SECOND, durataAsta);
+			scadenzaAsta.add(Calendar.SECOND, myController.getDurataAsta());
 			Map<String, Object> m = new HashMap<>();
 //			Long maxRilancio = myController.getMapSpesoTotale().get(nomegiocatore).get("maxRilancio");
 			if(offerta>maxRilancio) {
@@ -398,8 +381,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			m.put("utentiScaduti", utentiScaduti);
 //			m.put("elencoAllenatori", myController.getAllAllenatori());
 			m.put("utenti", getUtentiLoggati());
-			m.put("durataAsta", durataAsta);
-			m.put("giocatoreDurataAsta", giocatoreDurataAsta);
+			m.put("durataAsta", myController.getDurataAsta());
 			m.put("sSemaforoAttivo", sSemaforoAttivo);
 			m.put("offertaVincente", offertaVincente);
 			m.put("selCalciatoreMacroRuolo",selCalciatoreMacroRuolo);
@@ -493,6 +475,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		m.put("maxC", myController.getMaxC());
 		m.put("maxA", myController.getMaxA());
 		m.put("budget", myController.getBudget());
+		m.put("durataAsta", myController.getDurataAsta());
 		m.put("messaggi", messaggi);
 		m.put("utentiRinominati", utentiRinominati);
 		m.put("elencoAllenatori", allAllenatori);
@@ -522,7 +505,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		if (calInizioOfferta != null) {
 			Calendar now = Calendar.getInstance();
 			l = (now.getTimeInMillis() - calInizioOfferta.getTimeInMillis())/1000;
-			l = 100*l/durataAsta;
+			l = 100*l/myController.getDurataAsta();
 			if (l<33) conta = -1;
 			else if (l<66) conta = 1;
 			else if (l<99) conta = 2;

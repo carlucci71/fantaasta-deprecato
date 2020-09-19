@@ -11,7 +11,6 @@ app.run(
 			$rootScope.nomegiocatore="";
 			$rootScope.offerta=1;
 			$rootScope.offertaOC=1;
-			$rootScope.durataAsta=10;
 			$rootScope.bSemaforoAttivo=true;
 			$rootScope.messaggi=[];
 			$rootScope.tokenUtente;
@@ -28,6 +27,7 @@ app.run(
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.timePing=1000;
 			$rootScope.budget=500;
+			$rootScope.durataAstaDefault=10;
 			$rootScope.numAcquisti=27;
 			$rootScope.numMinAcquisti=23;
 			$rootScope.maxP=$rootScope.numAcquisti;
@@ -120,7 +120,7 @@ app.run(
 					alert("Errore!! Nomi non univoci");
 				} else {
 					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
-					$resource('./aggiornaConfigLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+					$resource('./aggiornaConfigLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							if (data.nuovoNomeLoggato){
 								$rootScope.nomegiocatore=data.nuovoNomeLoggato;
@@ -265,7 +265,7 @@ app.run(
 			}
 			$rootScope.confermaConfigIniziale=function(){
 				if ($rootScope.numeroUtenti>0){
-					$resource('./inizializzaLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
+					$resource('./inizializzaLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							$rootScope.ricaricaIndex(false);
 							if(data.isATurni=="S")
@@ -337,6 +337,8 @@ app.run(
 						$rootScope.utenti=data.utenti;
 						$rootScope.turno=data.turno;
 						$rootScope.budget=data.budget;
+						$rootScope.durataAsta=data.durataAsta;
+						$rootScope.durataAstaDefault=data.durataAsta;
 						$rootScope.numAcquisti=data.numAcquisti;
 						$rootScope.numMinAcquisti=data.numMinAcquisti;
 						$rootScope.maxP=data.maxP;
@@ -494,9 +496,6 @@ app.run(
 					if (msg.durataAsta){
 						$rootScope.durataAsta=msg.durataAsta;
 					}
-					if (msg.giocatoreDurataAsta){
-						$rootScope.giocatoreDurataAsta=msg.giocatoreDurataAsta;
-					}
 					if (msg.contaTempo){
 						if (msg.contaTempo>$rootScope.durataAsta*1000)
 							$rootScope.contaTempo=$rootScope.durataAsta*1000;
@@ -557,7 +556,7 @@ app.run(
 				$rootScope.bSemaforoAttivo=false;
 				$rootScope.timeStart=0;
 				$rootScope.contaTempo=0;
-				$rootScope.sendMsg(JSON.stringify({'operazione':'start', 'selCalciatoreMacroRuolo':$rootScope.selCalciatoreMacroRuolo,'selCalciatore':$rootScope.selCalciatore, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore,'nomegiocatore':ng,'idgiocatore':ig, 'durataAsta':$rootScope.durataAsta}));
+				$rootScope.sendMsg(JSON.stringify({'operazione':'start', 'selCalciatoreMacroRuolo':$rootScope.selCalciatoreMacroRuolo,'selCalciatore':$rootScope.selCalciatore, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore,'nomegiocatore':ng,'idgiocatore':ig}));
 				$rootScope.selCalciatore="";
 			}
 			$rootScope.azzeraTempo=function(){
@@ -614,9 +613,6 @@ app.run(
 					ig = $rootScope.idgiocatore;
 				}
 				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'maxRilancio':$rootScope.getFromMapSpesoTotale('MAXRILANCIO',ng),'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':off}));
-			}
-			$rootScope.aggiornaDurataAsta = function(){
-				$rootScope.sendMsg(JSON.stringify({'operazione':'aggiornaDurataAsta', 'giocatoreDurataAsta':$rootScope.nomegiocatore, 'durataAsta':$rootScope.durataAsta}));
 			}
 			$rootScope.cancellaUtente = function(u) {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':u.nome, 'idgiocatore':u.id}));

@@ -64,7 +64,9 @@ L'applicazione si può avviare con il seguente comando, dalla root del progetto:
 Al primo accesso verrà chiesto di inserire i seguenti valori:
 * Numero utenti
 * Budget
+* Durata asta
 * Numero massimo giocatori acquistabili
+* Numero minimo giocatori acquistabili (per un numero fisso di giocatori acquistabili, indicare lo stesso valore sia come minimo che come massimo)
 * Numero massimo portieri acquistabili
 * Numero massimo difensori acquistabili
 * Numero massimo centrocampisti acquistabili
@@ -110,7 +112,7 @@ E' presente anche la possibilità di configurare la frequenza di **refresh** del
 Solo l'amministratore, avrà anche la possibilità di avviare un'asta per un altro allenatore, tramite l'icona che appare una volta selezionato un giocatore.
 
 #### Accordion offerte
-Se è il proprio turno (o se si è amministratori) la prima attività da fare sarà **selezionare** il calciatore da offrire ed **avviare** l'asta (la durata è personalizzabile dall'amministratore). Dopo che sarà avviata, tutti gli allenatori vedranno il **progressivo del tempo rimanente** per effettuare un rilancio, la **situazione aggiornata** ed avranno la possibilità di **rilanciare** quanto indicato nell'apposito campo. Esiste la possibilità di **allineare in automatico** con i rilanci degli altri allenatori o **manualmente** con l'apposita icona. Inoltre esistono le scorciatoie per puntare **+1, +5 o +10**. 
+Se è il proprio turno (o se si è amministratori) la prima attività da fare sarà **selezionare** il calciatore da offrire ed **avviare** l'asta (la durata è personalizzabile dall'amministratore nella pagina di admin). Dopo che sarà avviata, tutti gli allenatori vedranno il **progressivo del tempo rimanente** per effettuare un rilancio, la **situazione aggiornata** ed avranno la possibilità di **rilanciare** quanto indicato nell'apposito campo. Esiste la possibilità di **allineare in automatico** con i rilanci degli altri allenatori o **manualmente** con l'apposita icona. Inoltre esistono le scorciatoie per puntare **+1, +5 o +10**. 
 
 Chiunque potrà sospendere il conto alla rovescia con il bottone **pausa**.
 Sono presenti i controlli per **bloccare** l'avvio ed il rilancio in caso di credito insufficiente o slot ruolo già completo.
