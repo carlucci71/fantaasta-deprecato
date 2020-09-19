@@ -20,6 +20,11 @@ public class Configurazione {
 	private Integer maxD;
 	private Integer maxC;
 	private Integer maxA;
+
+	private Integer minP;
+	private Integer minD;
+	private Integer minC;
+	private Integer minA;
 	
 	public Integer getId() {
 		return id;
@@ -105,9 +110,35 @@ public class Configurazione {
 	@Override
 	public String toString() {
 		return "Configurazione [id=" + id + ", isATurni=" + isATurni + ", isMantra=" + isMantra + ", budget=" + budget
-				+ ", durataAsta=" + durataAsta + ", numeroAcquisti=" + numeroAcquisti
-				+ ", numeroMinAcquisti=" + numeroMinAcquisti + ", maxP=" + maxP + ", maxD=" + maxD + ", maxC=" + maxC
-				+ ", maxA=" + maxA + ", numeroGiocatori=" + numeroGiocatori + "]";
+				+ ", durataAsta=" + durataAsta + ", numeroAcquisti=" + numeroAcquisti + ", numeroMinAcquisti="
+				+ numeroMinAcquisti + ", maxP=" + maxP + ", maxD=" + maxD + ", maxC=" + maxC + ", maxA=" + maxA
+				+ ", minP=" + minP + ", minD=" + minD + ", minC=" + minC + ", minA=" + minA + ", numeroGiocatori="
+				+ numeroGiocatori + "]";
 	}
+	public Integer getMinP() {
+		return minP;
+	}
+	public void setMinP(Integer minP) {
+		this.minP = minP;
+	}
+	public Integer getMinD() {
+		return minD;
+	}
+	public void setMinD(Integer minD) {
+		this.minD = minD;
+	}
+	public Integer getMinC() {
+		return minC;
+	}
+	public void setMinC(Integer minC) {
+		this.minC = minC;
+	}
+	public Integer getMinA() {
+		return minA;
+	}
+	public void setMinA(Integer minA) {
+		this.minA = minA;
+	}
+
 
 }

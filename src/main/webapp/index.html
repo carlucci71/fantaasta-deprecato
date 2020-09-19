@@ -46,28 +46,46 @@
 	<label style="width:190">Budget:</label><input  class="inputDato" type="number"  ng-model="budget"></input>
 	<br>
 	<label style="width:190">Durata asta:</label><input  class="inputDato" type="number"  ng-model="durataAstaDefault"></input>
-	<br><br>
-	<label style="width:190">Numero massimo acquisti:</label><input  class="inputDato" type="number"  ng-model="numAcquisti"></input>
 	<br>
-	<label style="width:190">Numero minimo acquisti:</label><input  class="inputDato" type="number"  ng-model="numMinAcquisti"></input>
-	<br><br>
-	<label style="width:190">Max portieri acquistabili:</label><input  class="inputDato" type="number"  ng-model="maxP"></input>
-	<br>
-	<label style="width:190">Max difensori acquistabili:</label><input  class="inputDato" type="number"  ng-model="maxD"></input>
-	<br>
-	<label style="width:190">Max centrocampisti acquistabili:</label><input  class="inputDato" type="number"  ng-model="maxC"></input>
-	<br>
-	<label style="width:190">Max attaccanti acquistabili:</label><input  class="inputDato" type="number"  ng-model="maxA"></input>
-	<br><br>
 	<label style="width:190">Gestione a turni</label>
 		<i title="gestione a turni" ng-click="isATurni=!isATurni" ng-show="isATurni" class="fa fa-check-square"></i>
 		<i title="gestione a turni" ng-click="isATurni=!isATurni" ng-show="!isATurni" class="fa fa-square"></i>
 	<br>
 	<label style="width:190">Mantra</label>
-		<i title="mantra" ng-click="isMantra=!isMantra" ng-show="isMantra" class="fa fa-check-square"></i>
-		<i title="mantra" ng-click="isMantra=!isMantra" ng-show="!isMantra" class="fa fa-square"></i>
+		<i title="mantra" ng-click="scegliMantra()" ng-show="isMantra" class="fa fa-check-square"></i>
+		<i title="mantra" ng-click="scegliMantra()" ng-show="!isMantra" class="fa fa-square"></i>
 	<br>
-		<button ng-show="numeroUtenti>1" ng-click="confermaConfigIniziale()">conferma</button>
+	<label style="width:190;color:red">Composizione rose</label>
+	<table>
+		<tr>
+			<td></td>
+			<td style="text-align:center">Min</td>
+			<td style="text-align:center">Max</td>
+		</tr>
+		<tr>
+			<td style="padding-right:10px">Portieri</td>
+			<td><input style="width:40;text-align:center" ng-model="minP" type=number></input></td>
+			<td><input style="width:40;text-align:center" ng-model="maxP" type=number></input></td>
+		</tr>
+		<tr ng-show="!isMantra">
+			<td style="padding-right:10px">Difensori</td>
+			<td><input style="width:40;text-align:center" ng-model="minD" type=number></input></td>
+			<td><input style="width:40;text-align:center" ng-model="maxD" type=number></input></td>
+		</tr>
+		<tr ng-show="!isMantra">
+			<td style="padding-right:10px">Centrocampisti</td>
+			<td><input style="width:40;text-align:center" ng-model="minC" type=number></input></td>
+			<td><input style="width:40;text-align:center" ng-model="maxC" type=number></input></td>
+		</tr>
+		<tr>
+			<td style="padding-right:10px"ng-show="!isMantra">Attaccanti</td>
+			<td style="padding-right:10px"ng-show="isMantra">Movimento</td>
+			<td><input style="width:40;text-align:center" ng-model="minA" type=number></input></td>
+			<td><input style="width:40;text-align:center" ng-model="maxA" type=number></input></td>
+		</tr>
+	
+	</table>
+	<button ng-show="numeroUtenti>1 && durataAstaDefault>1" ng-click="confermaConfigIniziale()">conferma</button>
 </div>
 
 <div ng-show="!config && !connessioneKO">
@@ -95,10 +113,12 @@
 		  	<td class="tabellaUtenti"></td>
 		  	<td ng-show="isATurni" class="tabellaUtenti" >Turno</td>
 		  	<td class="tabellaUtenti">Presi</td>
-		  	<td class="tabellaUtenti">P</td>
-		  	<td class="tabellaUtenti">D</td>
-		  	<td class="tabellaUtenti">C</td>
-		  	<td class="tabellaUtenti">A</td>
+		  	<td ng-show="isMantra" class="tabellaUtenti">Por</td>
+		  	<td ng-show="isMantra" class="tabellaUtenti">Mov</td>
+		  	<td ng-show="!isMantra" class="tabellaUtenti">P</td>
+		  	<td ng-show="!isMantra" class="tabellaUtenti">D</td>
+		  	<td ng-show="!isMantra" class="tabellaUtenti">C</td>
+		  	<td ng-show="!isMantra" class="tabellaUtenti">A</td>
 		  	<td class="tabellaUtenti">Max</td>
 		  </tr>
 		  <tr ng-repeat="utente in elencoAllenatori  | orderBy:'ordine'">
@@ -116,20 +136,23 @@
 					<label ng-show="utente.ordine==turno"><i class="fa fa-thumbs-up"></i></label>
 					<img title="forza turno" ng-show="isAdmin && utente.ordine!=turno" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
 				</td>
-		    	<td ng-class="getFromMapSpesoTotale('CONTA',utente.nome)>=numMinAcquisti?'tuttiPresi':'nonTuttiPresi'">  <!-- presi -->
+		    	<td ng-class="calcolaClassePresi('CONTA',utente.nome,numMinAcquisti,numAcquisti)">  <!-- presi -->
 		    		{{getFromMapSpesoTotale('CONTA',utente.nome)}} ({{getFromMapSpesoTotale('SPESO',utente.nome)}})
 		    	</td>
-		    	<td ng-class="getFromMapSpesoTotale('CONTAP',utente.nome)>=maxP?'tuttiPresi':'nonTuttiPresi'">  <!-- presiP -->
+		    	<td ng-class="calcolaClassePresi('CONTAP',utente.nome,minP,maxP)">  <!-- presiP -->
 		    		{{getFromMapSpesoTotale('CONTAP',utente.nome)}} ({{getFromMapSpesoTotale('SPESOP',utente.nome)}})
 		    	</td>
-		    	<td ng-class="getFromMapSpesoTotale('CONTAD',utente.nome)>=maxD?'tuttiPresi':'nonTuttiPresi'">  <!-- presiD -->
+		    	<td ng-show="!isMantra" ng-class="getFromMapSpesoTotale('CONTAD',utente.nome)>=maxD?'tuttiPresi':'nonTuttiPresi'">  <!-- presiD -->
 		    		{{getFromMapSpesoTotale('CONTAD',utente.nome)}} ({{getFromMapSpesoTotale('SPESOD',utente.nome)}})
 		    	</td>
-		    	<td ng-class="getFromMapSpesoTotale('CONTAC',utente.nome)>=maxC?'tuttiPresi':'nonTuttiPresi'">  <!-- presiC -->
+		    	<td ng-show="!isMantra" ng-class="getFromMapSpesoTotale('CONTAC',utente.nome)>=maxC?'tuttiPresi':'nonTuttiPresi'">  <!-- presiC -->
 		    		{{getFromMapSpesoTotale('CONTAC',utente.nome)}} ({{getFromMapSpesoTotale('SPESOC',utente.nome)}})
 		    	</td>
-		    	<td ng-class="getFromMapSpesoTotale('CONTAA',utente.nome)>=maxA?'tuttiPresi':'nonTuttiPresi'">  <!-- presiA -->
+		    	<td ng-show="!isMantra" ng-class="getFromMapSpesoTotale('CONTAA',utente.nome)>=maxA?'tuttiPresi':'nonTuttiPresi'">  <!-- presiA -->
 		    		{{getFromMapSpesoTotale('CONTAA',utente.nome)}} ({{getFromMapSpesoTotale('SPESOA',utente.nome)}})
+		    	</td>
+		    	<td ng-show="isMantra" ng-class="calcolaClassePresi('CONTAALL',utente.nome,minA,maxA)">  <!-- presiA -->
+		    		{{getFromMapSpesoTotale('CONTAALL',utente.nome)}} ({{getFromMapSpesoTotale('SPESOALL',utente.nome)}})
 		    	</td>
 		    	<td class="nonTuttiPresi">  <!-- max -->
 		    		{{getFromMapSpesoTotale('MAXRILANCIO',utente.nome)}}

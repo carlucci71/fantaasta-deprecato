@@ -58,9 +58,12 @@
 	<div ng-show="isAdmin">	
 	<label style="color:red;text-align:center;background-color:yellow;width:100%">Configurazione</label>
 			<br>
+			<!-- 
 			<label style="width:190">Budget:</label><input  class="inputDato" type="number"  ng-model="budget"></input>
 			<br>
+			-->
 			<label style="width:190">Durata asta:</label><input  class="inputDato" type="number"  ng-model="durataAstaDefault"></input>
+			<!-- 
 			<br><br>
 			<label style="width:190">Numero massimo acquisti:</label><input  class="inputDato" type="number"  ng-model="numAcquisti"></input>
 			<br>
@@ -74,14 +77,18 @@
 			<br>
 			<label style="width:190">Max attaccanti acquistabili:</label><input  class="inputDato" type="number"  ng-model="maxA"></input>
 			<br><br>
+			 -->
+			 <br>
 			<label style="width:190">Gestione a turni</label>
 					<i title="gestione a turni" ng-click="isATurni=!isATurni" ng-show="isATurni" class="fa fa-check-square"></i>
 					<i title="gestione a turni" ng-click="isATurni=!isATurni" ng-show="!isATurni" class="fa fa-square"></i>
 			<br>
+			<!-- 
 			<label style="width:190">Mantra</label>
 					<i title="mantra" ng-click="isMantra=!isMantra" ng-show="isMantra" class="fa fa-check-square"></i>
 					<i title="mantra" ng-click="isMantra=!isMantra" ng-show="!isMantra" class="fa fa-square"></i>
 			<br>
+			 -->
 		</div>	
 		<input type="button" value="AGGIORNA" style="width:100%;font-weight: bold;" ng-click="aggiornaConfigLega(isAdmin)"></input>
 	</div>

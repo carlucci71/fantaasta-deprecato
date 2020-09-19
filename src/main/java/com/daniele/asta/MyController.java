@@ -84,6 +84,10 @@ public class MyController {
 	private Integer maxD=0;
 	private Integer maxC=0;
 	private Integer maxA=0;
+	private Integer minP=0;
+	private Integer minD=0;
+	private Integer minC=0;
+	private Integer minA=0;
 	private Integer budget=0;
 	private Integer durataAsta=0;
 	private String turno="0";
@@ -213,6 +217,10 @@ public class MyController {
 			setMaxD(configurazione.getMaxD());
 			setMaxC(configurazione.getMaxC());
 			setMaxA(configurazione.getMaxA());
+			setMinP(configurazione.getMinP());
+			setMinD(configurazione.getMinD());
+			setMinC(configurazione.getMinC());
+			setMinA(configurazione.getMinA());
 			setBudget(configurazione.getBudget());
 			setDurataAsta(configurazione.getDurataAsta());
 			isATurni = configurazione.getIsATurni();
@@ -236,6 +244,10 @@ public class MyController {
 			ret.put("maxD", maxD);
 			ret.put("maxC", maxC);
 			ret.put("maxA", maxA);
+			ret.put("minP", minP);
+			ret.put("minD", minD);
+			ret.put("minC", minC);
+			ret.put("minA", minA);
 			ret.put("budget", budget);
 			ret.put("durataAsta", durataAsta);
 			ret.put("elencoAllenatori", allAllenatori);
@@ -449,6 +461,10 @@ public class MyController {
 			setMaxD((Integer) body.get("maxD"));
 			setMaxC((Integer) body.get("maxC"));
 			setMaxA((Integer) body.get("maxA"));
+			setMinP((Integer) body.get("minP"));
+			setMinD((Integer) body.get("minD"));
+			setMinC((Integer) body.get("minC"));
+			setMinA((Integer) body.get("minA"));
 			isATurni=(Boolean) body.get("isATurni");
 			setIsMantra((Boolean) body.get("isMantra"));
 			if (configurazione==null) configurazione=new Configurazione();
@@ -462,6 +478,10 @@ public class MyController {
 			configurazione.setMaxD(getMaxD());
 			configurazione.setMaxC(getMaxC());
 			configurazione.setMaxA(getMaxA());
+			configurazione.setMinP(getMinP());
+			configurazione.setMinD(getMinD());
+			configurazione.setMinC(getMinC());
+			configurazione.setMinA(getMinA());
 			configurazione.setIsATurni(isATurni);
 			configurazione.setMantra(getIsMantra());
 			configurazioneRepository.save(configurazione);
@@ -512,17 +532,17 @@ public class MyController {
 		if(isOkDispositiva(body)) {
 			Map <String, String> utentiRinominati = new HashMap<>();
 			int i=0;
-			setNumAcquisti((Integer) body.get("numAcquisti"));
-			setNumMinAcquisti((Integer) body.get("numMinAcquisti"));
-			setMaxP((Integer) body.get("maxP"));
-			setMaxD((Integer) body.get("maxD"));
-			setMaxC((Integer) body.get("maxC"));
-			setMaxA((Integer) body.get("maxA"));
-			setBudget((Integer) body.get("budget"));
+//			setNumAcquisti((Integer) body.get("numAcquisti"));
+//			setNumMinAcquisti((Integer) body.get("numMinAcquisti"));
+//			setMaxP((Integer) body.get("maxP"));
+//			setMaxD((Integer) body.get("maxD"));
+//			setMaxC((Integer) body.get("maxC"));
+//			setMaxA((Integer) body.get("maxA"));
+//			setBudget((Integer) body.get("budget"));
 			setDurataAsta((Integer) body.get("durataAsta"));
 			Boolean admin = (Boolean) body.get("admin");
 			isATurni = (Boolean) body.get("isATurni");
-			setIsMantra((Boolean) body.get("isMantra"));
+//			setIsMantra((Boolean) body.get("isMantra"));
 			List<Map<String, Object>> elencoAllenatori = (List<Map<String, Object>>) body.get("elencoAllenatori");
 			for (Map<String, Object> map : elencoAllenatori) {
 				Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
@@ -551,15 +571,15 @@ public class MyController {
 			}
 			Configurazione configurazione = getConfigurazione();
 			configurazione.setIsATurni(isATurni);
-			configurazione.setMantra(getIsMantra());
-			configurazione.setBudget(getBudget());
+//			configurazione.setMantra(getIsMantra());
+//			configurazione.setBudget(getBudget());
 			configurazione.setDurataAsta(getDurataAsta());
-			configurazione.setNumeroAcquisti(getNumAcquisti());
-			configurazione.setNumeroMinAcquisti(getNumMinAcquisti());
-			configurazione.setMaxP(getMaxP());
-			configurazione.setMaxD(getMaxD());
-			configurazione.setMaxC(getMaxC());
-			configurazione.setMaxA(getMaxA());
+//			configurazione.setNumeroAcquisti(getNumAcquisti());
+//			configurazione.setNumeroMinAcquisti(getNumMinAcquisti());
+//			configurazione.setMaxP(getMaxP());
+//			configurazione.setMaxD(getMaxD());
+//			configurazione.setMaxC(getMaxC());
+//			configurazione.setMaxA(getMaxA());
 			configurazioneRepository.save(configurazione);
 			if(isATurni) {
 				ret.put("isATurni", "S");
@@ -705,6 +725,10 @@ public class MyController {
 			tmp.put("maxRilancio", budget-tmp.get("speso")-(numMinAcquisti-tmp.get("conta"))+1);
 			tmp.put("speso"+speso.getMacroRuolo(),speso.getCosto());
 			tmp.put("conta"+speso.getMacroRuolo(),speso.getConta());
+			if(!speso.getMacroRuolo().equalsIgnoreCase("P")) {
+				tmp.put("spesoAll",(tmp.get("spesoAll")==null?0:tmp.get("spesoAll"))+speso.getCosto());
+				tmp.put("contaAll",(tmp.get("contaAll")==null?0:tmp.get("contaAll"))+speso.getConta());
+			}
 			getMapSpesoTotale().put(speso.getNome(), tmp);
 		}
 		Iterable<GiocatoriPerSquadra> giocatoriPerSquadra = fantaroseRepository.giocatoriPerSquadra();
@@ -997,6 +1021,38 @@ public class MyController {
 
 	public void setDurataAsta(Integer durataAsta) {
 		this.durataAsta = durataAsta;
+	}
+
+	public Integer getMinP() {
+		return minP;
+	}
+
+	public void setMinP(Integer minP) {
+		this.minP = minP;
+	}
+
+	public Integer getMinD() {
+		return minD;
+	}
+
+	public void setMinD(Integer minD) {
+		this.minD = minD;
+	}
+
+	public Integer getMinC() {
+		return minC;
+	}
+
+	public void setMinC(Integer minC) {
+		this.minC = minC;
+	}
+
+	public Integer getMinA() {
+		return minA;
+	}
+
+	public void setMinA(Integer minA) {
+		this.minA = minA;
 	}
 
 }

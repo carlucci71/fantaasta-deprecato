@@ -28,18 +28,35 @@ app.run(
 			$rootScope.timePing=1000;
 			$rootScope.budget=500;
 			$rootScope.durataAstaDefault=10;
-			$rootScope.numAcquisti=27;
-			$rootScope.numMinAcquisti=23;
-			$rootScope.maxP=$rootScope.numAcquisti;
-			$rootScope.maxD=$rootScope.numAcquisti;
-			$rootScope.maxC=$rootScope.numAcquisti;
-			$rootScope.maxA=$rootScope.numAcquisti;
 			$rootScope.idgiocatoreOperaCome=-1;
 			$rootScope.nomegiocatoreOperaCome="";
 			$rootScope.forzaLogout= function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				$rootScope.nomegiocatore='';
 			};
+			$rootScope.scegliMantra=function(){
+				$rootScope.isMantra=!$rootScope.isMantra;
+				if($rootScope.isMantra){
+					$rootScope.minP=2;
+					$rootScope.maxP=3;
+					$rootScope.minD=0;
+					$rootScope.maxD=0;
+					$rootScope.minC=0;
+					$rootScope.maxC=0;
+					$rootScope.minA=21;
+					$rootScope.maxA=25;
+				}
+				else {
+					$rootScope.minP=3;
+					$rootScope.maxP=3;
+					$rootScope.minD=8;
+					$rootScope.maxD=8;
+					$rootScope.minC=8;
+					$rootScope.maxC=8;
+					$rootScope.minA=6;
+					$rootScope.maxA=6;
+				}
+			}
 			$rootScope.callDoConnect = function(nome,id, pwd) {
 				var esci=false;
 				if (pwd != '') {
@@ -106,6 +123,15 @@ app.run(
 					value.ordine=value.nuovoOrdine;
 				});
 			}
+			$rootScope.calcolaClassePresi=function(tipo,nome,minimo,massimo){
+				var x=$rootScope.getFromMapSpesoTotale(tipo,nome);
+				if (x>=massimo)
+					return 'tuttiPresi';
+				else if (x>=minimo)
+					return 'minPresi';				
+				else
+					return 'nonTuttiPresi';				
+			}
 			$rootScope.aggiornaConfigLega= function(amministratore) {
 				var checkNome=[];
 				var ok=true;
@@ -118,9 +144,13 @@ app.run(
 				});
 				if (!ok) {
 					alert("Errore!! Nomi non univoci");
-				} else {
+				} if($rootScope.durataAstaDefault<=0) {
+					alert("La durata asta deve essere maggiore di 0");
+				}
+				else {
 					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
-					$resource('./aggiornaConfigLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+//					$resource('./aggiornaConfigLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+					$resource('./aggiornaConfigLega',{}).save({'durataAsta':$rootScope.durataAstaDefault,'isATurni':$rootScope.isATurni,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							if (data.nuovoNomeLoggato){
 								$rootScope.nomegiocatore=data.nuovoNomeLoggato;
@@ -211,6 +241,10 @@ app.run(
 					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].contaA) return 0;
 					return $rootScope.mapSpesoTotale[nome].contaA;
 				}
+				if (tipo=='CONTAALL'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].contaAll) return 0;
+					return $rootScope.mapSpesoTotale[nome].contaAll;
+				}
 				if (tipo=='SPESOP'){
 					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].spesoP) return 0;
 					return $rootScope.mapSpesoTotale[nome].spesoP;
@@ -226,6 +260,10 @@ app.run(
 				if (tipo=='SPESOA'){
 					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].spesoA) return 0;
 					return $rootScope.mapSpesoTotale[nome].spesoA;
+				}
+				if (tipo=='SPESOALL'){
+					if(!$rootScope.mapSpesoTotale[nome]||!$rootScope.mapSpesoTotale[nome].spesoAll) return 0;
+					return $rootScope.mapSpesoTotale[nome].spesoAll;
 				}
 				if (tipo=='MAXRILANCIO'){
 					if(!$rootScope.mapSpesoTotale || !$rootScope.mapSpesoTotale[nome]){
@@ -265,7 +303,10 @@ app.run(
 			}
 			$rootScope.confermaConfigIniziale=function(){
 				if ($rootScope.numeroUtenti>0){
-					$resource('./inizializzaLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
+					$rootScope.numAcquisti=$rootScope.maxP+$rootScope.maxC+$rootScope.maxD+$rootScope.maxA;
+					$rootScope.numMinAcquisti=$rootScope.minP+$rootScope.minC+$rootScope.minD+$rootScope.minA;
+
+					$resource('./inizializzaLega',{}).save({'minP':$rootScope.minP,'minD':$rootScope.minD,'minC':$rootScope.minC,'minA':$rootScope.minA,'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							$rootScope.ricaricaIndex(false);
 							if(data.isATurni=="S")
@@ -315,6 +356,7 @@ app.run(
 					$rootScope.connectWS();
 					if (data.DA_CONFIGURARE){
 						$rootScope.config=true;
+						$rootScope.scegliMantra();
 						if(chiudi){
 							window.location.href = '/';
 						}
@@ -345,6 +387,10 @@ app.run(
 						$rootScope.maxD=data.maxD;
 						$rootScope.maxC=data.maxC;
 						$rootScope.maxA=data.maxA;
+						$rootScope.minP=data.minP;
+						$rootScope.minD=data.minD;
+						$rootScope.minC=data.minC;
+						$rootScope.minA=data.minA;
 						$rootScope.nomeGiocatoreTurno=data.nomeGiocatoreTurno;
 						$rootScope.giocatoriPerSquadra=data.giocatoriPerSquadra;
 						$rootScope.mapSpesoTotale=data.mapSpesoTotale;
@@ -641,17 +687,34 @@ app.run(
 			$rootScope.$watch("selCalciatoreMacroRuolo", function(newValue, oldValue) {
 				if(!newValue) return true;
 				var max;
-				if(newValue == 'P') max=$rootScope.maxP;
-				if(newValue == 'D') max=$rootScope.maxD;
-				if(newValue == 'C') max=$rootScope.maxC;
-				if(newValue == 'A') max=$rootScope.maxA;
+				if ($rootScope.isMantra){
+					if(newValue == 'P') {
+						max=$rootScope.maxP;
+					}
+					else  {
+						max=$rootScope.maxA;
+						newValue='ALL';
+					}
+				}
+				else{
+					if(newValue == 'P') max=$rootScope.maxP;
+					if(newValue == 'D') max=$rootScope.maxD;
+					if(newValue == 'C') max=$rootScope.maxC;
+					if(newValue == 'A') max=$rootScope.maxA;
+				}
 				$rootScope.avviabili=[];
 				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
-					var avv1=false;
+//					var avv1=false;
 					var avv2=false;
-					if($rootScope.getFromMapSpesoTotale('CONTA',value.nome)<$rootScope.numAcquisti) avv1=true;
-					if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) avv2=true;
-					if(avv1 && avv2){
+					if ($rootScope.isMantra){
+//						if($rootScope.getFromMapSpesoTotale('CONTA',value.nome)<$rootScope.numAcquisti) avv1=true;
+						if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) avv2=true;
+					} else{
+//						if($rootScope.getFromMapSpesoTotale('CONTA',value.nome)<$rootScope.numAcquisti) avv1=true;
+						if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) avv2=true;
+					}
+//					if(avv1 && avv2){
+					if(avv2){
 						$rootScope.avviabili.push(value.nome)					
 					}
 				});
