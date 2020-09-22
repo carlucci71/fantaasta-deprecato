@@ -17,13 +17,12 @@ app.run(
 			$rootScope.isAdmin=false;
 			$rootScope.calciatori=[];
 			$rootScope.utenti=[];
-			$rootScope.numeroUtenti=10;
 			$rootScope.turno=0;
 			$rootScope.tokenDispositiva=-1;
 			$rootScope.isATurni=true;
 			$rootScope.autoAllinea=false;
 			$rootScope.autoAllineaOC=false;
-			$rootScope.isMantra=true;
+			$rootScope.isMantra=false;
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.timePing=1000;
 			$rootScope.budget=500;
@@ -37,16 +36,18 @@ app.run(
 			$rootScope.scegliMantra=function(){
 				$rootScope.isMantra=!$rootScope.isMantra;
 				if($rootScope.isMantra){
+					$rootScope.numeroUtenti=10;
 					$rootScope.minP=2;
-					$rootScope.maxP=3;
+					$rootScope.maxP=27;
 					$rootScope.minD=0;
 					$rootScope.maxD=0;
 					$rootScope.minC=0;
 					$rootScope.maxC=0;
-					$rootScope.minA=21;
-					$rootScope.maxA=25;
+					$rootScope.minA=23;
+					$rootScope.maxA=27;
 				}
 				else {
+					$rootScope.numeroUtenti=8;
 					$rootScope.minP=3;
 					$rootScope.maxP=3;
 					$rootScope.minD=8;
@@ -123,14 +124,36 @@ app.run(
 					value.ordine=value.nuovoOrdine;
 				});
 			}
-			$rootScope.calcolaClassePresi=function(tipo,nome,minimo,massimo){
-				var x=$rootScope.getFromMapSpesoTotale(tipo,nome);
+			$rootScope.calcolaClassePresiPerRuolo=function(tipo,nome){
+				var x=$rootScope.getFromMapSpesoTotale('CONTA'+tipo,nome);
+				if(tipo=='ALL') tipo='A';
+				var minimo  =eval('$rootScope.min' + tipo);
+				var massimo =eval('$rootScope.max' + tipo);
+				if($rootScope.isMantra && tipo=='P' && $rootScope.getFromMapSpesoTotale('CONTAALL',nome)>=$rootScope.maxA){
+					return 'tuttiPresi';
+				}
 				if (x>=massimo)
 					return 'tuttiPresi';
 				else if (x>=minimo)
 					return 'minPresi';				
 				else
-					return 'nonTuttiPresi';				
+					return 'nonTuttiPresi';
+				
+			}
+			$rootScope.calcolaClassePresi=function(tipo,nome){
+					var esitoP=$rootScope.calcolaClassePresiPerRuolo('P',nome);
+					var esitoD='tuttiPresi';
+					if (!$rootScope.isMantra) esitoD=$rootScope.calcolaClassePresiPerRuolo('D',nome);
+					var esitoC='tuttiPresi';
+					if (!$rootScope.isMantra) esitoC=$rootScope.calcolaClassePresiPerRuolo('C',nome);
+					var esitoA='tuttiPresi';
+					if (!$rootScope.isMantra) esitoA=$rootScope.calcolaClassePresiPerRuolo('A',nome);
+					var esitoAll='tuttiPresi';
+					if ($rootScope.isMantra) esitoAll=$rootScope.calcolaClassePresiPerRuolo('ALL',nome);
+					if(esitoP=='tuttiPresi' && esitoD=='tuttiPresi' && esitoC=='tuttiPresi' && esitoA=='tuttiPresi' && esitoAll=='tuttiPresi') return 'tuttiPresi';
+					if((esitoAll=='tuttiPresi' || esitoAll=='minPresi') && (esitoP=='tuttiPresi' || esitoP=='minPresi') && (esitoD=='tuttiPresi' || esitoD=='minPresi')
+							&& (esitoC=='tuttiPresi' || esitoC=='minPresi') && (esitoA=='tuttiPresi' || esitoA=='minPresi')) return 'minPresi';
+					return 'nonTuttiPresi';
 			}
 			$rootScope.aggiornaConfigLega= function(amministratore) {
 				var checkNome=[];
@@ -149,8 +172,21 @@ app.run(
 				}
 				else {
 					$rootScope.tokenDispositiva=Math.floor(Math.random()*(10000)+1);
-//					$resource('./aggiornaConfigLega',{}).save({'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
-					$resource('./aggiornaConfigLega',{}).save({'durataAsta':$rootScope.durataAstaDefault,'isATurni':$rootScope.isATurni,'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,'tokenDispositiva':$rootScope.tokenDispositiva}).$promise.then(function(data) {
+					if($rootScope.isMantra) {
+						$rootScope.maxP=$rootScope.maxA;
+						$rootScope.numAcquisti=$rootScope.maxA;
+					}
+					else {
+						$rootScope.numAcquisti=$rootScope.maxP+$rootScope.maxD+$rootScope.maxC+$rootScope.maxA;
+					}
+					$rootScope.numMinAcquisti=$rootScope.minP+$rootScope.minD+$rootScope.minC+$rootScope.minA;
+					$resource('./aggiornaConfigLega',{}).save({'durataAsta':$rootScope.durataAstaDefault,'isATurni':$rootScope.isATurni,
+						'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,
+						'tokenDispositiva':$rootScope.tokenDispositiva,'budget':$rootScope.budget,
+						'maxP':$rootScope.maxP,'minP':$rootScope.minP,'maxD':$rootScope.maxD,'minD':$rootScope.minD,
+						'maxC':$rootScope.maxC,'minC':$rootScope.minC,'maxA':$rootScope.maxA,'minA':$rootScope.minA,
+						'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti
+					}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							if (data.nuovoNomeLoggato){
 								$rootScope.nomegiocatore=data.nuovoNomeLoggato;
@@ -269,9 +305,7 @@ app.run(
 					if(!$rootScope.mapSpesoTotale || !$rootScope.mapSpesoTotale[nome]){
 						return $rootScope.budget-$rootScope.numMinAcquisti+1;
 					}else{
-//						console.log("1-" + $rootScope.mapSpesoTotale[nome] + "2-" + nome + "3-" + $rootScope.mapSpesoTotale);
 						return $rootScope.mapSpesoTotale[nome].maxRilancio;
-						
 					}
 				}
 			}
@@ -303,9 +337,14 @@ app.run(
 			}
 			$rootScope.confermaConfigIniziale=function(){
 				if ($rootScope.numeroUtenti>0){
-					$rootScope.numAcquisti=$rootScope.maxP+$rootScope.maxC+$rootScope.maxD+$rootScope.maxA;
-					$rootScope.numMinAcquisti=$rootScope.minP+$rootScope.minC+$rootScope.minD+$rootScope.minA;
-
+					if($rootScope.isMantra) {
+						$rootScope.maxP=$rootScope.maxA;
+						$rootScope.numAcquisti=$rootScope.maxA;
+					}
+					else {
+						$rootScope.numAcquisti=$rootScope.maxP+$rootScope.maxD+$rootScope.maxC+$rootScope.maxA;
+					}
+					$rootScope.numMinAcquisti=$rootScope.minP+$rootScope.minD+$rootScope.minC+$rootScope.minA;
 					$resource('./inizializzaLega',{}).save({'minP':$rootScope.minP,'minD':$rootScope.minD,'minC':$rootScope.minC,'minA':$rootScope.minA,'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							$rootScope.ricaricaIndex(false);
@@ -588,8 +627,7 @@ app.run(
 				$rootScope.bSemaforoAttivo=true;
 				$rootScope.sendMsg(JSON.stringify({'operazione':'liberaSemaforo'}));
 			}
-			
-			$rootScope.verificaAvviaAsta = function(ng) {
+/*			$rootScope.verificaAvviaAsta = function(ng) {
 				if(!$rootScope.selCalciatoreMacroRuolo) return true;
 				var max;
 				if($rootScope.selCalciatoreMacroRuolo == 'P') max=$rootScope.maxP;
@@ -597,7 +635,7 @@ app.run(
 				if($rootScope.selCalciatoreMacroRuolo == 'C') max=$rootScope.maxC;
 				if($rootScope.selCalciatoreMacroRuolo == 'A') max=$rootScope.maxA;
 				return $rootScope.getFromMapSpesoTotale('CONTA'+$rootScope.selCalciatoreMacroRuolo,ng)<max;
-			}
+			}*/
 			$rootScope.inizia = function(ng,ig) {
 				$rootScope.bSemaforoAttivo=false;
 				$rootScope.timeStart=0;
@@ -683,20 +721,10 @@ app.run(
 			$rootScope.$watch("elencoAllenatori", function(newValue, oldValue) {
 				$rootScope.calcolaIsAdmin();
 			});
-
 			$rootScope.$watch("selCalciatoreMacroRuolo", function(newValue, oldValue) {
 				if(!newValue) return true;
 				var max;
-				if ($rootScope.isMantra){
-					if(newValue == 'P') {
-						max=$rootScope.maxP;
-					}
-					else  {
-						max=$rootScope.maxA;
-						newValue='ALL';
-					}
-				}
-				else{
+				if (!$rootScope.isMantra){
 					if(newValue == 'P') max=$rootScope.maxP;
 					if(newValue == 'D') max=$rootScope.maxD;
 					if(newValue == 'C') max=$rootScope.maxC;
@@ -704,17 +732,18 @@ app.run(
 				}
 				$rootScope.avviabili=[];
 				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
-//					var avv1=false;
-					var avv2=false;
+					var avv=false;
 					if ($rootScope.isMantra){
-//						if($rootScope.getFromMapSpesoTotale('CONTA',value.nome)<$rootScope.numAcquisti) avv1=true;
-						if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) avv2=true;
-					} else{
-//						if($rootScope.getFromMapSpesoTotale('CONTA',value.nome)<$rootScope.numAcquisti) avv1=true;
-						if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) avv2=true;
+						max=$rootScope.maxA;
+						if(newValue!='P'){
+							max=max-$rootScope.minP+$rootScope.getFromMapSpesoTotale('CONTAP',value.nome);
+						}
+						if($rootScope.getFromMapSpesoTotale('CONTAALL',value.nome)<max) avv=true;
+					} 
+					else {
+						if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) avv=true;
 					}
-//					if(avv1 && avv2){
-					if(avv2){
+					if(avv){
 						$rootScope.avviabili.push(value.nome)					
 					}
 				});

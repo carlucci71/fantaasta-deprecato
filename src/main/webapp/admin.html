@@ -24,7 +24,7 @@
 <label>OFFERTA IN CORSO</label>
 </div>
 <div ng-show="nomegiocatore && bSemaforoAttivo">
-	<div style="border-style:dotted;width:98%"><label style="color:red;text-align:center;background-color:yellow;width:100%">Utenti</label>
+	<div style="border-style:dotted;width:98%;padding-left:10px;padding-right:10px; padding-top:10px;padding-bottom:10px"><label style="color:red;text-align:center;background-color:yellow;width:100%">Utenti</label>
 		<table>
 			  <tr>
 			  	<td ng-show="isAdmin" colspan=2>Ordine</td>
@@ -56,46 +56,54 @@
 		</table>
 
 	<div ng-show="isAdmin">	
+	<br>
 	<label style="color:red;text-align:center;background-color:yellow;width:100%">Configurazione</label>
 			<br>
-			<!-- 
 			<label style="width:190">Budget:</label><input  class="inputDato" type="number"  ng-model="budget"></input>
 			<br>
-			-->
-			<label style="width:190">Durata asta:</label><input  class="inputDato" type="number"  ng-model="durataAstaDefault"></input>
-			<!-- 
-			<br><br>
-			<label style="width:190">Numero massimo acquisti:</label><input  class="inputDato" type="number"  ng-model="numAcquisti"></input>
+			<label style="width:190">Secondi durata asta:</label><input  class="inputDato" type="number"  ng-model="durataAstaDefault"></input>
 			<br>
-			<label style="width:190">Numero minimo acquisti:</label><input  class="inputDato" type="number"  ng-model="numMinAcquisti"></input>
-			<br><br>
-			<label style="width:190">Max portieri acquistabili:</label><input  class="inputDato" type="number"  ng-model="maxP"></input>
-			<br>
-			<label style="width:190">Max difernsori acquistabili:</label><input  class="inputDato" type="number"  ng-model="maxD"></input>
-			<br>
-			<label style="width:190">Max centrocampisti acquistabili:</label><input  class="inputDato" type="number"  ng-model="maxC"></input>
-			<br>
-			<label style="width:190">Max attaccanti acquistabili:</label><input  class="inputDato" type="number"  ng-model="maxA"></input>
-			<br><br>
-			 -->
-			 <br>
-			<label style="width:190">Gestione a turni</label>
+ 			<label style="width:190">Gestione a turni</label>
 					<i title="gestione a turni" ng-click="isATurni=!isATurni" ng-show="isATurni" class="fa fa-check-square"></i>
 					<i title="gestione a turni" ng-click="isATurni=!isATurni" ng-show="!isATurni" class="fa fa-square"></i>
-			<br>
-			<!-- 
-			<label style="width:190">Mantra</label>
-					<i title="mantra" ng-click="isMantra=!isMantra" ng-show="isMantra" class="fa fa-check-square"></i>
-					<i title="mantra" ng-click="isMantra=!isMantra" ng-show="!isMantra" class="fa fa-square"></i>
-			<br>
-			 -->
+			<br><br>
+			<label style="width:190;color:red">Composizione rose</label>
+			<table>
+				<tr>
+					<td></td>
+					<td style="text-align:center">Min</td>
+					<td style="text-align:center">Max</td>
+				</tr>
+				<tr>
+					<td style="padding-right:10px">Portieri</td>
+					<td><input style="width:40;text-align:center" ng-model="minP" type=number></input></td>
+					<td><input ng-show="!isMantra" style="width:40;text-align:center" ng-model="maxP" type=number></input></td>
+				</tr>
+				<tr ng-show="!isMantra">
+					<td style="padding-right:10px">Difensori</td>
+					<td><input style="width:40;text-align:center" ng-model="minD" type=number></input></td>
+					<td><input style="width:40;text-align:center" ng-model="maxD" type=number></input></td>
+				</tr>
+				<tr ng-show="!isMantra">
+					<td style="padding-right:10px">Centrocampisti</td>
+					<td><input style="width:40;text-align:center" ng-model="minC" type=number></input></td>
+					<td><input style="width:40;text-align:center" ng-model="maxC" type=number></input></td>
+				</tr>
+				<tr>
+					<td style="padding-right:10px"ng-show="!isMantra">Attaccanti</td>
+					<td style="padding-right:10px"ng-show="isMantra">Totali</td>
+					<td><input style="width:40;text-align:center" ng-model="minA" type=number></input></td>
+					<td><input style="width:40;text-align:center" ng-model="maxA" type=number></input></td>
+				</tr>
+			</table>
 		</div>	
+		<br>
 		<input type="button" value="AGGIORNA" style="width:100%;font-weight: bold;" ng-click="aggiornaConfigLega(isAdmin)"></input>
 	</div>
 <br>
 <div>
 	<div ng-show="isAdmin" >
-		<div style="width:98%;border-style:dotted">
+		<div style="width:98%;border-style:dotted;;padding-left:10px;padding-right:10px; padding-top:10px;padding-bottom:10px"">
 			<label style="color:red;text-align:center;background-color:yellow;width:100%">Carica file</label>
 			<div >
 				<input type="file" id="file" name="file"/>

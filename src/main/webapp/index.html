@@ -41,19 +41,19 @@
 <div ng-show="config && !connessioneKO">
 	<label>CONFIGURAZIONE</label>
 	<br><br>
+	<label style="width:190">Mantra</label>
+		<i title="mantra" ng-click="scegliMantra()" ng-show="isMantra" class="fa fa-check-square"></i>
+		<i title="mantra" ng-click="scegliMantra()" ng-show="!isMantra" class="fa fa-square"></i>
+	<br>
 	<label style="width:190">Numero utenti:</label><input  class="inputDato" type="number"  ng-model="numeroUtenti"></input>
 	<br>
 	<label style="width:190">Budget:</label><input  class="inputDato" type="number"  ng-model="budget"></input>
 	<br>
-	<label style="width:190">Durata asta:</label><input  class="inputDato" type="number"  ng-model="durataAstaDefault"></input>
+	<label style="width:190">Secondi durata asta:</label><input  class="inputDato" type="number"  ng-model="durataAstaDefault"></input>
 	<br>
 	<label style="width:190">Gestione a turni</label>
 		<i title="gestione a turni" ng-click="isATurni=!isATurni" ng-show="isATurni" class="fa fa-check-square"></i>
 		<i title="gestione a turni" ng-click="isATurni=!isATurni" ng-show="!isATurni" class="fa fa-square"></i>
-	<br>
-	<label style="width:190">Mantra</label>
-		<i title="mantra" ng-click="scegliMantra()" ng-show="isMantra" class="fa fa-check-square"></i>
-		<i title="mantra" ng-click="scegliMantra()" ng-show="!isMantra" class="fa fa-square"></i>
 	<br>
 	<label style="width:190;color:red">Composizione rose</label>
 	<table>
@@ -65,7 +65,7 @@
 		<tr>
 			<td style="padding-right:10px">Portieri</td>
 			<td><input style="width:40;text-align:center" ng-model="minP" type=number></input></td>
-			<td><input style="width:40;text-align:center" ng-model="maxP" type=number></input></td>
+			<td><input ng-show="!isMantra" style="width:40;text-align:center" ng-model="maxP" type=number></input></td>
 		</tr>
 		<tr ng-show="!isMantra">
 			<td style="padding-right:10px">Difensori</td>
@@ -79,11 +79,10 @@
 		</tr>
 		<tr>
 			<td style="padding-right:10px"ng-show="!isMantra">Attaccanti</td>
-			<td style="padding-right:10px"ng-show="isMantra">Movimento</td>
+			<td style="padding-right:10px"ng-show="isMantra">Totali</td>
 			<td><input style="width:40;text-align:center" ng-model="minA" type=number></input></td>
 			<td><input style="width:40;text-align:center" ng-model="maxA" type=number></input></td>
 		</tr>
-	
 	</table>
 	<button ng-show="numeroUtenti>1 && durataAstaDefault>1" ng-click="confermaConfigIniziale()">conferma</button>
 </div>
@@ -114,7 +113,7 @@
 		  	<td ng-show="isATurni" class="tabellaUtenti" >Turno</td>
 		  	<td class="tabellaUtenti">Presi</td>
 		  	<td ng-show="isMantra" class="tabellaUtenti">Por</td>
-		  	<td ng-show="isMantra" class="tabellaUtenti">Mov</td>
+		  	<td ng-show="isMantra" class="tabellaUtenti">Tot</td>
 		  	<td ng-show="!isMantra" class="tabellaUtenti">P</td>
 		  	<td ng-show="!isMantra" class="tabellaUtenti">D</td>
 		  	<td ng-show="!isMantra" class="tabellaUtenti">C</td>
@@ -136,22 +135,22 @@
 					<label ng-show="utente.ordine==turno"><i class="fa fa-thumbs-up"></i></label>
 					<img title="forza turno" ng-show="isAdmin && utente.ordine!=turno" class="imgConnetti" style="margin-bottom:2px;cursor:pointer" src='./vai.png' ng-click="forzaTurno(utente.ordine)" />
 				</td>
-		    	<td ng-class="calcolaClassePresi('CONTA',utente.nome,numMinAcquisti,numAcquisti)">  <!-- presi -->
+		    	<td ng-class="calcolaClassePresi('',utente.nome,numMinAcquisti,numAcquisti)">  <!-- presi -->
 		    		{{getFromMapSpesoTotale('CONTA',utente.nome)}} ({{getFromMapSpesoTotale('SPESO',utente.nome)}})
 		    	</td>
-		    	<td ng-class="calcolaClassePresi('CONTAP',utente.nome,minP,maxP)">  <!-- presiP -->
+		    	<td ng-class="calcolaClassePresiPerRuolo('P',utente.nome,minP,maxP)">  <!-- presiP -->
 		    		{{getFromMapSpesoTotale('CONTAP',utente.nome)}} ({{getFromMapSpesoTotale('SPESOP',utente.nome)}})
 		    	</td>
-		    	<td ng-show="!isMantra" ng-class="getFromMapSpesoTotale('CONTAD',utente.nome)>=maxD?'tuttiPresi':'nonTuttiPresi'">  <!-- presiD -->
+		    	<td ng-show="!isMantra" ng-class="calcolaClassePresiPerRuolo('D',utente.nome)">  <!-- presiD -->
 		    		{{getFromMapSpesoTotale('CONTAD',utente.nome)}} ({{getFromMapSpesoTotale('SPESOD',utente.nome)}})
 		    	</td>
-		    	<td ng-show="!isMantra" ng-class="getFromMapSpesoTotale('CONTAC',utente.nome)>=maxC?'tuttiPresi':'nonTuttiPresi'">  <!-- presiC -->
+		    	<td ng-show="!isMantra" ng-class="calcolaClassePresiPerRuolo('C',utente.nome)">  <!-- presiC -->
 		    		{{getFromMapSpesoTotale('CONTAC',utente.nome)}} ({{getFromMapSpesoTotale('SPESOC',utente.nome)}})
 		    	</td>
-		    	<td ng-show="!isMantra" ng-class="getFromMapSpesoTotale('CONTAA',utente.nome)>=maxA?'tuttiPresi':'nonTuttiPresi'">  <!-- presiA -->
+		    	<td ng-show="!isMantra" ng-class="calcolaClassePresiPerRuolo('A',utente.nome)">  <!-- presiA -->
 		    		{{getFromMapSpesoTotale('CONTAA',utente.nome)}} ({{getFromMapSpesoTotale('SPESOA',utente.nome)}})
 		    	</td>
-		    	<td ng-show="isMantra" ng-class="calcolaClassePresi('CONTAALL',utente.nome,minA,maxA)">  <!-- presiA -->
+		    	<td ng-show="isMantra" ng-class="calcolaClassePresiPerRuolo('ALL',utente.nome)">  <!-- presiA -->
 		    		{{getFromMapSpesoTotale('CONTAALL',utente.nome)}} ({{getFromMapSpesoTotale('SPESOALL',utente.nome)}})
 		    	</td>
 		    	<td class="nonTuttiPresi">  <!-- max -->
@@ -261,8 +260,8 @@
 						<br>
 						<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=nomegiocatore">Puoi rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)}})</label>
 					</span>
-					<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)">Non hai crediti sufficienti per rilanciare</label>
-					<label class="nextOperation" ng-show="avviabili.indexOf(nomegiocatore)<0 && offertaVincente.nomegiocatore!=nomegiocatore">Non puoi rilanciare</label>
+					<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)">Non hai crediti sufficienti per rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatore)}})</label>
+					<label class="nextOperation" ng-show="avviabili.indexOf(nomegiocatore)<0 && offertaVincente.nomegiocatore!=nomegiocatore">Non puoi acquistare altri giocatori in quel ruolo</label>
 				</div>
 				<div ng-show="isAdmin" style="border-style:double;text-align:center">
 					<div style="color: green;text-align:center;cursor:pointer" ng-click="sezOperaComeVisible=!sezOperaComeVisible">
@@ -306,8 +305,8 @@
 								<br>
 								<label class="nextOperation" ng-show="offertaVincente.nomegiocatore!=nomegiocatoreOperaCome">Puoi rilanciare per {{nomegiocatoreOperaCome}} (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)}})</label>
 							</span>
-							<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)">{{nomegiocatoreOperaCome}} non ha crediti sufficienti per rilanciare</label>
-							<label class="nextOperation" ng-show="avviabili.indexOf(nomegiocatoreOperaCome)<0">Non puoi rilanciare per {{nomegiocatoreOperaCome}}</label>
+							<label class="nextOperation" ng-show="offertaVincente.offerta>=getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)">{{nomegiocatoreOperaCome}} non ha crediti sufficienti per rilanciare (max {{getFromMapSpesoTotale('MAXRILANCIO',nomegiocatoreOperaCome)}})</label>
+							<label class="nextOperation" ng-show="avviabili.indexOf(nomegiocatoreOperaCome)<0">{{nomegiocatoreOperaCome}} non può acquistare altri giocatore in quel ruolo </label>
 						</span>
 					</div> <!-- OPERACOME -->
 				</div>
