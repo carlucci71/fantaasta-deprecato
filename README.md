@@ -62,17 +62,12 @@ L'applicazione si può avviare con il seguente comando, dalla root del progetto:
 
 # Attività iniziali dopo il primo accesso
 Al primo accesso verrà chiesto di inserire i seguenti valori:
+* Modalità Mantra o classica
 * Numero utenti
 * Budget
-* Durata asta
-* Numero massimo giocatori acquistabili
-* Numero minimo giocatori acquistabili (per un numero fisso di giocatori acquistabili, indicare lo stesso valore sia come minimo che come massimo)
-* Numero massimo portieri acquistabili
-* Numero massimo difensori acquistabili
-* Numero massimo centrocampisti acquistabili
-* Numero massimo attaccanti acquistabili
+* Secondi durata asta
 * Se le chiamate verranno fatte a turno o chiunque può chiamare senza ordine
-* Se il fantacalcio sarà in modalità Mantra
+* La composizione delle rose, indicando il numero minimo/massimo di Portieri, Difensori, Centrocampisti e Attaccanti per la modalità classica oppure il numero minimo di portieri ed il totale minimo/massimo di giocatori totali acquistabili
 
 Confermando questi dati verrà caricata la pagina di admin in cui sarà possibile:
 * Cambiare i nomi degli allenatori
@@ -106,7 +101,7 @@ E' possibile accedere a:
 
 #### Accordion allenatori
 Una volta caricato l'url dell'applicazione è possibile connettersi cliccando sull'apposita icona, se si è settata una passowrd verrà richiesta altrimenti l'accesso sarà diretto.
-Una volta connessi si potrà uscire scollegarsi tramite l'icona vicino al proprio nome oppure dal cestino in alto a destra. L'amministratore può escludere qualunque altro allenatore tramite l'iconda del cestino. Se un allenatore non contatta il backend per più di 20 secondi (conteggiato da latenza) potrà essere cacciato da chiunque.
+Una volta connessi si potrà uscire scollegarsi tramite l'icona vicino al proprio nome oppure dal cestino in alto a destra. L'amministratore può escludere qualunque altro allenatore tramite l'icona del cestino. Se un allenatore non contatta il backend per più di 20 secondi (conteggiato da latenza) potrà essere cacciato da chiunque.
 In ciascuna riga sarà presente una icona, per segnalare l'effettivo collegamento degli altri allenatori. L'indicazione del giocatore di turno (forzabile dall'amministratore) e un riepilogo dei giocatori presi (dettagliato per ruolo).
 E' presente anche la possibilità di configurare la frequenza di **refresh** del client verso il backend. Si **sconsigliano** valori sotto i 1000 ms.
 Solo l'amministratore, avrà anche la possibilità di avviare un'asta per un altro allenatore, tramite l'icona che appare una volta selezionato un giocatore.
