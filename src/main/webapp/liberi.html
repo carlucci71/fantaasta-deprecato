@@ -15,10 +15,7 @@
 <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
 <script type="text/javascript" src="./app.js"></script>
-
-
 <body x-ng-app="app" style="margin-left:20px">
  <table>
     <thead>
@@ -43,6 +40,7 @@
  		        <span class="sortorder" ng-show="sort.column === 'quotazione'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'quotazione'"><i class="fa fa-sort"></i></span>
             </th>
+            <th></th>
         </tr>
         <tr>
             <th ng-show="isMantra"><input class="divCalciatore"style="width:70px;text-align:center" type=text ng-model="filterMacroRuolo"></input></th>
@@ -50,6 +48,7 @@
             <th><input class="divCalciatore"style="width:400px;text-align:center" type=text ng-model="filterNome"></input></th>
             <th><input class="divCalciatore"style="width:300px;text-align:center" type=text ng-model="filterSquadra"></input></th>
             <th><input class="divCalciatore"style="width:100px;text-align:center" type=number ng-model="filterQuotazione"></input></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -60,8 +59,12 @@
         <td class="divCalciatore">{{calciatore.ruolo}}</td>
         <td class="divCalciatore">{{calciatore.nome}}</td>
       	<td class="divCalciatore">{{calciatore.squadra}}</td>
-      	<td class="divCalciatore">{{calciatore.quotazione}}</td></tr>
-    </tbody>
+      	<td class="divCalciatore">{{calciatore.quotazione}}</td>
+		<td>
+			<i title="dettaglio" class="fa fa-info-circle" ng-click="urlDettaglio(calciatore.nome,calciatore.id)"></i>
+		</td>
+   </tr>
+ </tbody>
 </table>
 
 

@@ -200,6 +200,8 @@
 								 <label class="divCalciatore" style="width:400px;text-align:center;cursor:pointer">{{calciatore.nome}}</label>
 								 <label class="divCalciatore" style="width:200px;text-align:center;cursor:pointer">{{calciatore.squadra}}</label>
 								 <label class="divCalciatore" style="width:100px;text-align:center;cursor:pointer">{{calciatore.quotazione}}</label>
+						   		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						   		 	<i title="dettaglio" class="fa fa-info-circle" ng-click="urlDettaglio($rootScope.selCalciatoreNome,$rootScope.selCalciatoreId)"></i>
 							</div>
 						</div>
 				    </div>
@@ -311,6 +313,7 @@
 					</div> <!-- OPERACOME -->
 				</div>
 			<input ng-show="isAdmin" type="button" value="azzera tempo" ng-click="azzeraTempo()"></input>
+   		 	<i title="dettaglio" class="fa fa-info-circle" ng-click="urlDettaglio($rootScope.selCalciatoreNome,$rootScope.selCalciatoreId)"></i>
 			</div> <!-- RILANCIA -->  
 	
 			<div ng-show="timeout" align=center> <!-- TIMEOUT -->

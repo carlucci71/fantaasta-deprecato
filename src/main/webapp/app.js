@@ -80,6 +80,19 @@ app.run(
 		        }
 				$rootScope.calcolaIsAdmin();
 			}
+			$rootScope.urlDettaglio=function(cNome,cId){
+				var url;
+				if ($rootScope.isMantra){
+					url= "https://www.fantacalcio.it/squadre/giocatore/" + cNome + "/" + cId;
+				}
+				else {
+					var id=(""+cId).substring(2,10);
+					var nome="" + cNome;
+					nome=nome.substring(0,nome.indexOf(" ")).toLowerCase();
+					url = "https://www.fanta.soccer/it/seriea/" + id + "/calciatore/" + nome + "/";
+				}
+				window.open(url,'_blank' );
+			}
 			$rootScope.caricaFile = function(tipoFile){
 				$rootScope.caricamentoInCorso=true;
 				var f = document.getElementById('file').files[0], r = new FileReader();
