@@ -1,10 +1,9 @@
 package com.daniele.asta.entity;
 
+import java.util.Calendar;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 //@Entity(name = "giocatori")
 //@Table(name = "giocatori")
@@ -18,6 +17,7 @@ public class Giocatori {
 	private String ruolo;
 	private String macroRuolo;
 	private Integer quotazione;
+	private Calendar dataNascita;
 	public Integer getId() {
 		return id;
 	}
@@ -54,9 +54,17 @@ public class Giocatori {
 	public void setMacroRuolo(String macroRuolo) {
 		this.macroRuolo = macroRuolo;
 	}
+	public Calendar getDataNascita() {
+		return dataNascita;
+	}
+	public void setDataNascita(Calendar dataNascita) {
+		this.dataNascita = dataNascita;
+	}
+	
+	
 	@Override
 	public String toString() {
 		return "Giocatori [id=" + id + ", squadra=" + squadra + ", nome=" + nome + ", ruolo=" + ruolo + ", macroRuolo="
-				+ macroRuolo + ", quotazione=" + quotazione + "]";
+				+ macroRuolo + ", quotazione=" + quotazione + ", dataNascita=" + dataNascita + "]";
 	}
 }

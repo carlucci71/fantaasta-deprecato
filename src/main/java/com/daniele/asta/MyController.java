@@ -24,6 +24,7 @@ import javax.transaction.Transactional;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -97,6 +98,32 @@ public class MyController {
 
 	
 	@Autowired HttpSessionConfig httpSessionConfig;
+	
+	
+	@RequestMapping("/aggiornaDataNascita")
+	public List<Giocatori> aggiornaDataNascita() throws Exception {
+		List<Giocatori>  ret = new ArrayList<>();
+		Iterable<Giocatori> findAll = giocatoriRepository.findAll();
+		for (Giocatori giocatore : findAll) {
+			String url="https://www.fantacalcio.it/squadre/giocatore/" + giocatore.getNome() + "/" + giocatore.getId();
+			org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
+			List<String> eachText = doc.select("li").eachText();
+			String data="";
+			for (String string : eachText) {
+				if (string.startsWith("Data di nascita")) {
+					data=string;
+				}
+			}
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.YEAR, Integer.parseInt(data.substring(22,26)));
+			c.set(Calendar.MONTH, Integer.parseInt(data.substring(19,21))-1);
+			c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(data.substring(16,18)));
+			giocatore.setDataNascita(c);
+			giocatoriRepository.save(giocatore);
+			ret.add(giocatore);
+		}
+		return ret;
+	}
 	
 	@RequestMapping("/sesH")
 	public Map<String, Object> sesH() {
