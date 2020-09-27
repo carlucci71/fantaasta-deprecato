@@ -62,6 +62,8 @@
       	<td class="divCalciatore">{{calciatore.quotazione}}</td>
 		<td>
 			<i title="dettaglio" style="cursor:pointer" class="fa fa-info-circle" ng-click="urlDettaglio(calciatore.nome,calciatore.id)"></i>
+            <span ng-show="isMantra && calciatore.under23=='SI'">*</span>
+            <span ng-show="!isMantra || calciatore.under23!='SI'">&nbsp;</span>
 		</td>
    </tr>
  </tbody>

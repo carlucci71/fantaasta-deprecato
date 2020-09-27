@@ -69,6 +69,7 @@ public class MyController {
 	private static final String JSESSIONID = "JSESSIONID=";
 	private static final String PAGINA = "PAGINA=";
 	@Autowired Environment environment;	
+	private Calendar calUnder23;
 	@Autowired HttpSession httpSession;
 	@Autowired AllenatoriRepository allenatoriRepository;
 	@Autowired FantaroseRepository fantaroseRepository;
@@ -215,6 +216,8 @@ public class MyController {
 	
 	@RequestMapping("/init")
 	public Map<String, Object> init() {
+		calUnder23=Calendar.getInstance();
+		calUnder23.add(Calendar.YEAR, -23);
 		Map<String, Object> ret = new HashMap<>();
 		Configurazione configurazione = getConfigurazione();
 		if (configurazione==null || configurazione.getNumeroGiocatori()==null) {
@@ -935,12 +938,8 @@ public class MyController {
 	
 	@GetMapping(path="/giocatoriLiberi")
 	public @ResponseBody List<Map<String, Object>> getGiocatoriLiberi() {
-//		Iterable<Giocatori> giocatoriLiberi = giocatoriRepository.getGiocatoriLiberi();
 		List<Object[]> resultList = giocatoriRepository.getGiocatoriLiberi();
 		List<Map<String, Object>> ret = new ArrayList<>();
-//		for (Giocatori giocatori : giocatoriLiberi) {
-//			System.out.println(giocatori);
-//		}
 		for (Object[] row : resultList) {
 			Map<String, Object> m = new HashMap<>();
 			m.put("id",  row[0]);
@@ -949,10 +948,13 @@ public class MyController {
 			m.put("ruolo",  row[3]);
 			m.put("macroRuolo",  row[4]);
 			m.put("quotazione",  row[5]);
+			Calendar c = (Calendar) row[6];
+			if (c.get(Calendar.YEAR)<2020 && c.after(calUnder23)) m.put("under23", "SI");
 			ret.add(m);
 		}
 		return ret;
 	}
+	
 	public String getNomeGiocatoreTurno() {
 		return nomeGiocatoreTurno;
 	}

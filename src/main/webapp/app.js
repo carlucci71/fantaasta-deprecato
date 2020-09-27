@@ -347,6 +347,7 @@ app.run(
 				$rootScope.selCalciatoreMacroRuolo=calciatore.macroRuolo;
 				$rootScope.selCalciatoreNome=calciatore.nome;
 				$rootScope.selCalciatoreSquadra=calciatore.squadra;
+				$rootScope.selCalciatoreUnder23=calciatore.under23;
 			}
 			$rootScope.confermaConfigIniziale=function(){
 				if ($rootScope.numeroUtenti>0){

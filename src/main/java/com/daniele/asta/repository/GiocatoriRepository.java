@@ -11,7 +11,7 @@ import com.daniele.asta.entity.Giocatori;
 
 public interface GiocatoriRepository extends CrudRepository<Giocatori, Integer> {
 	
-	@Query("select id,squadra,nome,ruolo,macroRuolo,quotazione from Giocatori g where not exists (select 1 from Fantarose f where g.id=f.idGiocatore)")
+	@Query("select id,squadra,nome,ruolo,macroRuolo,quotazione, dataNascita from Giocatori g where not exists (select 1 from Fantarose f where g.id=f.idGiocatore)")
 	List<Object[]> getGiocatoriLiberi();
 
 //	Iterable<Giocatori>  getGiocatoriLiberi();

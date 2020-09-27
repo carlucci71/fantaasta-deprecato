@@ -202,6 +202,8 @@
 								 <label class="divCalciatore" style="width:100px;text-align:center;cursor:pointer">{{calciatore.quotazione}}</label>
 						   		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						   		 	<i title="dettaglio" class="fa fa-info-circle" style="cursor:pointer" ng-click="urlDettaglio(calciatore.nome,calciatore.id)"></i>
+						            <span ng-show="isMantra && calciatore.under23=='SI'">*</span>
+						            <span ng-show="!isMantra || calciatore.under23!='SI'">&nbsp;</span>
 							</div>
 						</div>
 				    </div>
@@ -314,6 +316,8 @@
 				</div>
 			<input ng-show="isAdmin" type="button" value="azzera tempo" ng-click="azzeraTempo()"></input>
    		 	<i title="dettaglio" class="fa fa-info-circle" style="cursor:pointer" ng-click="urlDettaglio(offertaVincente.giocatore.nome,offertaVincente.giocatore.id)"></i>
+            <span ng-show="isMantra && selCalciatoreUnder23=='SI'">*</span>
+            <span ng-show="!isMantra || selCalciatoreUnder23!='SI'">&nbsp;</span>
 			</div> <!-- RILANCIA -->  
 	
 			<div ng-show="timeout" align=center> <!-- TIMEOUT -->
