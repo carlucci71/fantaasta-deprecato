@@ -103,6 +103,10 @@ public class MyController {
 	
 	@RequestMapping("/aggiornaDataNascita")
 	public List<Giocatori> aggiornaDataNascita() throws Exception {
+		Configurazione configurazione = getConfigurazione();
+		if (!configurazione.isMantra()) {
+			throw new RuntimeException("Funzionalità solo per mantra");
+		}
 		List<Giocatori>  ret = new ArrayList<>();
 		Iterable<Giocatori> findAll = giocatoriRepository.findAll();
 		for (Giocatori giocatore : findAll) {
@@ -948,8 +952,10 @@ public class MyController {
 			m.put("ruolo",  row[3]);
 			m.put("macroRuolo",  row[4]);
 			m.put("quotazione",  row[5]);
-			Calendar c = (Calendar) row[6];
-			if (c.get(Calendar.YEAR)<2020 && c.after(calUnder23)) m.put("under23", "SI");
+			if(row[6] != null) {
+				Calendar c = (Calendar) row[6];
+				if (c.get(Calendar.YEAR)<2020 && c.after(calUnder23)) m.put("under23", "SI");
+			}
 			ret.add(m);
 		}
 		return ret;
