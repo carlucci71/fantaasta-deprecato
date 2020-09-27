@@ -792,6 +792,9 @@ public class MyController {
 			Map<String,Object> riga=new HashMap<>();
 			riga.put("ruolo", giocatorePerSquadra.getRuolo());
 			riga.put("giocatore", giocatorePerSquadra.getGiocatore());
+			if(giocatorePerSquadra.getDataNascita()!=null && giocatorePerSquadra.getDataNascita().get(Calendar.YEAR)<2020 && giocatorePerSquadra.getDataNascita().after(calUnder23)) {
+				riga.put("under23", "*");
+			}
 			riga.put("squadra", giocatorePerSquadra.getSquadra());
 			riga.put("costo", giocatorePerSquadra.getCosto());
 			list.add(riga);
