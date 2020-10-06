@@ -53,9 +53,8 @@
             <th><input class="divCalciatore"style="width:100px;text-align:center" type=text ng-model="filterSquadra"></input></th>
             <th><input class="divCalciatore"style="width:100px;text-align:center" type=number ng-model="filterQuotazione"></input></th>
             <th ng-show="nomegiocatore" >
-            <!-- <input class="divCalciatore" type=text ng-model="filterPreferito"></input> -->
-								 <i title="preferito" style="width:30px;text-align:center"  ng-click="filterPreferito=!filterPreferito" ng-show="filterPreferito" class="fa fa-check-square"></i>
-								 <i title="preferito" style="width:30px;text-align:center"  ng-click="filterPreferito=!filterPreferito" ng-show="!filterPreferito" class="fa fa-square"></i>
+				<i title="preferito" style="width:30px;text-align:center"  ng-click="filterPreferito=!filterPreferito" ng-show="filterPreferito" class="fa fa-check-square"></i>
+				<i title="preferito" style="width:30px;text-align:center"  ng-click="filterPreferito=!filterPreferito" ng-show="!filterPreferito" class="fa fa-square"></i>
 			</th>
             <th></th>
         </tr>
@@ -72,7 +71,8 @@
 			<i ng-show="calciatore.preferito" ng-click="addFav(calciatore,false)" class="fa fa-star" ></i>			
       	</td>
 		<td>
-			<i title="dettaglio" style="cursor:pointer" class="fa fa-info-circle" ng-click="urlDettaglio(calciatore.nome,calciatore.id)"></i>
+			<i title="dettaglio" style="cursor:pointer" class="fa fa-info-circle" ng-click="urlDettaglio(calciatore.nome,calciatore.id,false)"></i>
+			<span ng-show="isMantra">&nbsp;&nbsp;<i title="dettaglio old" style="cursor:pointer" class="fa fa-info-circle" ng-click="urlDettaglio(calciatore.nome,calciatore.id,true)"></i></span>
             <span ng-show="isMantra && calciatore.under23=='SI'">*</span>
             <span ng-show="!isMantra || calciatore.under23!='SI'">&nbsp;</span>
 		</td>

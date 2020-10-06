@@ -80,10 +80,11 @@ app.run(
 		        }
 				$rootScope.calcolaIsAdmin();
 			}
-			$rootScope.urlDettaglio=function(cNome,cId){
+			$rootScope.urlDettaglio=function(cNome,cId, old){
 				var url;
 				if ($rootScope.isMantra){
 					url= "https://www.fantacalcio.it/squadre/giocatore/" + cNome + "/" + cId;
+					if (old) url=url+"/3/2019-20";
 				}
 				else {
 					var id=(""+cId).substring(2,10);
