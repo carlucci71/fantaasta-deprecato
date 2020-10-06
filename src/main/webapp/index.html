@@ -179,33 +179,32 @@
 			<div ng-show="bSemaforoAttivo && calciatori.length>0" style="padding-left:0px;padding-right:20px;"> <!-- SELCALCIATORE -->
 					<div ng-show="isAdmin || nomeGiocatoreTurno==nomegiocatore || !isATurni"  style="padding-top:10px;border-style:double;width:98%;text-align:center;margin: auto">
 						<div>
-			 				 <div ng-show=false style="text-align:center;overflow-y:scroll;padding-bottom:0px">
-								 <label ng-show="isMantra" class="divCalciatore" style="width:70px;text-align:center">Macroruolo</label>
-								 <label class="divCalciatore" style="width:70px;text-align:center">Ruolo</label>
-								 <label class="divCalciatore"style="width:400px;text-align:center">Nome</label>
-								 <label class="divCalciatore"style="width:200px;text-align:center">Squadra</label>
-								 <label class="divCalciatore"style="width:100px;text-align:center">Quot.</label>
-							</div>
 			 				 <div style="text-align:center;overflow-y:scroll;padding-bottom:0px;padding-top:0px">
-								 <input ng-show="isMantra" class="divInputCalciatore" style="width:70px;text-align:center" type=text ng-model=filterMacroRuolo></input>
-								 <input class="divInputCalciatore" style="width:70px;text-align:center" type=text ng-model=filterRuolo></input>
-								 <input class="divInputCalciatore" style="width:400px;text-align:center" type=text ng-model=filterNome></input>
-								 <input class="divInputCalciatore" style="width:200px;text-align:center" type=text ng-model=filterSquadra></input>
-								 <input class="divInputCalciatore" style="width:100px;text-align:center" type=text ng-model=filterQuotazione></input>
+								 <input ng-show="isMantra" class="divInputCalciatore calcSize1" style="text-align:center" type=text ng-model=filterMacroRuolo></input>
+								 <input class="divInputCalciatore calcSize1" style="text-align:center" type=text ng-model=filterRuolo></input>
+								 <input class="divInputCalciatore calcSize2" style="text-align:center" type=text ng-model=filterNome></input>
+								 <input class="divInputCalciatore calcSize3" style="text-align:center" type=text ng-model=filterSquadra></input>
+								 <input class="divInputCalciatore calcSize3" style="text-align:center" type=text ng-model=filterQuotazione></input>
+								 <i style="width:50px;text-align:center" title="preferito" ng-click="filterPreferito=!filterPreferito" ng-show="filterPreferito" class="fa fa-check-square"></i>
+								 <i style="width:50px;text-align:center" title="preferito" ng-click="filterPreferito=!filterPreferito" ng-show="!filterPreferito" class="fa fa-square"></i>
+						   		 <span style="width:100px;text-align:center">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 							</div>
 						 </div>
 						 <div class="selCalciatore" style="text-align:center;overflow-y:scroll;">
 							 <div ng-class="{calciatoreNonSelezionato: selCalciatoreId!=calciatore.id, calciatoreSelezionato: selCalciatoreId==calciatore.id}" 
 							 ng-repeat="calciatore in calciatori | orderBy:'nome' | myTableFilter" ng-click="selezionaCalciatore(calciatore)" >
-								 <label ng-show="isMantra" class="divCalciatore" style="width:70px;text-align:center;cursor:pointer">{{calciatore.macroRuolo}}</label>
-								 <label class="divCalciatore" style="width:70px;text-align:center;cursor:pointer">{{calciatore.ruolo}}</label>
-								 <label class="divCalciatore" style="width:400px;text-align:center;cursor:pointer">{{calciatore.nome}}</label>
-								 <label class="divCalciatore" style="width:200px;text-align:center;cursor:pointer">{{calciatore.squadra}}</label>
-								 <label class="divCalciatore" style="width:100px;text-align:center;cursor:pointer">{{calciatore.quotazione}}</label>
-						   		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						   		 	<i title="dettaglio" class="fa fa-info-circle" style="cursor:pointer" ng-click="urlDettaglio(calciatore.nome,calciatore.id)"></i>
-						            <span ng-show="isMantra && calciatore.under23=='SI'">*</span>
-						            <span ng-show="!isMantra || calciatore.under23!='SI'">&nbsp;</span>
+								 <label ng-show="isMantra" class="divCalciatore calcSize1" style="width:70px;text-align:center;cursor:pointer">{{calciatore.macroRuolo}}</label>
+								 <label class="divCalciatore calcSize1" style="text-align:center;cursor:pointer">{{calciatore.ruolo}}</label>
+								 <label class="divCalciatore calcSize2" style="text-align:center;cursor:pointer">{{calciatore.nome}}</label>
+								 <label class="divCalciatore calcSize3" style="text-align:center;cursor:pointer">{{calciatore.squadra.substr(0,3)}}</label>
+								 <label class="divCalciatore calcSize3" style="text-align:center;cursor:pointer">{{calciatore.quotazione}}</label>
+								 <i style="width:50px;text-align:center" ng-show="!calciatore.preferito" class="fa fa-star-o" aria-hidden="true"></i>			
+								 <i style="width:50px;text-align:center" ng-show="calciatore.preferito" class="fa fa-star" aria-hidden="true"></i>			
+						   		 <span style="width:100px;text-align:center">
+							   		 <i title="dettaglio" class="fa fa-info-circle" style="cursor:pointer" ng-click="urlDettaglio(calciatore.nome,calciatore.id)"></i>
+							         <span ng-show="isMantra && calciatore.under23=='SI'">*</span>
+							         <span ng-show="!isMantra || calciatore.under23!='SI'">&nbsp;</span>
+						         </span>
 							</div>
 						</div>
 				    </div>

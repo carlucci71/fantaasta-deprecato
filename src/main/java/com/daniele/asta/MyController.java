@@ -51,10 +51,12 @@ import com.daniele.asta.entity.Allenatori;
 import com.daniele.asta.entity.Configurazione;
 import com.daniele.asta.entity.Fantarose;
 import com.daniele.asta.entity.Giocatori;
+import com.daniele.asta.entity.GiocatoriFavoriti;
 import com.daniele.asta.entity.LoggerMessaggi;
 import com.daniele.asta.repository.AllenatoriRepository;
 import com.daniele.asta.repository.ConfigurazioneRepository;
 import com.daniele.asta.repository.FantaroseRepository;
+import com.daniele.asta.repository.GiocatoriFavoritiRepository;
 import com.daniele.asta.repository.GiocatoriRepository;
 import com.daniele.asta.repository.LoggerRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -74,6 +76,7 @@ public class MyController {
 	@Autowired AllenatoriRepository allenatoriRepository;
 	@Autowired FantaroseRepository fantaroseRepository;
 	@Autowired GiocatoriRepository giocatoriRepository;
+	@Autowired GiocatoriFavoritiRepository giocatoriFavoritiRepository;
 	@Autowired LoggerRepository loggerRepository;
 	@Autowired ConfigurazioneRepository configurazioneRepository;
 	@Autowired Criptaggio criptaggio; 
@@ -96,6 +99,7 @@ public class MyController {
 	private String nomeGiocatoreTurno="";
 	private Boolean isATurni;
 	private Boolean isMantra;
+	private Map<Integer,List<Integer>> favoriti=new HashMap<>();
 
 	
 	@Autowired HttpSessionConfig httpSessionConfig;
@@ -219,7 +223,7 @@ public class MyController {
 	}
 	
 	@RequestMapping("/init")
-	public Map<String, Object> init() {
+	public Map<String, Object> init() throws IOException {
 		calUnder23=Calendar.getInstance();
 		calUnder23.add(Calendar.YEAR, -23);
 		Map<String, Object> ret = new HashMap<>();
@@ -287,8 +291,11 @@ public class MyController {
 			ret.put("elencoAllenatori", allAllenatori);
 			ret.put("nomeGiocatoreTurno", getNomeGiocatoreTurno());
 			ret.put("giocatoriPerSquadra",giocatoriPerSquadra());
+			ret.put("calciatori", getGiocatoriLiberi());
 			ret.put("mapSpesoTotale",mapSpesoTotale);
 			ret.put("turno", getTurno());
+			aggiornaFavoriti((String) httpSession.getAttribute("idLoggato"));
+			ret.put("preferiti", favoriti);
 		}
 		return ret;
 	}
@@ -349,6 +356,40 @@ public class MyController {
     	macroRuoliMantra.put("Pc", "A");
     	macroRuoliMantra.put("A", "A");
     }	
+	
+	@PostMapping("/addFav")
+	public Map<String, Object> addFav(@RequestBody Map<String,Object> body) throws Exception {
+		Map<String,Object> ret = new HashMap<>();
+		if (body.get("idgiocatore") != null) {
+			Integer calciatoreId = (Integer) body.get("calciatoreId");
+			String idgiocatore=body.get("idgiocatore").toString();
+			Boolean aggiungi = (Boolean) body.get("aggiungi");
+			if(aggiungi) {
+				GiocatoriFavoriti favorite = new GiocatoriFavoriti();
+				favorite.setIdAllenatore(Integer.parseInt(idgiocatore));
+				favorite.setIdGiocatore(calciatoreId);
+				favorite.setNota("");
+				giocatoriFavoritiRepository.save(favorite);
+			} else {
+				GiocatoriFavoriti favorite = giocatoriFavoritiRepository.getFavorite(calciatoreId,Integer.parseInt(idgiocatore));
+				giocatoriFavoritiRepository.delete(favorite);
+			}
+			aggiornaFavoriti(idgiocatore);
+			socketHandler.notificaPreferiti(favoriti);
+		}
+		return ret;
+	}
+
+	public void aggiornaFavoriti(String idgiocatore) throws IOException {
+		if (idgiocatore != null) {
+			Iterable<GiocatoriFavoriti> listaFavoriti = giocatoriFavoritiRepository.getListaFavoriti(Integer.parseInt(idgiocatore));
+			List<Integer> list = new ArrayList<>();
+			for (GiocatoriFavoriti giocatoriFavoriti : listaFavoriti) {
+				list.add(giocatoriFavoriti.getIdGiocatore());
+			}
+			favoriti.put(Integer.parseInt(idgiocatore), list);
+		}
+	}
 	
 	
 	@PostMapping("/caricaFile")
@@ -452,7 +493,7 @@ public class MyController {
 			Map<String, Object> mapOfferta = (Map)body.get("offerta");
 			Integer idGiocatore=(Integer) mapOfferta.get("idGiocatore");
 			fantaroseRepository.delete(idGiocatore);
-			socketHandler.notificaCancellaOfferta(mapOfferta,request.getRemoteAddr());
+			socketHandler.notificaCancellaOfferta(mapOfferta,request.getRemoteAddr(),String.valueOf(idGiocatore));
 			ret.put("ret", elencoCronologiaOfferte());
 			ret.put("esitoDispositiva", "OK");
 		}
@@ -942,7 +983,7 @@ public class MyController {
 		if (!iterator.hasNext()) return null;
 		return iterator.next();
 	}	
-	
+
 	@GetMapping(path="/giocatoriLiberi")
 	public @ResponseBody List<Map<String, Object>> getGiocatoriLiberi() {
 		List<Object[]> resultList = giocatoriRepository.getGiocatoriLiberi();
@@ -1099,6 +1140,14 @@ public class MyController {
 
 	public void setMinA(Integer minA) {
 		this.minA = minA;
+	}
+
+	public Map<Integer,List<Integer>> getFavoriti() {
+		return favoriti;
+	}
+
+	public void setFavoriti(Map<Integer,List<Integer>> favoriti) {
+		this.favoriti = favoriti;
 	}
 	
 }

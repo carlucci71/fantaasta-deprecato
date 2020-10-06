@@ -101,6 +101,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		}
 		if (operazione != null && operazione.equals("azzera")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			creaMessaggio(indirizzo,"AZZERATO DA: " + nomegiocatore,EnumCategoria.Alert);
 			Map<String, Object> m = new HashMap<>();
 			m.put("calciatori", myController.getGiocatoriLiberi());
@@ -130,6 +131,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			getUtentiLoggati().remove(nomegiocatore);
 			getUtentiLoggati().add(nomegiocatore);
 			m.put("calciatori", myController.getGiocatoriLiberi());
+			myController.aggiornaFavoriti(idgiocatore);
+			m.put("preferiti", myController.getFavoriti());
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			m.put("utenti", getUtentiLoggati());
 			creaMessaggio(indirizzo,"Connesso: " + nomegiocatore,EnumCategoria.Connessione);
@@ -171,6 +174,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			offertaVincente = new HashMap<>();
 			selCalciatoreMacroRuolo="";
 			Map<String, Object> m = new HashMap<>();
+			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("cronologiaOfferte", myController.elencoCronologiaOfferte());
 			m.put("clearOfferta", "x");
@@ -290,6 +294,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			httpSession.removeAttribute("idLoggato");
 			Map<String, Object> m = new HashMap<>();
 			creaMessaggio(indirizzo,"Utente disconnesso: " + nomegiocatore,EnumCategoria.Connessione);
+			m.put("calciatori", myController.getGiocatoriLiberi());
 			m.put("utenti", getUtentiLoggati());
 			invia(toJson(m));
 		}
@@ -420,7 +425,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		}
 	}
 	
-	public void notificaCancellaOfferta(Map<String, Object> mapOfferta, String indirizzo) throws IOException {
+	public void notificaCancellaOfferta(Map<String, Object> mapOfferta, String indirizzo, String idgiocatore) throws IOException {
 		Map<String, Object> m = new HashMap<>();
 		creaMessaggio(indirizzo,"Offerta registrata CANCELLATA: " + mapOfferta.get("allenatore") + " per " + mapOfferta.get("giocatore") + "(" + mapOfferta.get("ruolo") 
 		+ ") " + mapOfferta.get("squadra") + " vinto a " + mapOfferta.get("costo"),EnumCategoria.Alert);
@@ -485,6 +490,16 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 		m.put("elencoAllenatori", allAllenatori);
 		invia(toJson(m));
 	}
+	
+	
+	
+	public void notificaPreferiti(Map<Integer,List<Integer>> fav) throws IOException {
+		Map<String, Object> m = new HashMap<>();
+		m.put("preferiti", fav);
+		invia(toJson(m));
+	}
+	
+	
 	public void notificaCaricaFile(String indirizzo) throws IOException {
 		Map<String, Object> m = new HashMap<>();
 		creaMessaggio(indirizzo,"Giocatori caricati",EnumCategoria.Alert);

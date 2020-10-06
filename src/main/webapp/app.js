@@ -220,6 +220,11 @@ app.run(
 					});
 				}
 			}
+			$rootScope.addFav = function(calciatore, aggiungi) {
+				$resource('./addFav',{}).save({'calciatoreId':calciatore.id,'idgiocatore':$rootScope.idgiocatore,'aggiungi':aggiungi}).$promise.then(function(data) {
+				});
+				
+			}
 			$rootScope.doDisconnect = function() {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'disconnetti', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				$rootScope.nomegiocatore="";
@@ -251,9 +256,9 @@ app.run(
 			$rootScope.forzaTurno= function(turno) {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'forzaTurno', 'turno':turno,'idgiocatore':$rootScope.idgiocatore}));
 			}
-			$resource('./giocatoriLiberi',{}).query().$promise.then(function(data) {
-				$rootScope.calciatori=data;
-			});
+//			$resource('./giocatoriLiberi',{}).query({'idgiocatore':$rootScope.idgiocatore}).$promise.then(function(data) {
+//				$rootScope.calciatori=data;
+//			});
 			$rootScope.aggiornaLoggerMessaggi=function(){
 				$resource('./elencoLoggerMessaggi',{}).query().$promise.then(function(data) {
 					$rootScope.loggerMessaggi=data;
@@ -449,8 +454,22 @@ app.run(
 						$rootScope.mapSpesoTotale=data.mapSpesoTotale;
 						$rootScope.elencoAllenatori=data.elencoAllenatori;
 						$rootScope.aggiornaTimePing($rootScope.timePing);
+						$rootScope.calciatori=data.calciatori;
+						if ($rootScope.idgiocatore>-1) {
+							$rootScope.preferiti=data.preferiti[$rootScope.idgiocatore];
+							$rootScope.coreografaPreferiti();
+						}
 					}
 	            })}
+
+			$rootScope.coreografaPreferiti=function(){
+				if ($rootScope.preferiti){
+					angular.forEach($rootScope.calciatori, function(value,chiave) {
+						if ($rootScope.preferiti.indexOf(value.id)>-1) value.preferito=true; else value.preferito=false; 
+					});
+				}
+				
+			}
 			
 			$rootScope.ricaricaIndex(false);
 			$rootScope.sendMsg=function(s){
@@ -551,6 +570,13 @@ app.run(
 					}
 					if (msg.calciatori){
 						$rootScope.calciatori=msg.calciatori;
+						$rootScope.coreografaPreferiti();
+					}
+					if (msg.preferiti){
+						if ($rootScope.idgiocatore>-1) {
+							$rootScope.preferiti=msg.preferiti[$rootScope.idgiocatore];
+							$rootScope.coreografaPreferiti();
+						}
 					}
 					if (msg.cronologiaOfferte){
 						$rootScope.cronologiaOfferte=msg.cronologiaOfferte;
@@ -680,6 +706,7 @@ app.run(
 				$rootScope.filterNome="";
 				$rootScope.filterSquadra="";
 				$rootScope.filterQuotazione="";
+				$rootScope.filterPreferito=false;
 				$rootScope.selCalciatore="";
 				$rootScope.selCalciatoreId="";
 				$rootScope.selCalciatoreRuolo="";
@@ -923,13 +950,15 @@ app.filter('myTableFilter', function($rootScope){
 	              if($rootScope.filterNome) termInNome = item.nome.toLowerCase().indexOf($rootScope.filterNome.toLowerCase()) > -1;
 	              var termInSquadra=true;
 	              if($rootScope.filterSquadra) termInSquadra = item.squadra.toLowerCase().indexOf($rootScope.filterSquadra.toLowerCase()) > -1;
+	              var termInPreferito=true;
+	              if($rootScope.filterPreferito) termInPreferito = item.preferito;
 	              var termInQuotazione=true;
 	              if($rootScope.filterQuotazione >0) termInQuotazione = item.quotazione >= $rootScope.filterQuotazione;
 	              if($rootScope.filterQuotazione <0){
 	            	  var tmp=-$rootScope.filterQuotazione;
 	            	  termInQuotazione = item.quotazione <= tmp;
 	              }
-	              return termInRuolo && termInMacroRuolo && termInNome && termInSquadra && termInQuotazione;
+	              return termInRuolo && termInMacroRuolo && termInNome && termInSquadra && termInPreferito && termInQuotazione;
 	              
 	              
 	           });

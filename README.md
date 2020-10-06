@@ -96,7 +96,8 @@ E' possibile accedere a:
 * **pagina di amministrazione** oltre alle funzionalità descritte in precedenza per l'amministratore chiunque potrà personalizzare il proprio nome e la propria password.
 * **elenco offerte** oltre alla cronologia delle offerte l'amministratore potrà cancellare una offerta salvata
 * **log** cronologia di tutte le operazioni dispositive effettuate con indicazione oraria e indirizzo IP
-* **giocatori liberi** elenco dei giocatori ancora disponibili, filtrabili per nome/ruolo/squadra/quotazione (maggiore di oppure mettendo il - minore di)
+* **giocatori liberi** elenco dei giocatori ancora disponibili, filtrabili per nome/ruolo/squadra/quotazione ("maggiore di" oppure mettendo il - "minore di"). E' possibile persolizzare un proprio elenco di giocatori preferiti, per filtrarli nella pagina delle offerte.
+E' inoltre possibile aprire una scheda di dettaglio del giocatore.
 * **riepilogo** situazione riassuntiva per allenatore dei giocatori presi. In questa pagina è possibile **esportare** i dati per il sito, se tipo lega mantra o in formato csv generico
 
 #### Accordion allenatori
@@ -108,7 +109,9 @@ Solo l'amministratore, avrà anche la possibilità di avviare un'asta per un alt
 
 #### Accordion offerte
 Se è il proprio turno (o se si è amministratori) la prima attività da fare sarà **selezionare** il calciatore da offrire ed **avviare** l'asta (la durata è personalizzabile dall'amministratore nella pagina di admin). Dopo che sarà avviata, tutti gli allenatori vedranno il **progressivo del tempo rimanente** per effettuare un rilancio, la **situazione aggiornata** ed avranno la possibilità di **rilanciare** quanto indicato nell'apposito campo. Esiste la possibilità di **allineare in automatico** con i rilanci degli altri allenatori o **manualmente** con l'apposita icona. Inoltre esistono le scorciatoie per puntare **+1, +5 o +10**. 
-
+E' possibile filtrare i giocatori per ruolo, nome, squadra, quotazione (mettendo il numero negativo si filtra per "minore di" altrimenti per "maggiore di") e per preferiti.
+Non è prevista la possibilità di aggiungere i preferiti in questa pagina, ma solo in quella dei giocatori liberi.
+E' inoltre possibile aprire una scheda di dettaglio del giocatore.
 Chiunque potrà sospendere il conto alla rovescia con il bottone **pausa**.
 Sono presenti i controlli per **bloccare** l'avvio ed il rilancio in caso di credito insufficiente o slot ruolo già completo.
 

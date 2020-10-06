@@ -40,26 +40,37 @@
  		        <span class="sortorder" ng-show="sort.column === 'quotazione'" ng-class="{reverse: sort.descending}"></span>
  		        <span ng-hide="sort.column === 'quotazione'"><i class="fa fa-sort"></i></span>
             </th>
+            <th ng-show="nomegiocatore" style="width:30px;text-align:center;cursor: pointer" ng:class="selectedCls('preferito')" ng:click="changeSorting('preferito')">
+ 		        <span class="sortorder" ng-show="sort.column === 'preferito'" ng-class="{reverse: sort.descending}"></span>
+ 		        <span ng-hide="sort.column === 'preferito'"><i class="fa fa-sort"></i></span>
+            </th>
             <th></th>
         </tr>
         <tr>
             <th ng-show="isMantra"><input class="divCalciatore"style="width:70px;text-align:center" type=text ng-model="filterMacroRuolo"></input></th>
             <th><input class="divCalciatore"style="width:70px;text-align:center" type=text ng-model="filterRuolo"></input></th>
             <th><input class="divCalciatore"style="width:400px;text-align:center" type=text ng-model="filterNome"></input></th>
-            <th><input class="divCalciatore"style="width:300px;text-align:center" type=text ng-model="filterSquadra"></input></th>
+            <th><input class="divCalciatore"style="width:100px;text-align:center" type=text ng-model="filterSquadra"></input></th>
             <th><input class="divCalciatore"style="width:100px;text-align:center" type=number ng-model="filterQuotazione"></input></th>
+            <th ng-show="nomegiocatore" >
+            <!-- <input class="divCalciatore" type=text ng-model="filterPreferito"></input> -->
+								 <i title="preferito" style="width:30px;text-align:center"  ng-click="filterPreferito=!filterPreferito" ng-show="filterPreferito" class="fa fa-check-square"></i>
+								 <i title="preferito" style="width:30px;text-align:center"  ng-click="filterPreferito=!filterPreferito" ng-show="!filterPreferito" class="fa fa-square"></i>
+			</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-    
-    
-  <tr style="width:1px" ng-repeat="calciatore in calciatori | orderBy: sort.column: sort.descending | myTableFilter">
+  <tr ng-class="{liberiPari: $even, liberiDispari: $odd}"  style="width:1px" ng-repeat="calciatore in calciatori | orderBy: sort.column: sort.descending | myTableFilter">
         <td ng-show="isMantra" class="divCalciatore">{{calciatore.macroRuolo}}</td>
         <td class="divCalciatore">{{calciatore.ruolo}}</td>
         <td class="divCalciatore">{{calciatore.nome}}</td>
-      	<td class="divCalciatore">{{calciatore.squadra}}</td>
+      	<td class="divCalciatore">{{calciatore.squadra.substr(0,3)}}</td>
       	<td class="divCalciatore">{{calciatore.quotazione}}</td>
+      	<td ng-show="nomegiocatore" XXclass="divCalciatore" style="width:30px;text-align:center;cursor:pointer">
+			<i ng-show="!calciatore.preferito"  ng-click="addFav(calciatore,true)"  class="fa fa-star-o" ></i>			
+			<i ng-show="calciatore.preferito" ng-click="addFav(calciatore,false)" class="fa fa-star" ></i>			
+      	</td>
 		<td>
 			<i title="dettaglio" style="cursor:pointer" class="fa fa-info-circle" ng-click="urlDettaglio(calciatore.nome,calciatore.id)"></i>
             <span ng-show="isMantra && calciatore.under23=='SI'">*</span>

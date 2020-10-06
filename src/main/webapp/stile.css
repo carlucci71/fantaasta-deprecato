@@ -206,10 +206,25 @@ input {
 	color: black;
 	text-align:left;
 }
+.calcSize1 {
+	width:130px;
+}
+.calcSize2 {
+	width:400px;
+}
+.calcSize3 {
+	width:170px;
+}
  .divInputCalciatore{
 	 font-size:15px;
 	 height:20px;
 }
+.liberiPari {
+	background-color: lightgray;
+}	  
+.liberiDispari {
+	background-color: white;
+}	  
 .divCalciatore{
 	 font-size:15px;
 }
@@ -358,6 +373,15 @@ input {
 	  .divCalciatore{
 		  font-size:35;
 	  }
+	.calcSize1 {
+		width:70px;
+	}
+	.calcSize2 {
+		width:300px;
+	}
+	.calcSize3 {
+		width:100px;
+	}
 	  .divInputCalciatore{
 		  font-size:35;
 		  height:50px;
