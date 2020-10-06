@@ -193,7 +193,7 @@
 						 <div class="selCalciatore" style="text-align:center;overflow-y:scroll;">
 							 <div ng-class="{calciatoreNonSelezionato: selCalciatoreId!=calciatore.id, calciatoreSelezionato: selCalciatoreId==calciatore.id}" 
 							 ng-repeat="calciatore in calciatori | orderBy:'nome' | myTableFilter" ng-click="selezionaCalciatore(calciatore)" >
-								 <label ng-show="isMantra" class="divCalciatore calcSize1" style="width:70px;text-align:center;cursor:pointer">{{calciatore.macroRuolo}}</label>
+								 <label ng-show="isMantra" class="divCalciatore calcSize1" style="text-align:center;cursor:pointer">{{calciatore.macroRuolo}}</label>
 								 <label class="divCalciatore calcSize1" style="text-align:center;cursor:pointer">{{calciatore.ruolo}}</label>
 								 <label class="divCalciatore calcSize2" style="text-align:center;cursor:pointer">{{calciatore.nome}}</label>
 								 <label class="divCalciatore calcSize3" style="text-align:center;cursor:pointer">{{calciatore.squadra.substr(0,3)}}</label>

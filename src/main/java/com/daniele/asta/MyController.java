@@ -512,6 +512,8 @@ public class MyController {
 				giocatoriRepository.deleteAll();
 				fantaroseRepository.deleteAll();
 				allenatoriRepository.deleteAll();
+				giocatoriFavoritiRepository.deleteAll();
+				loggerRepository.deleteAll();
 				Configurazione configurazione = getConfigurazione();
 				configurazione.setNumeroGiocatori(null);
 				configurazioneRepository.save(configurazione);
