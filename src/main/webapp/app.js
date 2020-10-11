@@ -777,14 +777,15 @@ app.run(
 					var avv=false;
 					if ($rootScope.isMantra){
 						max=$rootScope.maxA;
-						if(newValue!='P'){
-							max=max-$rootScope.minP+$rootScope.getFromMapSpesoTotale('CONTAP',value.nome);
-						}
+//						if(newValue!='P'){
+//							max=max-$rootScope.minP+$rootScope.getFromMapSpesoTotale('CONTAP',value.nome);
+//						}
 						if($rootScope.getFromMapSpesoTotale('CONTAALL',value.nome)<max) avv=true;
 					} 
 					else {
 						if($rootScope.getFromMapSpesoTotale('CONTA'+newValue,value.nome)<max) avv=true;
 					}
+					if(avv && $rootScope.getFromMapSpesoTotale('MAXRILANCIO',value.nome)<=0) avv=false;
 					if(avv){
 						$rootScope.avviabili.push(value.nome)					
 					}

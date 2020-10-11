@@ -72,7 +72,7 @@
       	</td>
 		<td>
 			<i title="dettaglio" style="cursor:pointer" class="fa fa-info-circle" ng-click="urlDettaglio(calciatore.nome,calciatore.id,false)"></i>
-			<span ng-show="isMantra">&nbsp;&nbsp;<i title="dettaglio old" style="cursor:pointer" class="fa fa-info-circle" ng-click="urlDettaglio(calciatore.nome,calciatore.id,true)"></i></span>
+			<span ng-show="isMantra">&nbsp;&nbsp;<i title="dettaglio old" style="cursor:pointer;color:red" class="fa fa-info-circle" ng-click="urlDettaglio(calciatore.nome,calciatore.id,true)"></i></span>
             <span ng-show="isMantra && calciatore.under23=='SI'">*</span>
             <span ng-show="!isMantra || calciatore.under23!='SI'">&nbsp;</span>
 		</td>

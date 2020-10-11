@@ -202,7 +202,7 @@
 								 <i style="width:50px;text-align:center" ng-show="calciatore.preferito" class="fa fa-star" aria-hidden="true"></i>			
 						   		 <span style="width:100px;text-align:center">
 							   		 <i title="dettaglio" class="fa fa-info-circle" style="cursor:pointer" ng-click="urlDettaglio(calciatore.nome,calciatore.id, false)"></i>
-							   		 <span ng-show="isMantra">&nbsp;&nbsp;<i title="dettaglio old" class="fa fa-info-circle" style="cursor:pointer" ng-click="urlDettaglio(calciatore.nome,calciatore.id, true)"></i></span>
+							   		 <span ng-show="isMantra">&nbsp;&nbsp;<i title="dettaglio old" class="fa fa-info-circle" style="cursor:pointer;color:red" ng-click="urlDettaglio(calciatore.nome,calciatore.id, true)"></i></span>
 							         <span ng-show="isMantra && calciatore.under23=='SI'">*</span>
 							         <span ng-show="!isMantra || calciatore.under23!='SI'">&nbsp;</span>
 						         </span>
@@ -317,7 +317,8 @@
 					</div> <!-- OPERACOME -->
 				</div>
 			<input ng-show="isAdmin" type="button" value="azzera tempo" ng-click="azzeraTempo()"></input>
-   		 	<i title="dettaglio" class="fa fa-info-circle" style="cursor:pointer" ng-click="urlDettaglio(offertaVincente.giocatore.nome,offertaVincente.giocatore.id)"></i>
+   		 	<i title="dettaglio" class="fa fa-info-circle" style="cursor:pointer" ng-click="urlDettaglio(offertaVincente.giocatore.nome,offertaVincente.giocatore.id, false)"></i>
+   		 	<i title="dettaglio old" class="fa fa-info-circle" style="cursor:pointer;color:red" ng-click="urlDettaglio(offertaVincente.giocatore.nome,offertaVincente.giocatore.id, true)"></i>
             <span ng-show="isMantra && selCalciatoreUnder23=='SI'">*</span>
             <span ng-show="!isMantra || selCalciatoreUnder23!='SI'">&nbsp;</span>
 			</div> <!-- RILANCIA -->  

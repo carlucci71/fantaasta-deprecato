@@ -312,12 +312,14 @@ public class MyController {
 		List<String> readAllLines = Files.readAllLines(Paths.get(string));
 		for (String sql : readAllLines) {
 			if (sql.toUpperCase().startsWith("SELECT")) continue;
+			if (sql.toUpperCase().startsWith("update giocatori set data_nascita".toUpperCase())) continue;
+			if (sql.toUpperCase().startsWith("insert into giocatori_favoriti".toUpperCase())) continue;
 			if (sql.toUpperCase().startsWith("CREATE")) {
 				String tableName=sql.toUpperCase().replace("CREATE TABLE ", "");
 				tableName=tableName.substring(0,tableName.indexOf(" "));
 				try {
 					String sqlString = "DROP TABLE if exists " + tableName;
-					System.out.println(sqlString);
+//					System.out.println(sqlString);
 					Query qy = em.createNativeQuery(sqlString);
 					qy.executeUpdate();
 				}
@@ -328,10 +330,11 @@ public class MyController {
 			//			System.out.println(sql);
 			Query qy = em.createNativeQuery(sql);
 			try {
-				System.out.println(sql);
+//				System.out.println(sql);
 				qy.executeUpdate();
 			}
 			catch (Exception e) {
+				System.out.println(sql);
 				System.out.println("Errore:" + sql + e.getMessage());
 			}
 		}
@@ -807,7 +810,18 @@ public class MyController {
 			if (tmp==null) tmp=new HashMap();
 			tmp.put("speso", tmp.get("speso")==null?speso.getCosto():tmp.get("speso") + speso.getCosto());
 			tmp.put("conta", tmp.get("conta")==null?speso.getConta():tmp.get("conta") + speso.getConta());
-			tmp.put("maxRilancio", budget-tmp.get("speso")-(numMinAcquisti-tmp.get("conta"))+1);
+			
+			
+			long quantiDaPrendere=0;
+			if(numMinAcquisti<tmp.get("conta")) {
+				quantiDaPrendere=0;
+			} else {
+				quantiDaPrendere=tmp.get("conta")-numMinAcquisti;
+			}
+			//budget-quantiDaPrendere-speso
+			
+			tmp.put("maxRilancio", budget-quantiDaPrendere-tmp.get("speso") );
+			System.out.println(budget + ";"+speso.getNome() +";"+tmp.get("speso") + ";" + numMinAcquisti + ";" + tmp.get("conta") + ";" + quantiDaPrendere + ";");
 			tmp.put("speso"+speso.getMacroRuolo(),speso.getCosto());
 			tmp.put("conta"+speso.getMacroRuolo(),speso.getConta());
 //			if(!speso.getMacroRuolo().equalsIgnoreCase("P")) {
