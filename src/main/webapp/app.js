@@ -27,7 +27,7 @@ app.run(
 			$rootScope.autoAllineaOC=false;
 			$rootScope.isMantra=false;
 			$rootScope.caricamentoInCorso=false;
-			$rootScope.timePing=1000;
+			$rootScope.timePing=2000;
 			$rootScope.budget=500;
 			$rootScope.durataAstaDefault=10;
 			$rootScope.idgiocatoreOperaCome=-1;

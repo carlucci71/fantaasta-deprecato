@@ -167,7 +167,7 @@
 		<br>
 		<label class="nextOperation" ng-show="!nomegiocatore && elencoAllenatori.length==0">Lega in fase di inizializzazione</label>
 		<label class="nextOperation" ng-show="!nomegiocatore && elencoAllenatori.length>0">Connettiti</label>
-		<div ng-show="nomegiocatore">		
+		<div ng-show="nomegiocatore && false">		
 			<label>Frequenza refresh (ms). </label>
 			<input class="inputLarge" type="number" ng-model="timePing" ng-change="aggiornaTimePing(timePing)"></input>
 			<label ng-show="timePing<1000" class="nextOperation" >Sconsigliato refresh minore di 1000ms</label>
