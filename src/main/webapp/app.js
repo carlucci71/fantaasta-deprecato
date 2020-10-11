@@ -27,7 +27,7 @@ app.run(
 			$rootScope.autoAllineaOC=false;
 			$rootScope.isMantra=false;
 			$rootScope.caricamentoInCorso=false;
-			$rootScope.timePing=2000;
+			$rootScope.timePing=5000;
 			$rootScope.budget=500;
 			$rootScope.durataAstaDefault=10;
 			$rootScope.idgiocatoreOperaCome=-1;
@@ -767,6 +767,7 @@ app.run(
 			}
 			$rootScope.forza= function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'forza', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore,'forzaAllenatore':$rootScope.forzaAllenatore,'forzaOfferta':$rootScope.forzaOfferta}));
+				$rootScope.abilitaForza=false;
 			}
 			$rootScope.incrementaOfferta = function(ng,ig,val){
 				$rootScope.offerta=$rootScope.offerta+val;

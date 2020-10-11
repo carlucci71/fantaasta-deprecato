@@ -457,8 +457,8 @@
 								<label class="nextOperation">Devi confermare o annullare l'asta</label>
 								<br>
 							</span>
-							<img style="cursor:pointer" title="conferma" src='./conferma.jpeg' ng-click="conferma()"/>
-							<img style="cursor:pointer" title="annulla" src='./annulla.jpeg' ng-click="annulla()"/>
+							<img style="cursor:pointer" ng-show="!abilitaForza" title="conferma" src='./conferma.jpeg' ng-click="conferma()"/>
+							<img style="cursor:pointer" ng-show="!abilitaForza" title="annulla" src='./annulla.jpeg' ng-click="annulla()"/>
 							
 						</span> 
 				</div>
