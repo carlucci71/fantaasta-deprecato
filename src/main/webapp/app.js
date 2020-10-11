@@ -756,6 +756,8 @@ app.run(
 				$rootScope.selCalciatoreSquadra="";
 				$rootScope.offertaOC=1;
 				$rootScope.offerta=1;
+				$rootScope.offertaPrivOC=1;
+				$rootScope.offertaPriv=1;
 				$rootScope.idgiocatoreOperaCome=-1;
 				$rootScope.nomegiocatoreOperaCome="";
 			}
