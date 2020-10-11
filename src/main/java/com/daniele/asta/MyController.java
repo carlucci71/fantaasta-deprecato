@@ -837,8 +837,9 @@ public class MyController {
 				quantiDaPrendere=numMinAcquisti-tmp.get("conta");
 			}
 			//budget-quantiDaPrendere-speso
-			
-			tmp.put("maxRilancio", budget-quantiDaPrendere-tmp.get("speso") );
+			int adding=1;
+			if(quantiDaPrendere<1) adding=0;
+			tmp.put("maxRilancio", budget-quantiDaPrendere-tmp.get("speso") +adding );
 //			System.out.println(budget + ";"+speso.getNome() +";"+tmp.get("speso") + ";" + numMinAcquisti + ";" + tmp.get("conta") + ";" + quantiDaPrendere + ";");
 			tmp.put("speso"+speso.getMacroRuolo(),speso.getCosto());
 			tmp.put("conta"+speso.getMacroRuolo(),speso.getConta());

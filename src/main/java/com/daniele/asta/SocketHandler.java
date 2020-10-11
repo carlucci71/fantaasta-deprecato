@@ -314,6 +314,8 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 			invia(toJson(m));
 		} else if (operazione != null && operazione.equals("inviaOfferta")) {
 			String nomegiocatore = (String) jsonToMap.get("nomegiocatore");
+			Boolean azzera = null;
+			if (jsonToMap.get("azzera")!=null) azzera=(Boolean) jsonToMap.get("azzera");
 			String idgiocatore = jsonToMap.get("idgiocatore").toString();
 			String nomegiocatoreOperaCome = (String) jsonToMap.get("nomegiocatoreOperaCome");
 			Integer offerta = (Integer) jsonToMap.get("offerta");
@@ -354,7 +356,7 @@ public class SocketHandler extends TextWebSocketHandler implements WebSocketHand
 				str = str + " per " + offertaVincente.get("nomeCalciatore") + "("
 						+ ((Giocatori) offertaVincente.get("giocatore")).getRuolo() + ") "
 						+ ((Giocatori) offertaVincente.get("giocatore")).getSquadra();
-				if (attOfferta != null && offerta <= attOfferta) {
+				if (attOfferta != null && offerta <= attOfferta  && azzera == null) {
 					creaMessaggio(indirizzo, str + " non superiore all'offerta vincente di " + attOfferta + " fatta da "
 							+ offertaVincente.get("nomegiocatore"), EnumCategoria.Asta);
 				} else {

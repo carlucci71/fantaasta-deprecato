@@ -331,8 +331,8 @@
 
 			<div ng-show="isSingle" ng-repeat="allenatore in elencoAllenatori">
 				<div ng-show="allenatore.id==idgiocatore || isAdmin" style="text-align:center">
+					<label style="width:200px;text-align:right" class="nextOperation">{{allenatore.nome}}</label>
 					<span ng-show=" avviabili.indexOf(allenatore.nome)>=0 && offertaVincente.offerta<getFromMapSpesoTotale('MAXRILANCIO',allenatore.nome) ">
-						<label style="width:200px;text-align:right" class="nextOperation">{{allenatore.nome}}</label>
 						<span class="spanBtnIncrementa">
 							<input ng-show="offerta<=getFromMapSpesoTotale('MAXRILANCIO',allenatore.nome)-1" class="btnIncrementa" type="button" value="{{offerta+1}}" ng-click="incrementaOfferta(allenatore.nome,allenatore.id,1)"></input>
 						</span>
@@ -407,6 +407,7 @@
 				</div>
 					 -->
 			<input ng-show="isAdmin" type="button" value="azzera tempo" ng-click="azzeraTempo()"></input>
+			<input ng-show="isAdmin" type="button" value="azzera offerta" ng-click="azzeraOfferta()"></input>
    		 	<i title="dettaglio" class="fa fa-info-circle" style="cursor:pointer" ng-click="urlDettaglio(offertaVincente.giocatore.nome,offertaVincente.giocatore.id, false)"></i>
    		 	<i title="dettaglio old" class="fa fa-info-circle" style="cursor:pointer;color:red" ng-show="isMantra" ng-click="urlDettaglio(offertaVincente.giocatore.nome,offertaVincente.giocatore.id, true)"></i>
             <span ng-show="isMantra && selCalciatoreUnder23=='SI'">*</span>

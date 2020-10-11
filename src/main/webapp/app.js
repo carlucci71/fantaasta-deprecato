@@ -773,6 +773,11 @@ app.run(
 				$rootScope.offerta=$rootScope.offerta+val;
 				$rootScope.inviaOfferta(ng,ig);
 			}
+			$rootScope.azzeraOfferta = function(){
+				$rootScope.offerta=1;
+				$rootScope.inviaOfferta($rootScope.offertaVincente.nomegiocatore,$rootScope.offertaVincente.idgiocatore,true);
+			}
+			
 			$rootScope.inviaOffertaLibera = function(ng,ig,val){
 				$rootScope.offerta=val;
 				$rootScope.inviaOfferta(ng,ig);
@@ -784,10 +789,10 @@ app.run(
 					$rootScope.sendMsg(JSON.stringify({'operazione':'annullaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				}
 			}
-			$rootScope.inviaOfferta = function(ng,ig){
+			$rootScope.inviaOfferta = function(ng,ig,azzera){
 				$rootScope.offertaPriv=$rootScope.offerta;
 				$rootScope.offertaPrivOC=$rootScope.offerta;
-				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'maxRilancio':$rootScope.getFromMapSpesoTotale('MAXRILANCIO',ng),'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':$rootScope.offerta}));
+				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'maxRilancio':$rootScope.getFromMapSpesoTotale('MAXRILANCIO',ng),'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':$rootScope.offerta,'azzera':azzera}));
 			}
 			$rootScope.cancellaUtente = function(u) {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':u.nome, 'idgiocatore':u.id}));
