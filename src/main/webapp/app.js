@@ -10,6 +10,8 @@ app.run(
 			$rootScope.config=false;
 			$rootScope.nomegiocatore="";
 			$rootScope.offerta=1;
+			$rootScope.offertaPriv=1;
+			$rootScope.offertaPrivOC=1;
 			$rootScope.offertaOC=1;
 			$rootScope.bSemaforoAttivo=true;
 			$rootScope.messaggi=[];
@@ -20,6 +22,7 @@ app.run(
 			$rootScope.turno=0;
 			$rootScope.tokenDispositiva=-1;
 			$rootScope.isATurni=true;
+			$rootScope.isSingle=false;
 			$rootScope.autoAllinea=false;
 			$rootScope.autoAllineaOC=false;
 			$rootScope.isMantra=false;
@@ -29,6 +32,7 @@ app.run(
 			$rootScope.durataAstaDefault=10;
 			$rootScope.idgiocatoreOperaCome=-1;
 			$rootScope.nomegiocatoreOperaCome="";
+			$rootScope.abilitaForza=false;
 			$rootScope.forzaLogout= function(){
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				$rootScope.nomegiocatore='';
@@ -194,7 +198,7 @@ app.run(
 						$rootScope.numAcquisti=$rootScope.maxP+$rootScope.maxD+$rootScope.maxC+$rootScope.maxA;
 					}
 					$rootScope.numMinAcquisti=$rootScope.minP+$rootScope.minD+$rootScope.minC+$rootScope.minA;
-					$resource('./aggiornaConfigLega',{}).save({'durataAsta':$rootScope.durataAstaDefault,'isATurni':$rootScope.isATurni,
+					$resource('./aggiornaConfigLega',{}).save({'durataAsta':$rootScope.durataAstaDefault,'isSingle':$rootScope.isSingle,'isATurni':$rootScope.isATurni,
 						'elencoAllenatori':$rootScope.elencoAllenatori,'admin':amministratore,'idgiocatore':$rootScope.idgiocatore,
 						'tokenDispositiva':$rootScope.tokenDispositiva,'budget':$rootScope.budget,
 						'maxP':$rootScope.maxP,'minP':$rootScope.minP,'maxD':$rootScope.maxD,'minD':$rootScope.minD,
@@ -209,6 +213,10 @@ app.run(
 								$rootScope.isATurni=true;
 							else
 								$rootScope.isATurni=false;
+							if(data.isSingle=="S")
+								$rootScope.isSingle=true;
+							else
+								$rootScope.isSingle=false;
 							if(data.isMantra=="S")
 								$rootScope.isMantra=true;
 							else
@@ -365,13 +373,17 @@ app.run(
 						$rootScope.numAcquisti=$rootScope.maxP+$rootScope.maxD+$rootScope.maxC+$rootScope.maxA;
 					}
 					$rootScope.numMinAcquisti=$rootScope.minP+$rootScope.minD+$rootScope.minC+$rootScope.minA;
-					$resource('./inizializzaLega',{}).save({'minP':$rootScope.minP,'minD':$rootScope.minD,'minC':$rootScope.minC,'minA':$rootScope.minA,'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
+					$resource('./inizializzaLega',{}).save({'minP':$rootScope.minP,'minD':$rootScope.minD,'minC':$rootScope.minC,'minA':$rootScope.minA,'maxP':$rootScope.maxP,'maxD':$rootScope.maxD,'maxC':$rootScope.maxC,'maxA':$rootScope.maxA,'numAcquisti':$rootScope.numAcquisti,'numMinAcquisti':$rootScope.numMinAcquisti,'durataAsta':$rootScope.durataAstaDefault,'budget':$rootScope.budget,'numUtenti':$rootScope.numeroUtenti,'isATurni':$rootScope.isATurni,'isSingle':$rootScope.isSingle,'isMantra':$rootScope.isMantra}).$promise.then(function(data) {
 						if(data.esitoDispositiva == 'OK'){
 							$rootScope.ricaricaIndex(false);
 							if(data.isATurni=="S")
 								$rootScope.isATurni=true;
 							else
 								$rootScope.isATurni=false;
+							if(data.isSingle=="S")
+								$rootScope.isSingle=true;
+							else
+								$rootScope.isSingle=false;
 							if(data.isMantra=="S")
 								$rootScope.isMantra=true;
 							else
@@ -431,6 +443,10 @@ app.run(
 							$rootScope.isATurni=true;
 						else
 							$rootScope.isATurni=false;
+						if(data.isSingle=="S")
+							$rootScope.isSingle=true;
+						else
+							$rootScope.isSingle=false;
 						if(data.isMantra=="S")
 							$rootScope.isMantra=true;
 						else
@@ -536,6 +552,17 @@ app.run(
 						else
 							$rootScope.isATurni=false;
 					}
+					if (msg.isSingle){
+						if (msg.isSingle=="S")
+							$rootScope.isSingle=true;
+						else
+							$rootScope.isSingle=false;
+					}
+					if (msg.avviaAsta){
+						$rootScope.forzaAllenatore="";
+						$rootScope.forzaOfferta=0;
+						$rootScope.abilitaForza=false;
+					}
 					if (msg.isMantra){
 						if (msg.isMantra=="S")
 							$rootScope.isMantra=true;
@@ -612,11 +639,15 @@ app.run(
 					}
 					if (msg.offertaVincente){
 						$rootScope.offertaVincente=msg.offertaVincente;
-						if($rootScope.autoAllineaOC) {
-							$rootScope.offertaOC=$rootScope.offertaVincente.offerta;
-						}
-						if($rootScope.autoAllinea) {
+						if($rootScope.isSingle){
 							$rootScope.offerta=$rootScope.offertaVincente.offerta;
+						} else{
+							if($rootScope.autoAllineaOC) {
+								$rootScope.offertaPrivOC=$rootScope.offertaVincente.offerta;
+							}
+							if($rootScope.autoAllinea) {
+								$rootScope.offertaPriv=$rootScope.offertaVincente.offerta;
+							}
 						}
 					}
 					if (msg.durataAsta){
@@ -657,7 +688,7 @@ app.run(
 			}
 			$rootScope.pinga = function(){
 //				if ($rootScope.nomegiocatore)
-					$rootScope.sendMsg(JSON.stringify({'operazione':'ping', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
+					$rootScope.sendMsg(JSON.stringify({'operazione':'ping','nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 			}
 			$rootScope.aggiornaTimePing= function(timePing) {
 				$interval.cancel(a);
@@ -728,6 +759,23 @@ app.run(
 				$rootScope.idgiocatoreOperaCome=-1;
 				$rootScope.nomegiocatoreOperaCome="";
 			}
+			$rootScope.aggiornaAutoAllinea = function(accendi){
+				$rootScope.autoAllinea=accendi;
+			}
+			$rootScope.allineaOfferta = function(){
+				$rootScope.offerta=$rootScope.offertaVincente.offerta;
+			}
+			$rootScope.forza= function(){
+				$rootScope.sendMsg(JSON.stringify({'operazione':'forza', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore,'forzaAllenatore':$rootScope.forzaAllenatore,'forzaOfferta':$rootScope.forzaOfferta}));
+			}
+			$rootScope.incrementaOfferta = function(ng,ig,val){
+				$rootScope.offerta=$rootScope.offerta+val;
+				$rootScope.inviaOfferta(ng,ig);
+			}
+			$rootScope.inviaOffertaLibera = function(ng,ig,val){
+				$rootScope.offerta=val;
+				$rootScope.inviaOfferta(ng,ig);
+			}
 			$rootScope.annulla = function(){
 				if (window.confirm("Annullo offerta di:" + $rootScope.offertaVincente.nomegiocatore + " per " + $rootScope.offertaVincente.giocatore.nome + "(" + $rootScope.offertaVincente.giocatore.ruolo + ") " + $rootScope.offertaVincente.giocatore.squadra + " vinto a " + $rootScope.offertaVincente.offerta)){
 					$rootScope.messaggi=[];
@@ -735,18 +783,10 @@ app.run(
 					$rootScope.sendMsg(JSON.stringify({'operazione':'annullaAsta', 'nomegiocatore':$rootScope.nomegiocatore, 'idgiocatore':$rootScope.idgiocatore}));
 				}
 			}
-			$rootScope.inviaOfferta = function(quale, off){
-				var ng;
-				var ig;
-				if(quale=='OC') {
-					ng = $rootScope.nomegiocatoreOperaCome;
-					ig = $rootScope.idgiocatoreOperaCome;
-				}
-				else {
-					ng = $rootScope.nomegiocatore;
-					ig = $rootScope.idgiocatore;
-				}
-				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'maxRilancio':$rootScope.getFromMapSpesoTotale('MAXRILANCIO',ng),'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':off}));
+			$rootScope.inviaOfferta = function(ng,ig){
+				$rootScope.offertaPriv=$rootScope.offerta;
+				$rootScope.offertaPrivOC=$rootScope.offerta;
+				$rootScope.sendMsg(JSON.stringify({'operazione':'inviaOfferta', 'maxRilancio':$rootScope.getFromMapSpesoTotale('MAXRILANCIO',ng),'nomegiocatore':ng, 'idgiocatore':ig, 'nomegiocatoreOperaCome':$rootScope.nomegiocatore, 'idgiocatoreOperaCome':$rootScope.idgiocatore, 'offerta':$rootScope.offerta}));
 			}
 			$rootScope.cancellaUtente = function(u) {
 				$rootScope.sendMsg(JSON.stringify({'operazione':'cancellaUtente', 'nomegiocatore':u.nome, 'idgiocatore':u.id}));

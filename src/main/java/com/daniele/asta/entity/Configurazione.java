@@ -10,6 +10,7 @@ public class Configurazione {
 	@Id
 	private Integer id;
 	private Boolean isATurni;
+	private Boolean isSingle;
 	private boolean isMantra;
 	private Integer budget;
 	private Integer durataAsta;
@@ -107,14 +108,6 @@ public class Configurazione {
 	public void setDurataAsta(Integer durataAsta) {
 		this.durataAsta = durataAsta;
 	}
-	@Override
-	public String toString() {
-		return "Configurazione [id=" + id + ", isATurni=" + isATurni + ", isMantra=" + isMantra + ", budget=" + budget
-				+ ", durataAsta=" + durataAsta + ", numeroAcquisti=" + numeroAcquisti + ", numeroMinAcquisti="
-				+ numeroMinAcquisti + ", maxP=" + maxP + ", maxD=" + maxD + ", maxC=" + maxC + ", maxA=" + maxA
-				+ ", minP=" + minP + ", minD=" + minD + ", minC=" + minC + ", minA=" + minA + ", numeroGiocatori="
-				+ numeroGiocatori + "]";
-	}
 	public Integer getMinP() {
 		return minP;
 	}
@@ -138,6 +131,20 @@ public class Configurazione {
 	}
 	public void setMinA(Integer minA) {
 		this.minA = minA;
+	}
+	public Boolean getIsSingle() {
+		return isSingle;
+	}
+	public void setIsSingle(Boolean isSingle) {
+		this.isSingle = isSingle;
+	}
+	@Override
+	public String toString() {
+		return "Configurazione [id=" + id + ", isATurni=" + isATurni + ", isSingle=" + isSingle + ", isMantra="
+				+ isMantra + ", budget=" + budget + ", durataAsta=" + durataAsta + ", numeroAcquisti=" + numeroAcquisti
+				+ ", numeroMinAcquisti=" + numeroMinAcquisti + ", maxP=" + maxP + ", maxD=" + maxD + ", maxC=" + maxC
+				+ ", maxA=" + maxA + ", minP=" + minP + ", minD=" + minD + ", minC=" + minC + ", minA=" + minA
+				+ ", numeroGiocatori=" + numeroGiocatori + "]";
 	}
 
 

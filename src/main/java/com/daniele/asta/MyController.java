@@ -98,6 +98,7 @@ public class MyController {
 	private String turno="0";
 	private String nomeGiocatoreTurno="";
 	private Boolean isATurni;
+	private Boolean isSingle;
 	private Boolean isMantra;
 	private Map<Integer,List<Integer>> favoriti=new HashMap<>();
 
@@ -267,6 +268,15 @@ public class MyController {
 			}
 			else {
 				ret.put("isATurni", "N");
+			}
+			Boolean configIsSingle = configurazione.getIsSingle();
+			if (configIsSingle==null) configIsSingle=false;
+			setIsSingle(configIsSingle);
+			if(getIsSingle()) {
+				ret.put("isSingle", "S");
+			}
+			else {
+				ret.put("isSingle", "N");
 			}
 			setIsMantra(configurazione.isMantra());
 			if(getIsMantra()) {
@@ -546,6 +556,7 @@ public class MyController {
 			setMinC((Integer) body.get("minC"));
 			setMinA((Integer) body.get("minA"));
 			isATurni=(Boolean) body.get("isATurni");
+			setIsSingle((Boolean) body.get("isSingle"));
 			setIsMantra((Boolean) body.get("isMantra"));
 			if (configurazione==null) configurazione=new Configurazione();
 			configurazione.setId(0);
@@ -563,6 +574,7 @@ public class MyController {
 			configurazione.setMinC(getMinC());
 			configurazione.setMinA(getMinA());
 			configurazione.setIsATurni(isATurni);
+			configurazione.setIsSingle(getIsSingle());
 			configurazione.setMantra(getIsMantra());
 			configurazioneRepository.save(configurazione);
 			for(int i=0;i<numUtenti;i++) {
@@ -626,7 +638,7 @@ public class MyController {
 			setDurataAsta((Integer) body.get("durataAsta"));
 			Boolean admin = (Boolean) body.get("admin");
 			isATurni = (Boolean) body.get("isATurni");
-//			setIsMantra((Boolean) body.get("isMantra"));
+			setIsSingle((Boolean) body.get("isSingle"));
 			List<Map<String, Object>> elencoAllenatori = (List<Map<String, Object>>) body.get("elencoAllenatori");
 			for (Map<String, Object> map : elencoAllenatori) {
 				Allenatori al = allenatoriRepository.findOne((Integer) map.get("id"));
@@ -655,7 +667,7 @@ public class MyController {
 			}
 			Configurazione configurazione = getConfigurazione();
 			configurazione.setIsATurni(isATurni);
-//			configurazione.setMantra(getIsMantra());
+			configurazione.setIsSingle(getIsSingle());
 			configurazione.setBudget(getBudget());
 			configurazione.setDurataAsta(getDurataAsta());
 			configurazione.setNumeroAcquisti(getNumAcquisti());
@@ -674,6 +686,12 @@ public class MyController {
 			}
 			else {
 				ret.put("isATurni", "N");
+			}
+			if(getIsSingle()) {
+				ret.put("isSingle", "S");
+			}
+			else {
+				ret.put("isSingle", "N");
 			}
 			if(getIsMantra()) {
 				ret.put("isMantra", "S");
@@ -816,7 +834,7 @@ public class MyController {
 			if(numMinAcquisti<tmp.get("conta")) {
 				quantiDaPrendere=0;
 			} else {
-				quantiDaPrendere=tmp.get("conta")-numMinAcquisti;
+				quantiDaPrendere=numMinAcquisti-tmp.get("conta");
 			}
 			//budget-quantiDaPrendere-speso
 			
@@ -1164,6 +1182,14 @@ public class MyController {
 
 	public void setFavoriti(Map<Integer,List<Integer>> favoriti) {
 		this.favoriti = favoriti;
+	}
+
+	public Boolean getIsSingle() {
+		return isSingle;
+	}
+
+	public void setIsSingle(Boolean isSingle) {
+		this.isSingle = isSingle;
 	}
 	
 }
