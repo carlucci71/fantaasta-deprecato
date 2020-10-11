@@ -222,7 +222,7 @@
 							<span ng-show="isAdmin && selCalciatore && nomeGiocatoreTurno!=nomegiocatore && durataAsta>0">
 								<label ng-show="avviabili.indexOf(nomeGiocatoreTurno)>=0" class="nextOperation"> puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
 								<label ng-show="avviabili.indexOf(nomeGiocatoreTurno)<0" class="nextOperation">non puoi avviare l'asta al suo posto per {{selCalciatoreNome}} ({{selCalciatoreRuolo}}) {{selCalciatoreSquadra}}</label>
-								<img ng-show="avviabili.indexOf(nomeGiocatoreTurno)>=0" title="avvia asta" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="inizia(nomeGiocatoreTurno, turno)" />
+								<img ng-show="avviabili.indexOf(nomeGiocatoreTurno)>=0" title="avvia asta" style="margin-bottom:2px;cursor:pointer" src='./startGiocatore.png' ng-click="iniziaTurno(nomeGiocatoreTurno, turno)" />
 							</span>
 						</span>
 						<span ng-show="selCalciatore">

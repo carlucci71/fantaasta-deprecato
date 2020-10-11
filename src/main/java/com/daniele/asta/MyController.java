@@ -821,7 +821,7 @@ public class MyController {
 			//budget-quantiDaPrendere-speso
 			
 			tmp.put("maxRilancio", budget-quantiDaPrendere-tmp.get("speso") );
-			System.out.println(budget + ";"+speso.getNome() +";"+tmp.get("speso") + ";" + numMinAcquisti + ";" + tmp.get("conta") + ";" + quantiDaPrendere + ";");
+//			System.out.println(budget + ";"+speso.getNome() +";"+tmp.get("speso") + ";" + numMinAcquisti + ";" + tmp.get("conta") + ";" + quantiDaPrendere + ";");
 			tmp.put("speso"+speso.getMacroRuolo(),speso.getCosto());
 			tmp.put("conta"+speso.getMacroRuolo(),speso.getConta());
 //			if(!speso.getMacroRuolo().equalsIgnoreCase("P")) {

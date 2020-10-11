@@ -677,6 +677,14 @@ app.run(
 				if($rootScope.selCalciatoreMacroRuolo == 'A') max=$rootScope.maxA;
 				return $rootScope.getFromMapSpesoTotale('CONTA'+$rootScope.selCalciatoreMacroRuolo,ng)<max;
 			}*/
+
+			$rootScope.iniziaTurno = function(ng,turno) {
+				angular.forEach($rootScope.elencoAllenatori, function(value,chiave) {
+					if(value.ordine == turno)
+						$rootScope.inizia(ng,value.id);
+					});
+			}
+			
 			$rootScope.inizia = function(ng,ig) {
 				$rootScope.bSemaforoAttivo=false;
 				$rootScope.timeStart=0;
