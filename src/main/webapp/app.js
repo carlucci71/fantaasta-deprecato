@@ -25,11 +25,11 @@ app.run(
 			$rootScope.isSingle=false;
 			$rootScope.autoAllinea=false;
 			$rootScope.autoAllineaOC=false;
-			$rootScope.isMantra=false;
+			$rootScope.isMantra=true;
 			$rootScope.caricamentoInCorso=false;
 			$rootScope.timePing=5000;
 			$rootScope.budget=500;
-			$rootScope.durataAstaDefault=10;
+			$rootScope.durataAstaDefault=15;
 			$rootScope.idgiocatoreOperaCome=-1;
 			$rootScope.nomegiocatoreOperaCome="";
 			$rootScope.abilitaForza=false;

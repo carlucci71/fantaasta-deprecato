@@ -440,7 +440,7 @@ public class MyController {
 			}
 			else if("MANTRA".equalsIgnoreCase(tipoFile)) {
 				String[] split = content.split("\n");
-				for(int i=1;i<split.length;i++) {
+				for(int i=0;i<split.length;i++) {
 					String riga = split[i];
 					String[] colonne = riga.split("\t");
 					Giocatori giocatori = new Giocatori();
